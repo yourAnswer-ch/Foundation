@@ -40,9 +40,11 @@ public static class ServerCertBinder
     }
 
     private static void AddListener(KestrelServerOptions options, IServiceProvider services, KestrelBindingConfig binding)
-    {        
+    {
+        var ip = ParseAddressIP(binding);
         var certificate = (binding.Certificate != null) ? DownloadCertificate(services, binding.Certificate) : null;
-        options.Listen(IPAddress.Loopback, binding.Port, o =>
+        
+        options.Listen(ip, binding.Port, o =>
         {
             var httpProtocol = ParseEnum(binding.Protocols, HttpProtocols.Http1AndHttp2);
             var sslProtocol = ParseEnum(binding.Certificate?.Protocols, SslProtocols.Tls13);
@@ -62,6 +64,17 @@ public static class ServerCertBinder
                 }
             });
         });
+    }
+
+    private static IPAddress ParseAddressIP(KestrelBindingConfig binding)
+    {
+        if (binding.IPAddress == "*")
+            return IPAddress.Any;
+
+        if (IPAddress.TryParse(binding.IPAddress, out var ipAddress))
+            return ipAddress;
+
+        return IPAddress.Any;
     }
 
     private static X509Certificate2 DownloadCertificate(IServiceProvider services, CertificateConfig config)
