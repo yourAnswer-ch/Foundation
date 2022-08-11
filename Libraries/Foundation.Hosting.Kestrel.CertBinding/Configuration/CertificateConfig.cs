@@ -6,5 +6,7 @@ internal class CertificateConfig
 
     public string? Name { get; set; }
 
+    public string? HostHeader { get; set; }
+
     public string Protocols { get; set; } = "TLS12|TLS13";
 }

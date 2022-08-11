@@ -1,11 +1,11 @@
 ﻿using Azure.Security.KeyVault.Certificates;
 using Foundation.Hosting.Kestrel.CertBinding.Configuration;
-using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -16,43 +16,83 @@ public static class ServerCertBinder
 {
     public static void ConfigureBindings(this KestrelServerOptions options)
     {
-        var rootconfig = options.ApplicationServices.GetRequiredService<IConfiguration>();
-        var config  = rootconfig.GeKestrelConfig();
-        var client = options.ApplicationServices.GetRequiredService<IAzureClientFactory<CertificateClient>>().CreateClient("KV-FD-Certificates");
-        X509Certificate2 certificate = client.DownloadCertificate("wildcard-youranswer-ch");
-       
-        options.AddServerHeader = false;
-        options.Listen(IPAddress.Loopback, 10443, o =>
-        {
-            o.Protocols = HttpProtocols.Http1AndHttp2;
+        var services = options.ApplicationServices;
+        var log = services.GetService<ILogger<KestrelConfig>>();
+        var config = services.GetService<IConfiguration>();
 
+        try
+        {
+            if (config == null)
+                throw new ArgumentException("ServerCertBinder - Configuration not registered in service collection");
+
+            var kestrelConfig = config.GetKestrelConfig();           
+            options.AddServerHeader = kestrelConfig.AddServerHeader;
+
+            foreach (var binding in kestrelConfig.Bindings)
+            {
+                AddListener(options, services, binding);
+            }
+        }
+        catch (Exception ex) {
+            log.LogError(ex, "Fail to configure kestrel server.");
+            throw;
+        }
+    }
+
+    private static void AddListener(KestrelServerOptions options, IServiceProvider services, KestrelBindingConfig binding)
+    {        
+        var certificate = (binding.Certificate != null) ? DownloadCertificate(services, binding.Certificate) : null;
+        options.Listen(IPAddress.Loopback, binding.Port, o =>
+        {
+            var httpProtocol = ParseEnum(binding.Protocols, HttpProtocols.Http1AndHttp2);
+            var sslProtocol = ParseEnum(binding.Certificate?.Protocols, SslProtocols.Tls13);
+
+            o.Protocols = httpProtocol;
             o.UseHttps(httpsConfig =>
             {
-                httpsConfig.SslProtocols = SslProtocols.Tls13 | SslProtocols.Tls12;
-                httpsConfig.ServerCertificate = certificate;
+                httpsConfig.SslProtocols = sslProtocol;
+                
+                if(certificate != null)
+                    httpsConfig.ServerCertificate = certificate;
 
-                //httpsConfig.ServerCertificateSelector +=
+                if(binding.Certificates != null && binding.Certificates.Count > 0)
+                {
+                    var selector = new CertSelector(binding.Certificates, c => DownloadCertificate(services, c));
+                    httpsConfig.ServerCertificateSelector = selector.SelectCert;
+                }
             });
         });
     }
-}
 
-public class CertSelector
-{
-    private Dictionary<string, X509Certificate2> certs = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
-    //{
-    //    ["localhost"] = localhostCert,
-    //    ["example.com"] = exampleCert,
-    //    ["sub.example.com"] = subExampleCert
-    //};
-
-    public X509Certificate2 SelectCert(ConnectionContext connectionContext, string name)
+    private static X509Certificate2 DownloadCertificate(IServiceProvider services, CertificateConfig config)
     {
-        if (name is not null && certs.TryGetValue(name, out var cert))
-        {
-            return cert;
-        }
+        var factory = services.GetRequiredService<IAzureClientFactory<CertificateClient>>();
+        if (factory == null)
+            throw new ArgumentException("ServerCertBinder - AzureClientFactory for CertificateClient found");
 
-        return null;
+        var client = factory.CreateClient(config.Source);
+        if (factory == null)
+            throw new ArgumentException($"ServerCertBinder - CertificateClient not found - Name: {config.Name}");
+
+        return client.DownloadCertificate(config.Name);
+    }
+
+    private static T ParseEnum<T>(string? value, T defaultValue = default) where T : struct
+    {
+        if(string.IsNullOrEmpty(value))
+            return defaultValue;
+
+        var result = value.Split('|').Select(e =>
+        {
+            if (!Enum.TryParse<T>(e, true, out var enumValue))
+            {
+                var names = string.Join('|', Enum.GetNames(typeof(T)));
+                throw new ArgumentException($"ServerCertBinder - Value: {e} is not valid for type: '{typeof(T).Name}'. Use one of the following values: {names}.");
+            }
+
+            return Convert.ToInt32(enumValue);
+        }).Aggregate((a, b) => a | b);
+
+        return (T)Enum.ToObject(typeof(T), result);        
     }
 }
