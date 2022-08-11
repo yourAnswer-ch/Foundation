@@ -25,4 +25,5 @@ Additional Nuget packages used:
 ## Foundation.Hosting.Kestrel.CertBinding
 Configures Kestrel bindings and loads certificates from Azure KeyVault.
 
-	
+# Remarks:
+Currently all libraries are programmed in .net7. In principle they would also work with earlier ones. Support for earlier versions may be added later.	

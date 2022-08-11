@@ -1,8 +1,8 @@
 ﻿# Foundation.Hosting.Kestrel.CertBinding
 
-Die CertBinding Bibliotheke für Kestrel ermöglicht die Definition der Port, Ip und Zertifikatsbindung. Die Zertifikate werden dabei aus dem Azure KeyVault geladen.
+The CertBinding library for Kestrel allows you to define the port, ip and certificate binding. The certificates are loaded from the Azure KeyVault.
 
-## Codeanpassung im Program.cs
+## Code adaptation in Program.cs
 ```
 using Foundation.Hosting.Kestrel.CertBinding;
 
@@ -11,8 +11,16 @@ builder.WebHost.ConfigureKestrel(o =>
     o.ConfigureBindings();
 });
 ```
+The certificate binder requires at least one KeyVault certificate client that is registered by name. The KeyVault is then reserved in the configuration.
 
-## Konfiguration:
+```
+builder.Services.AddAzureClients(builder =>
+{
+    builder.AddCertificateClient(new Uri("https://kv-fd-certificates.vault.azure.net/")).WithName("KV-FD-Certificates");
+});
+```
+
+## Configuration:
 ```
 "Hosting": {
     "Kestrel": {
