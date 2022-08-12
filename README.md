@@ -26,7 +26,7 @@ Additional Nuget packages used:
 Configures Kestrel bindings and loads certificates from Azure KeyVault. [see details](https://github.com/yourAnswer-ch/Foundation/tree/main/Libraries/Foundation.Hosting.Kestrel.CertBinding)
 
 ## Foundation.Hosting.Info 
-Writes log information to the console and log. [see details](https://github.com/yourAnswer-ch/Foundation/tree/main/Libraries/Foundation.Hosting.info)
+Writes log information to the console and log. [see details](https://github.com/yourAnswer-ch/Foundation/tree/main/Libraries/Foundation.Hosting.Info)
 
 # Remarks:
 Currently all libraries are programmed in .net7. In principle they would also work with earlier ones. Support for earlier versions may be added later.	

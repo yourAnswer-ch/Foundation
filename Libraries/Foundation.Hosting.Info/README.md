@@ -25,5 +25,5 @@ It is not necessary to insert the entire configuration mandated is only the app 
 
 # Screenshots
 
-![Assembls and Environment variables](./Resources/screenshot-01.png)
-![Sartup banner](./Resources/screenshot-02.png)
+![Assembls and Environment variables](../../Resources/screenshot-01.png)
+![Sartup banner](../../Resources/screenshot-02.png)
