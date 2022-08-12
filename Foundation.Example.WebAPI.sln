@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Example.WebAPI",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Hosting.Kestrel.CertBinding", "Libraries\Foundation.Hosting.Kestrel.CertBinding\Foundation.Hosting.Kestrel.CertBinding.csproj", "{AF7ECC8F-A5D4-420B-A5A3-5BE411B33169}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Hosting.Info", "Libraries\Foundation.Hosting.Info\Foundation.Hosting.Info.csproj", "{0F574A8F-155C-4AFF-A3D6-075CBFE9E334}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AF7ECC8F-A5D4-420B-A5A3-5BE411B33169}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF7ECC8F-A5D4-420B-A5A3-5BE411B33169}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF7ECC8F-A5D4-420B-A5A3-5BE411B33169}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F574A8F-155C-4AFF-A3D6-075CBFE9E334}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F574A8F-155C-4AFF-A3D6-075CBFE9E334}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F574A8F-155C-4AFF-A3D6-075CBFE9E334}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F574A8F-155C-4AFF-A3D6-075CBFE9E334}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

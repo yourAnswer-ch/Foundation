@@ -1,4 +1,5 @@
 using Azure.Identity;
+using Foundation.Hosting.Info;
 using Foundation.Hosting.Kestrel.CertBinding;
 using Microsoft.Extensions.Azure;
 using System.Net;
@@ -35,7 +36,7 @@ builder.Services.AddAzureClients(builder =>
 });
 
 
-
+//builder.Services.RegisterLifetimeLogger();
 
 
 
@@ -47,6 +48,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.RegisterLifetimeLogger();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
