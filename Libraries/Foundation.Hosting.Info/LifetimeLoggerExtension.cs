@@ -28,8 +28,8 @@ public static class LifetimeLoggerExtension
         }
 
         var config = rootConfig.GetInfoConfig();
-        lifetime.ApplicationStarted.Register(() => log?.LogStartup(config.AppName));
-        lifetime.ApplicationStopped.Register(() => log?.LogStop(config.AppName));
+        lifetime.ApplicationStarted.Register(() => log?.LogStartup(config));
+        lifetime.ApplicationStopped.Register(() => log?.LogStop(config));
     }
 
     private static ILogger? GetLogger(this IServiceProvider provider)

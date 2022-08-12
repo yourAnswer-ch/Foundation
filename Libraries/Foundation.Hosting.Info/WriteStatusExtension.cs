@@ -57,7 +57,7 @@ public static class WriteStatusExtension
         if (!config.EnableConsoleStartupSummery)
             return;
 
-        var status = SystemStatus.GetInstance();
+        var status = SystemStatus.GetInstance(config.ShowAssemblies, config.ShowEnvironmentVariables);
         var version = status.Entry.Version;
 
         output.AppendLine(FiggleFonts.Standard.Render($"{appName} - {version}"));
@@ -69,7 +69,7 @@ public static class WriteStatusExtension
         output.AppendLine($"Host name: {status.HostName}");
         output.AppendLine();
 
-        if (config.ShowAssemblies && status.References.Any())
+        if (status.References.Any())
         {
             output.AppendLine("Entry:");
             AppendAssemblyStatus(output, status.Entry);
@@ -83,7 +83,7 @@ public static class WriteStatusExtension
             output.AppendLine();
         }
 
-        if (config.ShowEnvironmentVariables && status.EnvironmentVariables.Any())
+        if (status.EnvironmentVariables.Any())
         {
             output.AppendLine("Environment variables:");
             foreach (var reference in status.EnvironmentVariables)

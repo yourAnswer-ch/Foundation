@@ -1,6 +1,6 @@
 ﻿namespace Foundation.Hosting.Info.Configuration;
 
-internal class InfoConfig
+public class InfoConfig
 {
     public string? Key { get; set; }
 

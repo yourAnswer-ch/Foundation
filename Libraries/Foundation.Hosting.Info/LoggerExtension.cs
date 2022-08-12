@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using Foundation.Hosting.Info.Configuration;
 using Foundation.Hosting.Info.Models;
 using Microsoft.Extensions.Logging;
 
@@ -7,17 +8,17 @@ namespace Foundation.Hosting.Info;
 
 public static class LoggerExtension
 {
-    public static void LogStartup(this ILogger log, string name)
+    public static void LogStartup(this ILogger log, InfoConfig config)
     {
         try
-        {
-            var status = SystemStatus.GetInstance();
+        {            
+            var status = SystemStatus.GetInstance(config.ShowAssemblies, config.ShowEnvironmentVariables);
 
             var writer = new StringBuilder();
             writer.AppendLine();
             writer.AppendLine();
             writer.AppendLine($"       %%%%%%    ");
-            writer.AppendLine($"      %%%%%%                ### {name} ###");
+            writer.AppendLine($"      %%%%%%                ### {config.AppName} ###");
             writer.AppendLine($"     %%%%%%      ");
             writer.AppendLine($"    %%%%%%       version:   {status.Entry.FileVersion}");
             writer.AppendLine($"   %%%%%%%%%%%%  hostname:  {status.HostName}");
@@ -38,8 +39,8 @@ public static class LoggerExtension
         }
     }
 
-    public static void LogStop(this ILogger log, string name)
+    public static void LogStop(this ILogger log, InfoConfig config)
     {
-        log.LogWarning($" ==> Service: {name} is shutting down.");
+        log.LogWarning($" ==> Service: {config.AppName} is shutting down.");
     }
 }

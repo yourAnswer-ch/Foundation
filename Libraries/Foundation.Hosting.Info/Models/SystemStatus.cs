@@ -22,13 +22,13 @@ public class SystemStatus
 
     public AssemblyStatus[] References { get; private set; }
 
-    public Dictionary<string, string> EnvironmentVariables { get; private set; }
+    public List<KeyValuePair<string, string>> EnvironmentVariables { get; private set; }
 
-    public static SystemStatus GetInstance()
+    public static SystemStatus GetInstance(bool readreferences, bool readEnvironmentVariables)
     {
         var assembly = Assembly.GetEntryAssembly();
-        var references = assembly?.GetReferencedAssemblies().Select(a => new AssemblyStatus(a));
-        var variables = Environment.GetEnvironmentVariables().Cast<DictionaryEntry>();
+        var references = readreferences ? assembly?.GetReferencedAssemblies().Select(a => new AssemblyStatus(a)) : null;
+        var variables = readEnvironmentVariables ? Environment.GetEnvironmentVariables() : null;
 
         return new SystemStatus
         (            
@@ -39,7 +39,7 @@ public class SystemStatus
             Environment.MachineName,
             assembly,
             references?.OrderBy(e => e.Name),
-            variables.Select(e => new KeyValuePair<string, string>($"{e.Key}", $"{e.Value}")).OrderBy(e => e.Key)
+            variables
         );
     }
 
@@ -51,7 +51,7 @@ public class SystemStatus
         string hostName,
         Assembly? assembly,
         IEnumerable<AssemblyStatus>? references,
-        IEnumerable<KeyValuePair<string, string>> environmentVariables)
+        IDictionary? environmentVariables)
     {
         if (assembly != null)
         {
@@ -71,6 +71,18 @@ public class SystemStatus
         HostOS = hostOS;
         HostName = hostName;
         References = references?.ToArray() ?? Array.Empty<AssemblyStatus>();
-        EnvironmentVariables = environmentVariables.ToDictionary(k => k.Key, v => v.Value);
+
+        if (environmentVariables != null)
+        {
+            EnvironmentVariables = environmentVariables
+            .Cast<DictionaryEntry>()
+            .Select(e => new KeyValuePair<string, string>($"{e.Key}", $"{e.Value}"))
+            .OrderBy(e => e.Key)
+            .ToList();
+        }
+        else
+        {
+            EnvironmentVariables = new List<KeyValuePair<string, string>>();
+        }
     }
 }
