@@ -1,6 +1,7 @@
 using Azure.Identity;
 using Foundation.Hosting.Info;
 using Foundation.Hosting.Kestrel.CertBinding;
+using Foundation.Logging.EventHubLogger;
 using Microsoft.Extensions.Azure;
 using System.Net;
 
@@ -33,11 +34,11 @@ builder.Services.AddAzureClients(builder =>
 {
     builder.AddSecretClient(new Uri("http://my.keyvault.com"));
     builder.AddCertificateClient(new Uri("https://kv-fd-certificates.vault.azure.net/")).WithName("KV-FD-Certificates");
+    //builder.AddEventHubProducerClient(opts.ConnectionString).WithName("EventHubLogger");
 });
 
 
-//builder.Services.RegisterLifetimeLogger();
-
+builder.Logging.AddEventHubLogger(o => o.Update(builder.Configuration));
 
 
 

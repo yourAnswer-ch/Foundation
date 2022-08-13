@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Foundation.Hosting.Kestrel.CertBinding": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:49702;http://localhost:49703"
+    }
+  }
+}

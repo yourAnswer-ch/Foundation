@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\Libraries\Foundation.Hosting.Info.Web\Foundation.Hosting.Info.Web.csproj" />
     <ProjectReference Include="..\..\Libraries\Foundation.Hosting.Info\Foundation.Hosting.Info.csproj" />
     <ProjectReference Include="..\..\Libraries\Foundation.Hosting.Kestrel.CertBinding\Foundation.Hosting.Kestrel.CertBinding.csproj" />
+    <ProjectReference Include="..\..\Libraries\Foundation.Logging.EventHubLogger\Foundation.Logging.EventHubLogger.csproj" />
   </ItemGroup>
 
 </Project>
