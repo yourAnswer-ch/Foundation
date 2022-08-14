@@ -3,6 +3,7 @@ using Foundation.Hosting.Info;
 using Foundation.Hosting.Kestrel.CertBinding;
 using Foundation.Logging.EventHubLogger;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.WebHost.ConfigureKestrel(o =>
 });
 
 
+builder.Configuration.AddAzureKeyVault(new Uri("https://ff-dev.vault.azure.net/"), new DefaultAzureCredential());
 
 //builder.Services.AddAzureClients(builder =>
 //{
@@ -38,7 +40,8 @@ builder.Services.AddAzureClients(builder =>
 });
 
 
-builder.Logging.AddEventHubLogger(o => o.Update(builder.Configuration));
+builder.Logging.AddEventHubLogger();
+
 
 
 

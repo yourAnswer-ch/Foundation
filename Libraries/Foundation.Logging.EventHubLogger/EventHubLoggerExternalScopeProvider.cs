@@ -2,7 +2,7 @@
 
 namespace Foundation.Logging.EventHubLogger;
 
-public class LogServerExternalScopeProvider : IExternalScopeProvider
+public class EventHubLoggerExternalScopeProvider : IExternalScopeProvider
 {
     private ICorrelationContext? _currentContext;
 
@@ -21,10 +21,10 @@ public class LogServerExternalScopeProvider : IExternalScopeProvider
 
     class CorrelationScope : IDisposable
     {
-        private readonly LogServerExternalScopeProvider _provider;
+        private readonly EventHubLoggerExternalScopeProvider _provider;
         private bool _isDisposed;
 
-        public CorrelationScope(LogServerExternalScopeProvider provider)
+        public CorrelationScope(EventHubLoggerExternalScopeProvider provider)
         {
             _provider = provider;
         }

@@ -36,7 +36,7 @@ public class SystemStatus
             Environment.CurrentDirectory,
             Environment.ProcessId.ToString(),
             RuntimeInformation.OSDescription,
-            Environment.MachineName,
+            Environment.MachineName, 
             assembly,
             references?.OrderBy(e => e.Name),
             variables

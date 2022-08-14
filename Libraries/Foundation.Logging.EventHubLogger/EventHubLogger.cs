@@ -6,12 +6,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Foundation.Logging.EventHubLogger;
 
-public class LogServerLogger : ILogger
+public class EventHubLogger : ILogger
 {
     private const int Indentation = 2;
-    private readonly LogServerOptions _options;
+    private readonly EventHubLoggerOptions _options;
     private readonly Func<string, LogLevel, bool> _filter;
-    private readonly LogServerExternalScopeProvider _scopeProvider;
+    private readonly EventHubLoggerExternalScopeProvider _scopeProvider;
     private readonly IMessagePump _messagePump;
 
     public string Name { get; }
@@ -136,11 +136,11 @@ public class LogServerLogger : ILogger
         }
     }
 
-    internal LogServerLogger(
-        LogServerOptions options,
+    internal EventHubLogger(
+        EventHubLoggerOptions options,
         string name,
         Func<string, LogLevel, bool>? filter,
-        LogServerExternalScopeProvider scopeProvider,
+        EventHubLoggerExternalScopeProvider scopeProvider,
         IMessagePump messagePump)
     {
         Name = name;

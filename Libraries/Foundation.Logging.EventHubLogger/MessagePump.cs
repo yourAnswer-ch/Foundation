@@ -57,7 +57,7 @@ internal class MessagePump : IMessagePump
         }, TaskCreationOptions.LongRunning);
     }
 
-    public MessagePump(LogServerOptions options)
+    public MessagePump(EventHubLoggerOptions options)
     {
         _client = new EventHubProducerClient(options.ConnectionString);
         _messages = new BlockingCollection<LogEntry>();
