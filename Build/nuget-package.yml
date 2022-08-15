@@ -39,7 +39,7 @@ jobs:
 - task: NuGetCommand@2
   inputs:
     command: 'restore'
-    restoreSolution: '$(solution)'
+    restoreSolution: '${{ parameters.projects }}'
     feedsToUse: 'select'
     vstsFeed: '${{ parameters.vstsFeed }}'
 
