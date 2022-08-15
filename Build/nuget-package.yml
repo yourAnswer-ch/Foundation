@@ -31,21 +31,34 @@ jobs:
     buildConfiguration: 'Release'
 
   steps:
-  - task: NuGetToolInstaller@1
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk 7.0.0'
     inputs:
-      versionSpec: 
-      checkLatest: true
+      packageType: 'sdk'
+      version: '7.0.x'
+      includePreviewVersions: true
 
-  - task: NuGetCommand@2
+  - task: DotNetCoreCLI@2
+    displayName: 'restore packages'
     inputs:
       command: 'restore'
-      restoreSolution: '${{ parameters.projects }}'
+      projects: '${{ parameters.projects }}'
       feedsToUse: 'select'
       vstsFeed: '${{ parameters.vstsFeed }}'
 
-  - task: VSBuild@1
+  - task: DotNetCoreCLI@2
+    displayName: 'build'
     inputs:
-      solution: '${{ parameters.projects }}'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
-      msbuildArchitecture: 'x64'
+      projects: '${{ parameters.projects }}'
+      arguments: '--configuration ${{ parameters.buildConfiguration }} -p:Version=${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'push package'
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Build.SourcesDirectory)/**/*.$(Build.BuildId).nupkg;$(Build.SourcesDirectory)/**/*.$(Build.BuildId).snupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: '${{ parameters.vstsFeed }}'
+
+
+
