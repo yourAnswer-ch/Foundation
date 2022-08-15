@@ -31,7 +31,7 @@ jobs:
     displayName: 'Use .NET Core sdk 7.0.0'
     inputs:
       packageType: 'sdk'
-      version: '7.0.0'
+      version: '7.0.x'
       includePreviewVersions: true
 
   - task: DotNetCoreCLI@2
