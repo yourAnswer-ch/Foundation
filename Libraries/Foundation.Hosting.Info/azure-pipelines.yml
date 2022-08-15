@@ -3,6 +3,7 @@ trigger:
 
 jobs:
 - template: /Build/nuget-package.yml
-  parameters:
+  parameters:  
     versionMajor: 7
     versionMinor: 0
+    projects: '/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
