@@ -36,16 +36,16 @@ jobs:
       versionSpec: 
       checkLatest: true
 
-- task: NuGetCommand@2
-  inputs:
-    command: 'restore'
-    restoreSolution: '${{ parameters.projects }}'
-    feedsToUse: 'select'
-    vstsFeed: '${{ parameters.vstsFeed }}'
+  - task: NuGetCommand@2
+    inputs:
+      command: 'restore'
+      restoreSolution: '${{ parameters.projects }}'
+      feedsToUse: 'select'
+      vstsFeed: '${{ parameters.vstsFeed }}'
 
-- task: VSBuild@1
-  inputs:
-    solution: '${{ parameters.projects }}'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    msbuildArchitecture: 'x64'
+  - task: VSBuild@1
+    inputs:
+      solution: '${{ parameters.projects }}'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+      msbuildArchitecture: 'x64'
