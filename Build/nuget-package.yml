@@ -26,32 +26,26 @@ jobs:
   pool:
     vmImage: ${{ parameters.vmImage }}
 
+  variables:
+    buildPlatform: 'Any CPU'
+    buildConfiguration: 'Release'
+
   steps:
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk 7.0.0'
+  - task: NuGetToolInstaller@1
     inputs:
-      packageType: 'sdk'
-      version: '7.0.x'
-      includePreviewVersions: true
+      versionSpec: 
+      checkLatest: true
 
-  - task: DotNetCoreCLI@2
-    displayName: 'restore packages'
-    inputs:
-      command: 'restore'
-      projects: '${{ parameters.projects }}'
-      feedsToUse: 'select'
-      vstsFeed: '${{ parameters.vstsFeed }}'
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore'
+    restoreSolution: '$(solution)'
+    feedsToUse: 'select'
+    vstsFeed: '${{ parameters.vstsFeed }}'
 
-  - task: DotNetCoreCLI@2
-    displayName: 'build'
-    inputs:
-      projects: '${{ parameters.projects }}'
-      arguments: '--configuration ${{ parameters.buildConfiguration }} -p:Version=${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
-
-  - task: DotNetCoreCLI@2
-    displayName: 'push package'
-    inputs:
-      command: 'push'
-      packagesToPush: '$(Build.SourcesDirectory)/**/*.$(Build.BuildId).nupkg;$(Build.SourcesDirectory)/**/*.$(Build.BuildId).snupkg'
-      nuGetFeedType: 'internal'
-      publishVstsFeed: '${{ parameters.vstsFeed }}'
+- task: VSBuild@1
+  inputs:
+    solution: '${{ parameters.projects }}'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+    msbuildArchitecture: 'x64'
