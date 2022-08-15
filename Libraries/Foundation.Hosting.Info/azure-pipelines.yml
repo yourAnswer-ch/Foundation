@@ -1,14 +1,8 @@
 trigger:
 - master
 
-resources:
-  repositories:
-    - repository: templates
-      type: git
-      name: yourAnswer.Build/yourAnswer.Build
-
 jobs:
-- template: BuildTemplates/nuget-package.yml@templates
+- template: /Build/nuget-package.yml
   parameters:
     versionMajor: 7
     versionMinor: 0
