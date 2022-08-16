@@ -27,6 +27,13 @@ steps:
     version: '7.0.x'
     includePreviewVersions: true
 
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore'
+    restoreSolution: '**/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
+    feedsToUse: 'select'
+    vstsFeed: '2d453fef-16a6-4802-a154-ee007cf87da0/69b88f5e-321a-4194-af0f-848884079628'
+
 - task: VSBuild@1
   inputs:
     solution: '**\*.sln'
