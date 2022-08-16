@@ -1,10 +1,11 @@
 trigger:
-- master
+  paths:
+    include:
+    - Libraries/Foundation.Hosting.Info
 
 jobs:
 - template: /Build/nuget-package.yml
   parameters:  
     versionMajor: 7
     versionMinor: 0
-    vstsFeed: 'FlairFindr/FlairFindr'
     projects: '**/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
