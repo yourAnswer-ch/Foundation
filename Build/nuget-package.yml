@@ -32,11 +32,10 @@ jobs:
 
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk 7.0.0'
+    displayName: 'Use .NET Core sdk 7.x'
     inputs:
       packageType: 'sdk'
-      version: '7.0.x'
-      includePreviewVersions: true
+      version: '7.x'      
 
   - task: DotNetCoreCLI@2
     displayName: 'restore packages'
@@ -44,8 +43,7 @@ jobs:
       command: 'restore'
       projects: '${{ parameters.projects }}'
       feedsToUse: 'select'
-      vstsFeed: '${{ parameters.vstsFeed }}'
-
+      
   - task: DotNetCoreCLI@2
     displayName: 'build'
     inputs:
