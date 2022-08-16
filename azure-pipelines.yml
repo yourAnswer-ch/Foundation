@@ -25,6 +25,7 @@ steps:
   inputs:
     packageType: 'sdk'
     version: '7.0.x'
+    vsVersion: '17.3.0.37102'
     includePreviewVersions: true
 
 - task: NuGetCommand@2
