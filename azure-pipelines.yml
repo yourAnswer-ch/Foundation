@@ -40,3 +40,8 @@ steps:
     projects: '**/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
     feedsToUse: 'select' 
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
+
