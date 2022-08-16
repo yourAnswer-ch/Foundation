@@ -32,6 +32,7 @@ steps:
   inputs:
     filename: 'C:\hostedtoolcache\windows\dotnet\sdk\7.0.100-preview.7.22377.5\dotnet'
     arguments: 'restore **/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
+  enabled: flase
 
 - task: DotNetCoreCLI@2
   inputs:
