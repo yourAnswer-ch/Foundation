@@ -24,7 +24,7 @@ steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: '7.0.x'
+    version: '7.x'
     vsVersion: '17.3.0.37102'
     includePreviewVersions: true
 
