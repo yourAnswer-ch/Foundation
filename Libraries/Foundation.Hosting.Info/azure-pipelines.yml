@@ -6,4 +6,5 @@ jobs:
   parameters:  
     versionMajor: 7
     versionMinor: 0
+    vstsFeed: 'FlairFindr/FlairFindr'
     projects: '**/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
