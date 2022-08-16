@@ -28,11 +28,6 @@ steps:
     vsVersion: '17.3.0.37102'
     includePreviewVersions: true
 
-- task: BatchScript@1
-  inputs:
-    filename: 'dotnet'
-    arguments: 'restore' 
-    
 - task: DotNetCoreCLI@2
   inputs:
     command: 'restore'
