@@ -1,0 +1,47 @@
+# ASP.NET Core (.NET Framework)
+
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: '6.x'
+    checkLatest: true
+
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '7.x'
+    vsVersion: '17.3.0.37102'
+    includePreviewVersions: true
+
+- task: BatchScript@1
+  inputs:
+    filename: 'C:\hostedtoolcache\windows\dotnet\sdk\7.0.100-preview.7.22377.5\dotnet'
+    arguments: 'restore **/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
+  enabled: false
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
+    feedsToUse: 'select' 
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
+
