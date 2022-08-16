@@ -31,5 +31,12 @@ steps:
 - task: BatchScript@1
   inputs:
     filename: 'dotnet'
-    arguments: 'restore **/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
+    arguments: 'restore' 
+    
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/Libraries/Foundation.Hosting.Info/Foundation.Hosting.Info.csproj'
+    feedsToUse: 'select'
+    vstsFeed: '2d453fef-16a6-4802-a154-ee007cf87da0/69b88f5e-321a-4194-af0f-848884079628'
 
