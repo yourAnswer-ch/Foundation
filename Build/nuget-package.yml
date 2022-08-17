@@ -58,9 +58,9 @@ jobs:
       projects: '${{ parameters.projects }}'
       arguments: '--configuration ${{ parameters.buildConfiguration }} -p:Version=${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
 
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.SourcesDirectory)/**/*.$(Build.BuildId).nupkg;$(Build.SourcesDirectory)/**/*.$(Build.BuildId).snupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: '2d453fef-16a6-4802-a154-ee007cf87da0/69b88f5e-321a-4194-af0f-848884079628'
+  - task: NuGetCommand@2
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Build.SourcesDirectory)/**/*.$(Build.BuildId).nupkg;$(Build.SourcesDirectory)/**/*.$(Build.BuildId).snupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: '2d453fef-16a6-4802-a154-ee007cf87da0/69b88f5e-321a-4194-af0f-848884079628'
