@@ -11,14 +11,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Hosting.Info", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{10CB7D45-9665-4FD4-86D8-5B3A237DD1EE}"
 	ProjectSection(SolutionItems) = preProject
+		Build\nuget-package.yml = Build\nuget-package.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Hosting.Info.Web", "Libraries\Foundation.Hosting.Info.Web\Foundation.Hosting.Info.Web.csproj", "{83635A3A-6817-4CE3-B430-0A4EF2428E3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Logging.EventHubLogger", "Libraries\Foundation.Logging.EventHubLogger\Foundation.Logging.EventHubLogger.csproj", "{46FBCAEF-6C6F-4C63-84BF-3C25F621B607}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Logging.EventHubLogger", "Libraries\Foundation.Logging.EventHubLogger\Foundation.Logging.EventHubLogger.csproj", "{46FBCAEF-6C6F-4C63-84BF-3C25F621B607}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Logging.EventHubLogger.Interface", "Libraries\Foundation.Logging.EventHubLogger.Interface\Foundation.Logging.EventHubLogger.Interface.csproj", "{1969FDCC-6513-476A-B5C3-2050202E5164}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Logging.EventHubLogger.Interface", "Libraries\Foundation.Logging.EventHubLogger.Interface\Foundation.Logging.EventHubLogger.Interface.csproj", "{1969FDCC-6513-476A-B5C3-2050202E5164}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
