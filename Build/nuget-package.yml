@@ -44,16 +44,18 @@ jobs:
       command: 'restore'
       projects: '${{ parameters.projects }}'
       feedsToUse: 'select'
-      
+      vstsFeed: '${{ parameters.vstsFeed }}'
+
   - task: DotNetCoreCLI@2
     displayName: 'build'
     inputs:
       projects: '${{ parameters.projects }}'
       arguments: '--configuration ${{ parameters.buildConfiguration }} -p:Version=${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
 
-  - task: NuGetCommand@2
+  - task: DotNetCoreCLI@2
+    displayName: 'push package'
     inputs:
       command: 'push'
       packagesToPush: '$(Build.SourcesDirectory)/**/*.$(Build.BuildId).nupkg;$(Build.SourcesDirectory)/**/*.$(Build.BuildId).snupkg'
       nuGetFeedType: 'internal'
-      publishVstsFeed: '2d453fef-16a6-4802-a154-ee007cf87da0/69b88f5e-321a-4194-af0f-848884079628'
+      publishVstsFeed: '${{ parameters.vstsFeed }}'
