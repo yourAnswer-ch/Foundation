@@ -31,6 +31,13 @@ jobs:
     buildConfiguration: 'Release'
 
   steps:
+  - task: AzureKeyVault@2
+    displayName: 'Azure Key Vault: KV-Build-Secrets'
+    inputs:
+      azureSubscription: 'Azure-Pipelin-Access'
+      KeyVaultName: 'KV-Build-Secrets'
+      RunAsPreJob: true
+
   - task: UseDotNet@2
     displayName: 'Use .NET Core sdk 7.x'
     inputs:
@@ -51,13 +58,9 @@ jobs:
       projects: '${{ parameters.projects }}'
       arguments: '--configuration ${{ parameters.buildConfiguration }} -p:Version=${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
 
-  - task: DotNetCoreCLI@2
-    displayName: 'push package'
-    inputs:
-      command: 'push'
-      packagesToPush: '$(Build.SourcesDirectory)/**/*.$(Build.BuildId).nupkg;$(Build.SourcesDirectory)/**/*.$(Build.BuildId).snupkg'
-      nuGetFeedType: 'internal'
-      publishVstsFeed: '${{ parameters.vstsFeed }}'
-
-
-
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.SourcesDirectory)/**/*.$(Build.BuildId).nupkg;$(Build.SourcesDirectory)/**/*.$(Build.BuildId).snupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '2d453fef-16a6-4802-a154-ee007cf87da0/69b88f5e-321a-4194-af0f-848884079628'
