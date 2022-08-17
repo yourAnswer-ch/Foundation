@@ -4,6 +4,11 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Logger Interface</Title>
+    <Company>yourAnswer.ch AG</Company>
+    <PackageProjectUrl>https://github.com/yourAnswer-ch/Foundation</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yourAnswer-ch/Foundation</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
