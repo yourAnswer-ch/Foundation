@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Foundation.Processing.Pipeline\Foundation.Processing.Pipeline.csproj" />
   </ItemGroup>
 

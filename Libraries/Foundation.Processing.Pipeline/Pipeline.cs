@@ -1,4 +1,5 @@
 ﻿using Foundation.Processing.Pipeline.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly;
 using System.Diagnostics;
@@ -7,16 +8,20 @@ namespace Foundation.Processing.Pipeline;
 
 public class Pipeline : IPipeline
 {
+
     private readonly ILogger _log;
+    private readonly IServiceProvider _provieder;
     private readonly IList<IPipeDefinition> _pipeDefinitions;
 
-    internal Pipeline(IList<IPipeDefinition> pipeDefinitions, ILogger<Pipeline> log)
+    internal Pipeline(IServiceProvider provider, IList<IPipeDefinition> pipeDefinitions)
     {
-        _log = log;
+        _provieder = provider;
         _pipeDefinitions = pipeDefinitions;
+        _log = provider.GetRequiredService<ILogger<Pipeline>>();
+        
     }
 
-    public async Task ExecuteAsync(IServiceProvider provieder, object? parameters)
+    public async Task ExecuteAsync(object? parameters = null)
     {
         var commandName = "";
 
@@ -35,7 +40,7 @@ public class Pipeline : IPipeline
             {
                 var stopwatch = Stopwatch.StartNew();
 
-                var command = definition.CreateCommand(provieder);
+                var command = definition.CreateCommand(_provieder);
                 if (command == null)
                     throw new ArgumentException($"Pipeline - command: {definition.Name} could not create instance.");
                 

@@ -1,10 +1,6 @@
-﻿using Microsoft.VisualBasic;
+﻿namespace Foundation.Processing.Pipeline.Abstractions;
 
-namespace Foundation.Processing.Pipeline.Abstractions
+public interface IPipeline
 {
-    public interface IPipeline
-    {
-        Task ExecuteAsync(IServiceProvider provieder, object parameters);
-        //event Action<object> Finished;
-    }
+    Task ExecuteAsync(object parameters);
 }
