@@ -4,6 +4,13 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Default Azure stack for console apps</Title>
+    <Company>yourAnswer.ch AG</Company>
+    <PackageProjectUrl>https://github.com/yourAnswer-ch/Foundation</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yourAnswer-ch/Foundation</RepositoryUrl>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
