@@ -16,6 +16,11 @@ namespace Foundation.ServiceBuilder
 
         public static IStack Create => new Stack();
 
+        public virtual IStack AddConfiguration()
+        {
+            return AddConfiguration(null);
+        }
+
         public virtual IStack AddConfiguration(Action<IConfigurationBuilder>? builder)
         {
             _configurationBuilder = new ConfigurationBuilder();
@@ -23,7 +28,12 @@ namespace Foundation.ServiceBuilder
             return this;
         }
 
-        public virtual IStack AddLogging(Action<ILoggingBuilder>? builder = null)
+        public virtual IStack AddLogging()
+        {
+            return AddLogging(_ => { });
+        }
+
+        public virtual IStack AddLogging(Action<ILoggingBuilder>? builder)
         {
             if (_configurationBuilder == null)
                 throw new ArgumentException("Stack - Add configuration bevore adding logging.");
@@ -36,7 +46,7 @@ namespace Foundation.ServiceBuilder
             return this;
         }
 
-        public virtual IStack AddLogging(Action<ILoggingBuilder, IConfiguration>? builder = null)
+        public virtual IStack AddLogging(Action<ILoggingBuilder, IConfiguration>? builder)
         {
             if (_configurationBuilder == null)
                 throw new ArgumentException("Stack - Add configuration bevore adding logging.");

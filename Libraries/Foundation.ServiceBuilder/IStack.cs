@@ -6,8 +6,12 @@ namespace Foundation.ServiceBuilder
 {
     public interface IStack
     {
+        IStack AddConfiguration();
+
         IStack AddConfiguration(Action<IConfigurationBuilder>? builder);
-        
+
+        IStack AddLogging();
+
         IStack AddLogging(Action<ILoggingBuilder>? builder);
 
         IStack AddLogging(Action<ILoggingBuilder, IConfiguration>? builder);

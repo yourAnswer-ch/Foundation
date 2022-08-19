@@ -9,7 +9,12 @@ namespace Foundation.ServiceBuilder.AzureDefault
     {
         public static new IStack Create => new DefaultAzureStack();
 
-        public override IStack AddConfiguration(Action<IConfigurationBuilder>? builder = null)
+        public override IStack AddConfiguration()
+        {
+            return this.AddConfiguration(null);
+        }
+
+        public override IStack AddConfiguration(Action<IConfigurationBuilder>? builder)
         {
             var environment = Environment.GetEnvironmentVariable("ENVIRONMENT");
 
@@ -26,7 +31,12 @@ namespace Foundation.ServiceBuilder.AzureDefault
             });
         }
 
-        public override IStack AddLogging(Action<ILoggingBuilder, IConfiguration>? builder = null)
+        public override IStack AddLogging()
+        {
+            return this.AddLogging(null);
+        }
+
+        public override IStack AddLogging(Action<ILoggingBuilder, IConfiguration>? builder)
         {
             return base.AddLogging((b, c) =>
             {
@@ -38,7 +48,7 @@ namespace Foundation.ServiceBuilder.AzureDefault
             });
         }
 
-        public override IStack AddLogging(Action<ILoggingBuilder>? builder = null)
+        public override IStack AddLogging(Action<ILoggingBuilder>? builder)
         {
             return base.AddLogging((b, c) =>
             {

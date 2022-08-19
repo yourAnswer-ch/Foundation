@@ -27,7 +27,7 @@
     <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.0.0" />
     <PackageReference Include="Foundation.Configuration.KeyVault" Version="7.0.18339" />
     <PackageReference Include="Foundation.Logging.EventHubLogger" Version="7.0.18337" />
-    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="7.0.18342" />
+    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="7.0.18343" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.4.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
