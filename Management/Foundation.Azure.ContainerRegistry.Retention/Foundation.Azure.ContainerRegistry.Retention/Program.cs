@@ -20,7 +20,6 @@ var stack = Stack.Create.AddConfiguration(b =>
     b.AddConfiguration(c.GetSection("Logging"));
     b.AddConsole();
     b.AddEventHubLogger();
-
 }).AddServices(s =>
 {
     s.AddAzureClients(e =>
