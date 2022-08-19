@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -6,18 +6,36 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>fd1496f9-d1f0-47f5-8c59-f34585ae0829</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.Development.json" />
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.0.0" />
-    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
-    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="7.0.18327" />
+    <PackageReference Include="Foundation.Configuration.KeyVault" Version="7.0.18339" />
+    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="7.0.18337" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Foundation.Processing.Pipeline\Foundation.Processing.Pipeline.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\Foundation.ServiceBuilder\Foundation.ServiceBuilder.csproj" />
     <ProjectReference Include="..\Foundation.Azure.ContainerRegistry.Retention.Core\Foundation.Azure.ContainerRegistry.Retention.Core.csproj" />
   </ItemGroup>
 
