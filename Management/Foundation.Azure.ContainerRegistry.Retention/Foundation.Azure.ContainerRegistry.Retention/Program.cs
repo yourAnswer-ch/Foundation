@@ -10,17 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Foundation.Configuration.KeyVault;
 using Foundation.ServiceBuilder;
 using Microsoft.Extensions.Logging;
+using Foundation.ServiceBuilder.AzureDefault;
 
-var stack = Stack.Create.AddConfiguration(b =>
-{
-    b.AddJsonFile("appsettings.json");
-    b.AddAzureKeyVault();
-}).AddLogging((b, c) =>
-{
-    b.AddConfiguration(c.GetSection("Logging"));
-    b.AddConsole();
-    b.AddEventHubLogger();
-}).AddServices(s =>
+var stack = DefaultAzureStack.Create
+    .AddConfiguration()
+    .AddLogging()
+    .AddServices(s =>
 {
     s.AddAzureClients(e =>
     {

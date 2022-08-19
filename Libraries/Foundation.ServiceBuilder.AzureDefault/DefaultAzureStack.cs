@@ -9,7 +9,7 @@ namespace Foundation.ServiceBuilder.AzureDefault
     {
         public static new IStack Create => new DefaultAzureStack();
 
-        public override IStack AddConfiguration(Action<IConfigurationBuilder>? builder)
+        public override IStack AddConfiguration(Action<IConfigurationBuilder>? builder = null)
         {
             var environment = Environment.GetEnvironmentVariable("ENVIRONMENT");
 
