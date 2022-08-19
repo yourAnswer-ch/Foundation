@@ -16,14 +16,12 @@ var config = (IConfiguration)configBuilder.Build();
 
 var services = new ServiceCollection();
 
-//services.AddSingleton<IConfiguration>(config);
-
 services.AddSingleton(config);
 
 services.AddLogging(l => {    
-    l.AddConfiguration(config);
+    l.AddConfiguration(config.GetSection("Logging"));
     l.AddConsole();
-    l.AddEventHubLogger(o => o.ConnectionString = config.GetValue<string>("Logging:EventHub:ConnectionString") ?? "");
+    l.AddEventHubLogger();
 });
 
 services.AddAzureClients(e =>
