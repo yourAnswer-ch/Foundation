@@ -25,13 +25,7 @@ var stack = Stack.Create.AddConfiguration(b =>
 {
     s.AddAzureClients(e =>
     {
-        e.AddClient<ContainerRegistryClient, ContainerRegistryClientOptions>((o) =>
-        {
-            var endpoint = new Uri("https://ffdev.azurecr.io");
-            o.Audience = ContainerRegistryAudience.AzureResourceManagerPublicCloud;
-
-            return new ContainerRegistryClient(endpoint, new DefaultAzureCredential(), o);
-        });
+        e.AddContianerRegistry();
     });
 
     s.AddPipeline(builder =>
