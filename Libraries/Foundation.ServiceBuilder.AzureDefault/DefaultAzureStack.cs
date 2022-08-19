@@ -3,61 +3,60 @@ using Foundation.Logging.EventHubLogger;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Foundation.ServiceBuilder.AzureDefault
+namespace Foundation.ServiceBuilder.AzureDefault;
+
+public class DefaultAzureStack : Stack
 {
-    public class DefaultAzureStack : Stack
+    public static new IStack Create => new DefaultAzureStack();
+
+    public override IStack AddConfiguration()
     {
-        public static new IStack Create => new DefaultAzureStack();
+        return AddConfiguration(null);
+    }
 
-        public override IStack AddConfiguration()
+    public override IStack AddConfiguration(Action<IConfigurationBuilder>? builder)
+    {
+        var environment = Environment.GetEnvironmentVariable("ENVIRONMENT");
+
+        if (string.IsNullOrWhiteSpace(environment))
+            environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+        return base.AddConfiguration(b =>
         {
-            return this.AddConfiguration(null);
-        }
+            b.AddJsonFile("appsettings.json", false);
+            if (!string.IsNullOrWhiteSpace(environment))
+                b.AddJsonFile($"appsettings.{environment}.json", true);                
+            b.AddAzureKeyVault();
+            builder?.Invoke(b);
+        });
+    }
 
-        public override IStack AddConfiguration(Action<IConfigurationBuilder>? builder)
+    public override IStack AddLogging()
+    {
+        return AddLogging(_ => { });
+    }
+
+    public override IStack AddLogging(Action<ILoggingBuilder, IConfiguration>? builder)
+    {
+        return base.AddLogging((b, c) =>
         {
-            var environment = Environment.GetEnvironmentVariable("ENVIRONMENT");
+            b.AddConsole();                
+            b.AddEventHubLogger();
+            b.AddTraceSource("Sherlock");
+            b.AddConfiguration(c.GetSection("Logging"));
+            builder?.Invoke(b, c);
+        });
+    }
 
-            if (string.IsNullOrWhiteSpace(environment))
-                environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            return base.AddConfiguration(b =>
-            {
-                b.AddJsonFile("appsettings.json", false);
-                if (!string.IsNullOrWhiteSpace(environment))
-                    b.AddJsonFile($"appsettings.{environment}.json", true);                
-                b.AddAzureKeyVault();
-                builder?.Invoke(b);
-            });
-        }
-
-        public override IStack AddLogging()
+    public override IStack AddLogging(Action<ILoggingBuilder>? builder)
+    {
+        return base.AddLogging((b, c) =>
         {
-            return this.AddLogging(null);
-        }
-
-        public override IStack AddLogging(Action<ILoggingBuilder, IConfiguration>? builder)
-        {
-            return base.AddLogging((b, c) =>
-            {
-                b.AddConsole();                
-                b.AddEventHubLogger();
-                b.AddTraceSource("Sherlock");
-                b.AddConfiguration(c.GetSection("Logging"));
-                builder?.Invoke(b, c);
-            });
-        }
-
-        public override IStack AddLogging(Action<ILoggingBuilder>? builder)
-        {
-            return base.AddLogging((b, c) =>
-            {
-                b.AddConsole();
-                b.AddEventHubLogger();
-                b.AddTraceSource("Sherlock");
-                b.AddConfiguration(c.GetSection("Logging"));
-                builder?.Invoke(b);
-            });
-        }
+            b.AddConsole();
+            b.AddEventHubLogger();
+            b.AddTraceSource("Sherlock");
+            b.AddConfiguration(c.GetSection("Logging"));
+            builder?.Invoke(b);
+        });
     }
 }
