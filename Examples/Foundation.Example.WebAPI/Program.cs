@@ -1,4 +1,5 @@
 using Azure.Identity;
+using Foundation.Configuration.KeyVault;
 using Foundation.Hosting.Info;
 using Foundation.Hosting.Kestrel.CertBinding;
 using Foundation.Logging.EventHubLogger;
@@ -16,7 +17,7 @@ builder.WebHost.ConfigureKestrel(o =>
 });
 
 
-builder.Configuration.AddAzureKeyVault(new Uri("https://ff-dev.vault.azure.net/"), new DefaultAzureCredential());
+builder.Configuration.AddAzureKeyVault();
 
 //builder.Services.AddAzureClients(builder =>
 //{
