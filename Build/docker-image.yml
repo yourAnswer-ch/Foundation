@@ -47,6 +47,9 @@ parameters:
 - name: 'devContainerRegistryUrl'
   default: 'ffdev.azurecr.io'
   type: string
+- name: 'dockerfilePath'
+  default: '**/Dockerfile'
+  type: string
 
 jobs:
 - job: Build_and_deploy
@@ -74,7 +77,7 @@ jobs:
       containerRegistry: '${{ parameters.devContainerRegistryName }}'
       repository: '${{ parameters.containerRepository }}'
       command: 'build'
-      Dockerfile: '**/Dockerfile'      
+      Dockerfile: '${{ dockerfilePath }}'      
       buildContext:
       tags: |
         $(Build.BuildId)
@@ -87,7 +90,7 @@ jobs:
       containerRegistry: '${{ parameters.devContainerRegistryName }}'
       repository: '${{ parameters.containerRepository }}'
       command: 'push'
-      Dockerfile: '**/Dockerfile'
+      Dockerfile: '${{ dockerfilePath }}'
       buildContext:
       tags: |
         $(Build.BuildId)
@@ -99,7 +102,7 @@ jobs:
       containerRegistry: '${{ parameters.prdContainerRegistryName }}'
       repository: '${{ parameters.containerRepository }}'
       command: 'build'
-      Dockerfile: '**/Dockerfile'
+      Dockerfile: '${{ dockerfilePath }}'
       buildContext: 
       tags: |
         $(Build.BuildId)
@@ -113,7 +116,7 @@ jobs:
       containerRegistry: '${{ parameters.prdContainerRegistryName }}'
       repository: '${{ parameters.containerRepository }}'
       command: 'push'
-      Dockerfile: '**/Dockerfile'
+      Dockerfile: '${{ dockerfilePath }}'
       buildContext: 
       tags: |
         $(Build.BuildId)
