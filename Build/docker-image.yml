@@ -1,0 +1,129 @@
+# Repo: yourAnswer.Build
+# File: docker-image.yml
+
+parameters:
+- name: 'uploadToReleaseRegistry' # example: 'true'
+  default: 'false'
+  type: string
+- name: 'imageName' # example: 'flairfindr/api'
+  default: 'imageName-not-set'
+  type: string
+- name: 'kubernetesDeploymentName' # example: 'deployments/ff-api'
+  default: 'kubernetesDeploymentName-not-set'
+  type: string
+- name: 'kubernetesContainerName' # example: 'api'
+  default: 'kubernetesContainerName-not-set'
+  type: string
+- name: 'kubernetesEndpoint'
+  default: 'Cluster01-FF-Staging'
+  type: string
+- name: 'kubernetesNamespace'
+  default: 'ff-staging'
+  type: string
+- name: 'containerRepository'
+  default: 'containerRepository-not-set' # example: 'flairfindr/content-admin'
+  type: string
+- name: 'versionMajor'
+  default: '7'
+  type: string
+- name: 'versionMinor'
+  default: '0'
+  type: string
+- name: 'vmImage'
+  default: 'ubuntu-latest'
+  type: string
+- name: 'vstsFeed'
+  default: '2d453fef-16a6-4802-a154-ee007cf87da0/69b88f5e-321a-4194-af0f-848884079628'
+  type: string
+- name: 'subscriptionEndpoint'
+  default: 'Azure-Pipelin-Access'
+  type: string
+- name: 'devContainerRegistryName'
+  default: 'FF-Dev'
+  type: string
+- name: 'prdContainerRegistryName'
+  default: 'FF-Prd'
+  type: string
+- name: 'devContainerRegistryUrl'
+  default: 'ffdev.azurecr.io'
+  type: string
+
+jobs:
+- job: Build_and_deploy
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  steps:
+  - task: AzureKeyVault@2
+    displayName: 'Azure Key Vault: KV-Build-Secrets'
+    inputs:
+      azureSubscription: 'Azure-Pipelin-Access'
+      KeyVaultName: 'KV-Build-Secrets'
+      RunAsPreJob: true
+    
+  - task: bleddynrichards.Assembly-Info-Task.Assembly-Info-NetCore.Assembly-Info-NetCore@2
+    displayName: 'Set assembly versions'
+    inputs:
+      VersionNumber: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+      FileVersionNumber: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+      InformationalVersion: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+      PackageVersion: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+
+  - task: Docker@2
+    displayName: 'Build DEV image'
+    inputs:
+      containerRegistry: '${{ parameters.devContainerRegistryName }}'
+      repository: '${{ parameters.containerRepository }}'
+      command: 'build'
+      Dockerfile: '**/Dockerfile'      
+      buildContext:
+      tags: |
+        $(Build.BuildId)
+        latest
+      arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
+
+  - task: Docker@2
+    displayName: 'Push DEV image'
+    inputs:
+      containerRegistry: '${{ parameters.devContainerRegistryName }}'
+      repository: '${{ parameters.containerRepository }}'
+      command: 'push'
+      Dockerfile: '**/Dockerfile'
+      buildContext:
+      tags: |
+        $(Build.BuildId)
+        latest
+      
+  - task: Docker@2
+    displayName: 'Build PRD image'
+    inputs:
+      containerRegistry: '${{ parameters.prdContainerRegistryName }}'
+      repository: '${{ parameters.containerRepository }}'
+      command: 'build'
+      Dockerfile: '**/Dockerfile'
+      buildContext: 
+      tags: |
+        $(Build.BuildId)
+        latest
+      arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
+    condition: and(succeeded(), eq(variables['uploadToReleaseRegistry'], 'true'))
+
+  - task: Docker@2
+    displayName: 'Push PRD image'
+    inputs:
+      containerRegistry: '${{ parameters.prdContainerRegistryName }}'
+      repository: '${{ parameters.containerRepository }}'
+      command: 'push'
+      Dockerfile: '**/Dockerfile'
+      buildContext: 
+      tags: |
+        $(Build.BuildId)
+        latest
+    condition: and(succeeded(), eq(variables['uploadToReleaseRegistry'], 'true'))
+
+  - task: Kubernetes@1
+    displayName: 'Update DEV environment'
+    inputs:      
+      kubernetesServiceEndpoint: '${{ parameters.kubernetesEndpoint }}'
+      namespace: '${{ parameters.kubernetesNamespace }}'
+      command: 'set'
+      arguments: 'image ${{ parameters.kubernetesDeploymentName }} ${{ parameters.kubernetesContainerName }}=${{ parameters.devContainerRegistryUrl }}/${{ parameters.imageName }}:$(Build.BuildId)'

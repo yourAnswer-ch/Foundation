@@ -8,7 +8,6 @@ namespace Foundation.Processing.Pipeline;
 
 public class Pipeline : IPipeline
 {
-
     private readonly ILogger _log;
     private readonly IServiceProvider _provieder;
     private readonly IList<IPipeDefinition> _pipeDefinitions;
@@ -17,8 +16,7 @@ public class Pipeline : IPipeline
     {
         _provieder = provider;
         _pipeDefinitions = pipeDefinitions;
-        _log = provider.GetRequiredService<ILogger<Pipeline>>();
-        
+        _log = provider.GetRequiredService<ILogger<Pipeline>>();        
     }
 
     public async Task ExecuteAsync(object? parameters = null)

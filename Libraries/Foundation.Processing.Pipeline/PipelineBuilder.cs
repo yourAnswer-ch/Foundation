@@ -17,6 +17,7 @@ public class PipelineBuilder : IPipelineBuilder
         _pipeDefinitions = new List<IPipeDefinition>();
 
     }
+
     public void AddCommand<T>() where T : ICommand
     {
         _pipeDefinitions.Add(new PipeDefinition<T>());

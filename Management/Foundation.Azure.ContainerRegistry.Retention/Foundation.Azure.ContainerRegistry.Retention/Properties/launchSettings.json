@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Foundation.Azure.ContainerRegistry.Retention": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
