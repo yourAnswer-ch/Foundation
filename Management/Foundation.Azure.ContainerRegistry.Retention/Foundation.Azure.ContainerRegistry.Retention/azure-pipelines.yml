@@ -1,7 +1,7 @@
 trigger:
   paths:
     include:
-    - Libraries/Foundation.Processing.Pipeline
+    - Management/Foundation.Azure.ContainerRegistry.Retention
 
 jobs:
 - template: /Build/nuget-package.yml
