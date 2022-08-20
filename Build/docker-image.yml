@@ -78,7 +78,7 @@ jobs:
       repository: '${{ parameters.containerRepository }}'
       command: 'build'
       Dockerfile: '${{ parameters.dockerfilePath }}'      
-      buildContext: '**/Foundation.Azure.ContainerRegistry.Retention'
+      buildContext: '/Management/Foundation.Azure.ContainerRegistry.Retention'
       tags: |
         $(Build.BuildId)
         latest
