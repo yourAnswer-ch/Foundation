@@ -4,7 +4,7 @@ trigger:
     - Management/Foundation.Azure.ContainerRegistry.Retention
 
 jobs:
-- template: /Build/nuget-package.yml
+- template: /Build/docker-image.yml
   parameters:
     uploadToReleaseRegistry: $(uploadToReleaseRegistry)
     imageName: 'azure/acr-cleanup'
