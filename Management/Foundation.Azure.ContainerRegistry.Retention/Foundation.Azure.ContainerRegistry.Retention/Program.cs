@@ -4,9 +4,13 @@ using Foundation.Processing.Pipeline.Abstractions;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Foundation.ServiceBuilder.AzureDefault;
+using Microsoft.Extensions.Configuration;
 
 var stack = DefaultAzureStack.Create
-    .AddConfiguration()
+    .AddConfiguration(c =>
+    {
+        c.AddEnvironmentVariables();
+    })
     .AddLogging()
     .AddServices(s =>
     {
