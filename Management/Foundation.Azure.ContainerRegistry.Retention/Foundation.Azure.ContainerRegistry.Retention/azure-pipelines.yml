@@ -1,0 +1,13 @@
+trigger:
+  paths:
+    include:
+    - Libraries/Foundation.Processing.Pipeline
+
+jobs:
+- template: /Build/nuget-package.yml
+  parameters:
+    uploadToReleaseRegistry: $(uploadToReleaseRegistry)
+    imageName: 'azure/acr-cleanup'
+    kubernetesDeploymentName: 'deployments/acr-cleanup'
+    kubernetesContainerName: 'acr-cleanup'
+    containerRepository: 'azure/acr-cleanup'
