@@ -6,7 +6,8 @@ trigger:
 jobs:
 - template: /Build/docker-image.yml
   parameters:
-    dockerfilePath: '**/Foundation.Azure.ContainerRegistry.Retention/Dockerfile'
+    context: 'Management/Foundation.Azure.ContainerRegistry.Retention'
+    dockerfilePath: '**/Foundation.Azure.ContainerRegistry.Retention/Dockerfile'    
     uploadToReleaseRegistry: $(uploadToReleaseRegistry)
     imageName: 'azure/acr-cleanup'
     kubernetesDeploymentName: 'deployments/acr-cleanup'

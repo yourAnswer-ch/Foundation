@@ -50,6 +50,9 @@ parameters:
 - name: 'dockerfilePath'
   default: '**/Dockerfile'
   type: string
+- name: 'context'
+  default: ''
+  type: string
 
 jobs:
 - job: Build_and_deploy
@@ -78,7 +81,7 @@ jobs:
       repository: '${{ parameters.containerRepository }}'
       command: 'build'
       Dockerfile: '${{ parameters.dockerfilePath }}'      
-      buildContext: 'Management/Foundation.Azure.ContainerRegistry.Retention'
+      buildContext: '${{ parameters.context }}'
       tags: |
         $(Build.BuildId)
         latest
@@ -91,7 +94,7 @@ jobs:
       repository: '${{ parameters.containerRepository }}'
       command: 'push'
       Dockerfile: '${{ parameters.dockerfilePath }}'
-      buildContext:
+      buildContext: '${{ parameters.context }}'
       tags: |
         $(Build.BuildId)
         latest
@@ -103,7 +106,7 @@ jobs:
       repository: '${{ parameters.containerRepository }}'
       command: 'build'
       Dockerfile: '${{ parameters.dockerfilePath }}'
-      buildContext: 
+      buildContext: '${{ parameters.context }}'
       tags: |
         $(Build.BuildId)
         latest
@@ -117,7 +120,7 @@ jobs:
       repository: '${{ parameters.containerRepository }}'
       command: 'push'
       Dockerfile: '${{ parameters.dockerfilePath }}'
-      buildContext: 
+      buildContext: '${{ parameters.context }}'
       tags: |
         $(Build.BuildId)
         latest
