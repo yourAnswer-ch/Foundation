@@ -20,6 +20,8 @@ public class ClearContainers : Command
     {
         var expiration = DateTime.UtcNow.Subtract(TimeSpan.FromDays(180));
 
+        _log.LogInformation($"ClearContainers - Start cleaning up container registry - expiration: {expiration} - min coount: 20 ");
+
         var repositories = _client.GetRepositoryNamesAsync();
         await foreach (string name in repositories)
         {
