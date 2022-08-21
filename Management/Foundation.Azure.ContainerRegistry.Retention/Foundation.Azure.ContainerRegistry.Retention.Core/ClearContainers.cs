@@ -1,6 +1,5 @@
 ﻿using Azure.Containers.ContainerRegistry;
 using Foundation.Processing.Pipeline;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Foundation.Azure.ContainerRegistry.Retention.Core;
@@ -10,7 +9,7 @@ public class ClearContainers : Command
     private readonly ILogger _log;
     private readonly ContainerRegistryClient _client;
 
-    public ClearContainers(ContainerRegistryClient client, ILogger<ClearContainers> log, IConfiguration config)
+    public ClearContainers(ContainerRegistryClient client, ILogger<ClearContainers> log)
     {
         _log = log;
         _client = client;
