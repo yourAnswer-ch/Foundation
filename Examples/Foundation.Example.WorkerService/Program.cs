@@ -4,6 +4,7 @@ using Foundation.Logging.EventHubLogger;
 using Foundation.Processing.StorageQueue;
 using Microsoft.Extensions.Azure;
 
+
 var builder = Host.CreateDefaultBuilder(args);
 
 var environment = Environment.GetEnvironmentVariable("ENVIRONMENT");
@@ -13,10 +14,7 @@ if (string.IsNullOrWhiteSpace(environment))
 
 builder.ConfigureHostConfiguration(c =>
 {
-    c.AddJsonFile("appsettings.json", false);
-    if (!string.IsNullOrWhiteSpace(environment))
-        c.AddJsonFile($"appsettings.{environment}.json", true);
-    c.AddAzureKeyVault();
+    c.AddDefaultConfiguration();
 });
 
 builder.ConfigureLogging(l =>

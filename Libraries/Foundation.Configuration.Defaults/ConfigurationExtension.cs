@@ -5,9 +5,12 @@ namespace Foundation.Configuration.Defaults;
 
 public static class ConfigurationExtension 
 {
-    public static void AddDefaultConfiguration(IConfigurationBuilder builder)
+    public static void AddDefaultConfiguration(this IConfigurationBuilder builder)
     {
         var environment = Environment.GetEnvironmentVariable("ENVIRONMENT");
+
+        if (string.IsNullOrWhiteSpace(environment))
+            environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT");
 
         if (string.IsNullOrWhiteSpace(environment))
             environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
