@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Foundation.Example.WorkerService": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

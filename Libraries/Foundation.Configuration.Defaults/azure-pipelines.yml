@@ -1,0 +1,11 @@
+trigger:
+  paths:
+    include:
+    - Libraries/Foundation.Configuration.Defaults
+
+jobs:
+- template: /Build/nuget-package.yml
+  parameters:  
+    versionMajor: 7
+    versionMinor: 0
+    projects: '**/Libraries/Foundation.Configuration.Defaults/Foundation.Configuration.Defaults.csproj'
