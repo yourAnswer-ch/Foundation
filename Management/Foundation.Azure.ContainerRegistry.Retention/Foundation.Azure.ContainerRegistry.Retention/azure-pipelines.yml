@@ -10,6 +10,7 @@ jobs:
     dockerfilePath: '**/Foundation.Azure.ContainerRegistry.Retention/Dockerfile'    
     uploadToReleaseRegistry: $(uploadToReleaseRegistry)
     imageName: 'azure/acr-cleanup'
+    kubernetesEndpoint: 'Cluster01-PUB-Office'
     kubernetesNamespace: 'pub-office'
     kubernetesDeploymentName: 'cronjobs/acr-cleanup-dev'
     kubernetesContainerName: 'acr-cleanup'
