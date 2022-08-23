@@ -1,6 +1,6 @@
-﻿public interface ICommand
-{
-    Task ExecuteAsync(IPipelineContext context);
+﻿namespace Foundation.Processing.Pipeline;
 
-    Task RollbackAsync(IPipelineContext context);
+public interface ICommand
+{
+    Task<Result> ExecuteAsync(IPipelineContext context);
 }

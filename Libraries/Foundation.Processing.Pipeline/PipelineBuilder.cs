@@ -7,19 +7,24 @@ public class PipelineBuilder : IPipelineBuilder
 {
     IServiceCollection Services { get; }
 
-    internal IList<IPipeDefinition> Definitions => _pipeDefinitions;
+    internal IList<ICommandDefinition> Definitions => _pipeDefinitions;
 
-    private readonly IList<IPipeDefinition> _pipeDefinitions;
+    private readonly IList<ICommandDefinition> _pipeDefinitions;
 
     public PipelineBuilder(IServiceCollection services)
     {
         Services = services;
-        _pipeDefinitions = new List<IPipeDefinition>();
+        _pipeDefinitions = new List<ICommandDefinition>();
 
     }
 
     public void AddCommand<T>() where T : ICommand
     {
-        _pipeDefinitions.Add(new PipeDefinition<T>());
+        _pipeDefinitions.Add(new CommandDefinition<T>());
+    }
+
+    public void AddCommand<TCommand, TRollback>() where TCommand : ICommand  where TRollback : ICommand
+    {
+        _pipeDefinitions.Add(new CommandDefinition<TCommand, TRollback>());
     }
 }
