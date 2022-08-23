@@ -1,4 +1,4 @@
-using Foundation.Configuration.KeyVault;
+using Foundation.Configuration.Defaults;
 using Foundation.Hosting.Info;
 using Foundation.Logging.EventHubLogger;
 using Foundation.Processing.StorageQueue;
@@ -6,11 +6,6 @@ using Microsoft.Extensions.Azure;
 
 
 var builder = Host.CreateDefaultBuilder(args);
-
-var environment = Environment.GetEnvironmentVariable("ENVIRONMENT");
-
-if (string.IsNullOrWhiteSpace(environment))
-    environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 builder.ConfigureHostConfiguration(c =>
 {
@@ -29,6 +24,8 @@ builder.ConfigureServices(s => {
         //builder.AddCertificateClient(new Uri("https://kv-fd-certificates.vault.azure.net/")).WithName("KV-FD-Certificates");
     });
 
+    s.AddTransient<IMessageHandler, MessageHandler>();
+    s.AddTransient<QueueReciver>();
     s.AddHostedService<QueueProcessorService>();
 });
 
