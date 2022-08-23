@@ -11,6 +11,6 @@ jobs:
     uploadToReleaseRegistry: $(uploadToReleaseRegistry)
     imageName: 'azure/acr-cleanup'
     kubernetesNamespace: 'pub-office'
-    kubernetesDeploymentName: 'cronjob/acr-cleanup-dev'
+    kubernetesDeploymentName: 'cronjobs/acr-cleanup-dev'
     kubernetesContainerName: 'acr-cleanup'
     containerRepository: 'azure/acr-cleanup'
