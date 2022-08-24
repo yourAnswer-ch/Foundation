@@ -1,9 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Slack notification library</Title>
+    <Company>yourAnswer.ch AG</Company>
+    <PackageProjectUrl>https://github.com/yourAnswer-ch/Foundation</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yourAnswer-ch/Foundation</RepositoryUrl>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>

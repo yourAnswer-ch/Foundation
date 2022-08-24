@@ -48,35 +48,23 @@ public class SlackBotService : ISlackBotService
 
     public async Task<string?> SendTestMessageAsync()
     {
-        try
+        var message = new Message()
         {
-            var message = new Message()
+            Username = "Jobs Service",
+            //IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
+            IconUrl = "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
+            Attachments = new List<Attachment>
             {
-                Username = "Jobs Service",
-                IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
-                Attachments = new List<Attachment>
-                    {
-                        new Attachment
-                        {
-                            Fallback = "This is a test message",
-                            Pretext = $"This is a test message {Emoji.HeavyCheckMark}",
-                            Text = $"This is a test message",
-                            Color = "good",
-                        },
-                    }
-            };
-            var client = new SbmClient(_config.WebHookUrl);
-            var value = await client.SendAsync(message);
+                new Attachment
+                {
+                    Fallback = "This is a test message",
+                    Pretext = $"This is a test message {Emoji.HeavyCheckMark}",
+                    Text = $"This is a test message",
+                    Color = "good",
+                },
+            }
+        };
 
-            _log.LogInformation($"Slack - Message sent: {value}");
-
-            return value;
-        }
-        catch (Exception ex)
-        {
-            _log.LogError(ex, "Slack - Fail to post message.");
-        }
-
-        return null;
+        return await SendMessageAsync(message);
     }
 }

@@ -80,7 +80,8 @@ static async Task SendErrorMessage(ISlackBotService slackBot, IEnumerable<Except
     var message = new Message(text)
     {
         Username = "Certificate maintinace",
-        IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
+        //IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
+        IconUrl = "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
         Attachments = new List<Attachment>
                 {
                     new Attachment
@@ -102,7 +103,8 @@ static async Task SendSuccessMessage(ISlackBotService slackBot, CertificateConfi
     var message = new Message(text)
     {
         Username = "Certificate maintinace",
-        IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
+        //IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
+        IconUrl = "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
         Attachments = new List<Attachment>
                 {
                     new Attachment

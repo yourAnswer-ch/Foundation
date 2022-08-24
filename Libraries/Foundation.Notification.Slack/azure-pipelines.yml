@@ -1,0 +1,11 @@
+trigger:
+  paths:
+    include:
+    - Libraries/Foundation.Notification.Slack
+
+jobs:
+- template: /Build/nuget-package.yml
+  parameters:  
+    versionMajor: 7
+    versionMinor: 0
+    projects: '**/Libraries/Foundation.Notification.Slack/Foundation.Notification.Slack.csproj'
