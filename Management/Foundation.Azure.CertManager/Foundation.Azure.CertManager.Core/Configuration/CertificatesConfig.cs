@@ -11,13 +11,13 @@ public class CertificatesConfig
 
     public int DaysBeforeExpired { get; set; } = 30;
 
-    public string? FrontDoorName { get; set; } 
+    public string? FrontDoorName { get; set; }
+
+    public CsrInfoConfig? CsrInfo { get; set; }
 
     public AdTenantConfig AdTenant { get; private set; }
     
     public LetsEncryptConfig LetsEncrypt { get; private set; }
-
-    public CsrInfoConfig? CsrInfo { get; private set; }
-
+   
     public List<CertificateConfig> Certificates { get; private set; }
 }

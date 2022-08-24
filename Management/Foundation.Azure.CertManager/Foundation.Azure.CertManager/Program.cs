@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using SlackBotMessages.Models;
 using SlackBotMessages;
 using Certes;
-using Foundation.Azure.CertManager.Core.Slack;
+using Foundation.Notification.Slack;
 
 var stack = DefaultAzureStack.Create
     .AddConfiguration()

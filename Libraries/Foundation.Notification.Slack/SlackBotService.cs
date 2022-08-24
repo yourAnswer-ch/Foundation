@@ -28,16 +28,19 @@ public class SlackBotService : ISlackBotService
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(_config?.WebHookUrl))
+                throw new ArgumentException("Slack - WebHookUrl not configured.");
+
             var client = new SbmClient(_config.WebHookUrl);
             var value = await client.SendAsync(message);
 
-            _log.LogInformation($"Message sent to slack: {value}");
+            _log.LogInformation($"Slack - Message sent: {value}");
 
             return value;
         }
         catch (Exception ex)
         {
-            _log.LogError(ex, "Fail to post slack message.");
+            _log.LogError(ex, "Slack - Fail to post message.");
         }
 
         return null;
@@ -65,13 +68,13 @@ public class SlackBotService : ISlackBotService
             var client = new SbmClient(_config.WebHookUrl);
             var value = await client.SendAsync(message);
 
-            _log.LogInformation($"Message sent to slack: {value}");
+            _log.LogInformation($"Slack - Message sent: {value}");
 
             return value;
         }
         catch (Exception ex)
         {
-            _log.LogError(ex, "Fail to post slack message.");
+            _log.LogError(ex, "Slack - Fail to post message.");
         }
 
         return null;
