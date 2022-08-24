@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Foundation.Notification.Slack\Foundation.Notification.Slack.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Foundation.Processing.Pipeline\Foundation.Processing.Pipeline.csproj" />
     <ProjectReference Include="..\Foundation.Azure.CertManager.Core\Foundation.Azure.CertManager.Core.csproj" />
   </ItemGroup>

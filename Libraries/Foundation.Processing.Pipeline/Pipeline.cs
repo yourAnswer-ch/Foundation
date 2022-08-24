@@ -25,7 +25,7 @@ public class Pipeline : IPipeline
     }
 
     public async Task<bool> ExecuteAsync(object? parameters = null)
-    {
+    {        
         var commandName = "";
 
         var policy = Policy.Handle<Exception>().RetryAsync(3, (ex, r) =>
@@ -35,6 +35,7 @@ public class Pipeline : IPipeline
             _log.LogWarning(ex, message);
         });
 
+        Exceptions.Clear(); 
         var properties = parameters.GetProperties();
         var context = new PipelineContext(properties);
         var queue = new Queue<ICommand>(_commands.Count);

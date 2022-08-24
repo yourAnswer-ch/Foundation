@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using SlackBotMessages.Models;
 using SlackBotMessages;
 using Certes;
+using Foundation.Azure.CertManager.Core.Slack;
 
 var stack = DefaultAzureStack.Create
     .AddConfiguration()
@@ -37,10 +38,13 @@ var stack = DefaultAzureStack.Create
             //builder.AddCommand<AzureFrontDoor>();
             builder.AddExceptionFormater<AcmeRequestException>(Formator.Exception);
         });
+
+        s.AddSlackBot();
     });
 
 var provider = stack.Build();
 
+var slack = provider.GetRequiredService<ISlackBotService>();
 var pipeline = provider.GetRequiredService<IPipeline>();
 
 
@@ -62,7 +66,7 @@ foreach (var domain in config.Certificates)
     //  continue;
     //}
 
-    await pipeline.ExecuteAsync(new { Context = context, Domain = domain });
+    var success = await pipeline.ExecuteAsync(new { Context = context, Domain = domain });
 
     //await SendMessage(context, domain.Name);
 }
