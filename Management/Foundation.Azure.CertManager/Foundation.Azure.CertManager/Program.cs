@@ -10,6 +10,7 @@ using Foundation.Azure.CertManager.Core.Configuration;
 using Microsoft.Extensions.Logging;
 using SlackBotMessages.Models;
 using SlackBotMessages;
+using Certes;
 
 var stack = DefaultAzureStack.Create
     .AddConfiguration()
@@ -23,16 +24,18 @@ var stack = DefaultAzureStack.Create
 
         s.AddPipeline(builder =>
         {
-            builder.AddCommand<AzureCheckIfIsExpired>();
-            builder.AddCommand<LetsEncryptCreateAccount>();
-            builder.AddCommand<LetsEncryptCreateOrder>();
-            builder.AddCommand<LetsEncryptAuthorizeDns>();
-            builder.AddCommand<AzureCreateTxtRecord, AzureRemoveTxtRecord>();
-            builder.AddCommand<LetsEncryptValidate>();
-            builder.AddCommand<LetsEncryptDownloadCert>();
-            builder.AddCommand<AzureStoreCert>();
-            builder.AddCommand<AzureRemoveTxtRecord>();
+            builder.AddCommand<TestException>();
+            //builder.AddCommand<AzureCheckIfIsExpired>();
+            //builder.AddCommand<LetsEncryptCreateAccount>();
+            //builder.AddCommand<LetsEncryptCreateOrder>();
+            //builder.AddCommand<LetsEncryptAuthorizeDns>();
+            //builder.AddCommand<AzureCreateTxtRecord, AzureRemoveTxtRecord>();
+            //builder.AddCommand<LetsEncryptValidate>();
+            //builder.AddCommand<LetsEncryptDownloadCert>();
+            //builder.AddCommand<AzureStoreCert>();
+            //builder.AddCommand<AzureRemoveTxtRecord>();
             //builder.AddCommand<AzureFrontDoor>();
+            builder.AddExceptionFormater<AcmeRequestException>(Formator.Exception);
         });
     });
 
@@ -49,18 +52,18 @@ foreach (var domain in config.Certificates)
     log.LogInformation($"Process domain: {domain.DomainName} resource group: {domain.ResourceGroup}");
 
     var context = new Context();
-    
+
     //var isExpired = await context.IsExpired(domain.Name);
     //if (!isExpired)
     //{
-        //if (context.Errors)
-        //    await SendMessage(context, domain.Name);
+    //if (context.Errors)
+    //    await SendMessage(context, domain.Name);
 
-      //  continue;
+    //  continue;
     //}
-    
+
     await pipeline.ExecuteAsync(new { Context = context, Domain = domain });
-    
+
     //await SendMessage(context, domain.Name);
 }
 
@@ -111,3 +114,12 @@ foreach (var domain in config.Certificates)
 //    }
 //}
 
+public class TestException : Command
+{
+    public Task<Result> ExecuteAsync()
+    {
+        return Task.FromResult(Result.Failed());
+        //throw new AcmeRequestException();
+    }
+
+}

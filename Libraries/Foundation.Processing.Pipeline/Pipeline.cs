@@ -11,21 +11,25 @@ public class Pipeline : IPipeline
     private readonly ILogger _log;
     private readonly IServiceProvider _provieder;
     private readonly IList<ICommandDefinition> _commands;
+    private readonly ExceptionFormatrs _formaters;
 
-    internal Pipeline(IServiceProvider provider, IList<ICommandDefinition> commands)
+    internal Pipeline(IServiceProvider provider, IList<ICommandDefinition> commands, ExceptionFormatrs formaters)
     {
         _provieder = provider;
         _commands = commands;
-        _log = provider.GetRequiredService<ILogger<Pipeline>>();        
+        _log = provider.GetRequiredService<ILogger<Pipeline>>();
+        _formaters = formaters;
     }
 
     public async Task ExecuteAsync(object? parameters = null)
     {
         var commandName = "";
 
-        var policy = Policy.Handle<Exception>().RetryAsync(3, (e, r) =>
+        var policy = Policy.Handle<Exception>().RetryAsync(3, (ex, r) =>
         {
-            _log.LogWarning(e, $"Pipeline - Command: {commandName} failed. Retry attemp: {r}");
+            var message = _formaters.Format(ex, commandName);
+            _log.LogWarning($"Pipeline - Command: {commandName} failed. Retry attemp: {r}");
+            _log.LogWarning(ex, message);
         });
 
         var properties = parameters.GetProperties();
@@ -47,20 +51,29 @@ public class Pipeline : IPipeline
                     queue.Enqueue(command);
 
                 commandName = definition.Name;
-                var result = await policy.ExecuteAsync(() => command.ExecuteAsync(context));
+                var result = await policy.ExecuteAsync(async () =>
+                {
+                    var result = await command.ExecuteAsync(context);
+
+                    if (result.FlowControl == FlowControl.Failed)
+                        throw new InvalidOperationException($"Command: {commandName} returned failed state.");
+
+                    return result;
+                });
 
                 if (result.FlowControl == FlowControl.Exit)
                 {
                     _log.LogWarning("Pipeline - Exit pipeline.");
                     return;
-                }
+                }                 
 
                 stopwatch.Stop();
                 _log.LogInformation($"Pipeline - Command: {definition.Name} successfuly executed. Duration {stopwatch.ElapsedMilliseconds}");
             }
         }
         catch(Exception ex)
-        {           
+        {
+            var message = _formaters.Format(ex, commandName);
             _log.LogError($"Pipeline - Command: {commandName} failed.", ex);
             await Rollback(queue, context);
         }

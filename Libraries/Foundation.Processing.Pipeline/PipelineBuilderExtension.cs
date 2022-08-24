@@ -10,6 +10,6 @@ public static class PipelineBuilderExtension
         var b = new PipelineBuilder();
         builder.Invoke(b);
         
-        services.AddTransient<IPipeline>(e => new Pipeline(e, b.Definitions));
+        services.AddTransient<IPipeline>(e => new Pipeline(e, b.Definitions, b.Formaters));
     }
 }
