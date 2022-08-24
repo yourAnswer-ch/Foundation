@@ -1,0 +1,17 @@
+trigger:
+  paths:
+    include:
+    - Management/Foundation.Azure.CertManager
+
+jobs:
+- template: /Build/docker-image.yml
+  parameters:
+    context: 'Management/Foundation.Azure.CertManager'
+    dockerfilePath: '**/Foundation.Azure.CertManager/Dockerfile'    
+    uploadToReleaseRegistry: $(uploadToReleaseRegistry)
+    imageName: 'azure/cert-maintainer'
+    kubernetesEndpoint: 'Cluster01-PUB-Office'
+    kubernetesNamespace: 'pub-office'
+    kubernetesDeploymentName: 'cronjobs/cert-maintainer-dev'
+    kubernetesContainerName: 'cert-maintainer'
+    containerRepository: 'azure/cert-maintainer'

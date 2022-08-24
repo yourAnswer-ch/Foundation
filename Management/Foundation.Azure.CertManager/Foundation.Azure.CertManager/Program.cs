@@ -1,17 +1,18 @@
-﻿using Foundation.Processing.Pipeline;
-using Foundation.Processing.Pipeline.Abstractions;
-using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Foundation.Notification.Slack;
 using Foundation.ServiceBuilder.AzureDefault;
+using Foundation.Processing.Pipeline;
+using Foundation.Processing.Pipeline.Abstractions;
+using Foundation.Azure.CertManager.Core.Configuration;
 using Foundation.Azure.CertManager.Core.Steps;
 using Foundation.Azure.CertManager.Core;
 using Microsoft.Extensions.Configuration;
-using Foundation.Azure.CertManager.Core.Configuration;
+using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SlackBotMessages.Models;
 using SlackBotMessages;
 using Certes;
-using Foundation.Notification.Slack;
+
 
 var stack = DefaultAzureStack.Create
     .AddConfiguration()
@@ -80,7 +81,6 @@ static async Task SendErrorMessage(ISlackBotService slackBot, IEnumerable<Except
     var message = new Message(text)
     {
         Username = "Certificate maintinace",
-        //IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
         IconUrl = "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
         Attachments = new List<Attachment>
                 {
@@ -103,7 +103,6 @@ static async Task SendSuccessMessage(ISlackBotService slackBot, CertificateConfi
     var message = new Message(text)
     {
         Username = "Certificate maintinace",
-        //IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
         IconUrl = "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
         Attachments = new List<Attachment>
                 {
