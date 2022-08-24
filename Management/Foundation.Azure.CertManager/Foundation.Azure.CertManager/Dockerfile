@@ -10,7 +10,7 @@ ARG NUGET_KEY
 ARG NUGET_SOURCE
 
 WORKDIR /src
-COPY ["FFoundation.Azure.CertManager/Foundation.Azure.CertManager.csproj", "Foundation.Azure.CertManager/"]
+COPY ["Foundation.Azure.CertManager/Foundation.Azure.CertManager.csproj", "Foundation.Azure.CertManager/"]
 
 RUN dotnet nuget add source --valid-authentication-types basic --store-password-in-clear-text --username Docker --password $NUGET_KEY --name FlairFindr $NUGET_SOURCE
 RUN dotnet restore "Foundation.Azure.CertManager/Foundation.Azure.CertManager.csproj"
