@@ -48,7 +48,7 @@ public class Pipeline : IPipeline
 
                 var command = definition.CreateCommand(_provieder);
                 if (command == null)
-                    throw new ArgumentException($"Pipeline - command: {definition.Name} could not create instance.");
+                    throw new ArgumentException($"Pipeline - Command: {definition.Name} could not create instance.");
 
                 var rollback = definition.CreateRollbackCommand(_provieder);
                 if(rollback != null)

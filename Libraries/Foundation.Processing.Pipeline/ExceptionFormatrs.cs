@@ -8,13 +8,13 @@ internal class ExceptionFormatrs : Dictionary<Type, Func<Exception, string, stri
     {
         var exception = (ex is TargetInvocationException) ? ex.InnerException : ex;
         if(exception == null)
-            return $"Pipeline - command: '{commandName}' execution failed - unknown exception.";
+            return $"Pipeline - Command: {commandName} execution failed - unknown exception.";
 
         var type = exception.GetType();
         
         if (TryGetValue(type, out var function))
             return function.Invoke(exception, commandName);
 
-        return $"Pipeline - command: '{commandName}' execution failed: {ex.Message}";
+        return $"Pipeline - Command: {commandName} execution failed: {ex.Message}";
     }
 }

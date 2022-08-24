@@ -22,4 +22,6 @@ public class Context
     public byte[]? Certificate { get; set; }    
 
     public List<string> DnsTokens { get; }
+
+    public bool IsValid { get; set; }
 }

@@ -19,11 +19,12 @@ public class AzureCheckIfIsExpired : Command
         _config = config.GetCertManagerConfig();
     }
 
-    public Task<Result> ExecuteAsync(CertificateConfig domain)
+    public Task<Result> ExecuteAsync(Context context, CertificateConfig domain)
     {
         if (string.IsNullOrWhiteSpace(domain?.DomainName))
             throw new ArgumentException("Domain name can not be null.");
-       
+
+        context.IsValid = false;
         var versions = _client.GetPropertiesOfCertificateVersions(domain.CertificatName);
         var version = versions.OrderByDescending(e => e.CreatedOn).FirstOrDefault();
 
@@ -42,7 +43,8 @@ public class AzureCheckIfIsExpired : Command
             return Task.FromResult(Result.Next());
         }
 
-        _log.LogInformation($"{domain.DomainName} - Certificate is valid - expieres on: {expires}");
+        context.IsValid = true;
+        _log.LogInformation($"{domain.DomainName} - Certificate is valid - expieres on: {expires}");        
         return Task.FromResult(Result.Exit());
     }
 }

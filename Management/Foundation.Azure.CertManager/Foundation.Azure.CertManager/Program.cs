@@ -24,17 +24,16 @@ var stack = DefaultAzureStack.Create
         });
 
         s.AddPipeline(builder =>
-        {
-            builder.AddCommand<TestException>();
-            //builder.AddCommand<AzureCheckIfIsExpired>();
-            //builder.AddCommand<LetsEncryptCreateAccount>();
-            //builder.AddCommand<LetsEncryptCreateOrder>();
-            //builder.AddCommand<LetsEncryptAuthorizeDns>();
-            //builder.AddCommand<AzureCreateTxtRecord, AzureRemoveTxtRecord>();
-            //builder.AddCommand<LetsEncryptValidate>();
-            //builder.AddCommand<LetsEncryptDownloadCert>();
-            //builder.AddCommand<AzureStoreCert>();
-            //builder.AddCommand<AzureRemoveTxtRecord>();
+        {            
+            builder.AddCommand<AzureCheckIfIsExpired>();
+            builder.AddCommand<LetsEncryptCreateAccount>();
+            builder.AddCommand<LetsEncryptCreateOrder>();
+            builder.AddCommand<LetsEncryptAuthorizeDns>();
+            builder.AddCommand<AzureCreateTxtRecord, AzureRemoveTxtRecord>();
+            builder.AddCommand<LetsEncryptValidate>();
+            builder.AddCommand<LetsEncryptDownloadCert>();
+            builder.AddCommand<AzureStoreCert>();
+            builder.AddCommand<AzureRemoveTxtRecord>();
             //builder.AddCommand<AzureFrontDoor>();
             builder.AddExceptionFormater<AcmeRequestException>(Formator.Exception);
         });
@@ -57,73 +56,64 @@ foreach (var domain in config.Certificates)
 
     var context = new Context();
 
-    //var isExpired = await context.IsExpired(domain.Name);
-    //if (!isExpired)
-    //{
-    //if (context.Errors)
-    //    await SendMessage(context, domain.Name);
+    var success = await pipeline.ExecuteAsync(new { 
+        Context = context, 
+        Domain = domain 
+    });
 
-    //  continue;
-    //}
+    if (context.IsValid)
+        continue;
 
-    var success = await pipeline.ExecuteAsync(new { Context = context, Domain = domain });
-
-    //await SendMessage(context, domain.Name);
+    if(success)
+    {
+        await SendSuccessMessage(slack, domain);
+    }
+    else
+    {
+        await SendErrorMessage(slack, pipeline.Exceptions, domain);
+    }
 }
 
-
-//private static async Task SendMessage(Context context, string domain)
-//{
-//    if (context.Errors)
-//    {
-//        var text = $"Certificate job faild. - Domain: {domain} - Utc Time: {DateTime.Now}";
-//        var message = new Message(text)
-//        {
-//            Username = "Jobs Service",
-//            IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
-//            Attachments = new List<Attachment>
-//                {
-//                    new Attachment
-//                    {
-//                        Fallback = "Multiple exceptions.",
-//                        Pretext = $"Exceptions occurd check logstrem for details {Emoji.X}",
-//                        Text = context.Exceptions.Select(e => $"{e.GetType().Name}: {e.Message}").Aggregate((a, b) => $"{a}\n{b}"),
-//                        Color = "danger",
-//                    },
-//                }
-//        };
-
-//        await _slackBot.SendMessageAsync(message);
-//    }
-//    else
-//    {
-//        var text = $"Certificate has been regenerated. The delivery on FrontDoor was started. The exchange can take up to 60 minutes. - Domain: {domain}";
-//        var message = new Message(text)
-//        {
-//            Username = "Jobs Service",
-//            IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
-//            Attachments = new List<Attachment>
-//                {
-//                    new Attachment
-//                    {
-//                        Fallback = "Verify the following domains.",
-//                        Pretext = $"Verify the following domains {Emoji.HeavyCheckMark}",
-//                        Text = $"https://{domain}\n\nhttps://www.{domain}",
-//                        Color = "good",
-//                    },
-//                }
-//        };
-
-//        await _slackBot.SendMessageAsync(message);
-//    }
-//}
-
-public class TestException : Command
+static async Task SendErrorMessage(ISlackBotService slackBot, IEnumerable<Exception> exceptions, CertificateConfig domain)
 {
-    public Task<Result> ExecuteAsync()
+    var text = $"Certificate renewal faild - Domain: {domain.DomainName}";
+    var message = new Message(text)
     {
-        return Task.FromResult(Result.Failed());
-        //throw new AcmeRequestException();
-    }
+        Username = "Certificate maintinace",
+        IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
+        Attachments = new List<Attachment>
+                {
+                    new Attachment
+                    {
+                        Fallback = "Exceptions occurd check logs for details",
+                        Pretext = $"Exceptions occurd check logs for details {Emoji.X}",
+                        Text = exceptions.Select(e => $"{e.GetType().Name}: {e.Message}").Aggregate((a, b) => $"{a}\n{b}"),
+                        Color = "danger",
+                    },
+                }
+    };
 
+    await slackBot.SendMessageAsync(message);
+}
+
+static async Task SendSuccessMessage(ISlackBotService slackBot, CertificateConfig domain)
+{
+    var text = $"Certificate successfully renewed - Domain: {domain.DomainName}";
+    var message = new Message(text)
+    {
+        Username = "Certificate maintinace",
+        IconUrl = "https://miro.medium.com/max/700/1*8mpWApzQD5gZZlnYYUkbcA.png",
+        Attachments = new List<Attachment>
+                {
+                    new Attachment
+                    {
+                        Fallback = "Verify the following domain",
+                        Pretext = $"Verify the following domain {Emoji.HeavyCheckMark}",
+                        Text = $"https://{domain.DomainName}",
+                        Color = "good",
+                    },
+                }
+    };
+
+    await slackBot.SendMessageAsync(message);
 }

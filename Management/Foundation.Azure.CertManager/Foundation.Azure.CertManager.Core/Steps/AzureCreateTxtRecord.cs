@@ -20,10 +20,13 @@ public class AzureCreateTxtRecord : AzureManagement
     {
         _log.LogInformation($"{domain.DomainName} - Azure create txt record for validation.");
 
-        var record = CreateClient().DnsZones
-            .GetByResourceGroup(domain.ResourceGroup, domain.DomainName)
-            .Update()
-            .DefineTxtRecordSet("_acme-challenge");
+        var zone = CreateClient().DnsZones
+            .GetByResourceGroup(domain.ResourceGroup, domain.DomainName);
+
+        if (zone == null)
+            throw new ArgumentException($"DNS zone not found - Domain: {domain.DomainName} - ResourceGroup: {domain.ResourceGroup}");
+
+        var record = zone.Update().DefineTxtRecordSet("_acme-challenge");
 
         IWithTxtRecordTextValueOrAttachable<IUpdate>? update = null;
         foreach (var token in context.DnsTokens)
