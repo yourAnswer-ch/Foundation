@@ -2,14 +2,14 @@
 
 namespace Foundation.Azure.CertManager.Core.Configuration;
 
-public class LetsEncrypt
+public class LetsEncryptConfig
 {
-    public Account Account { get; set; }
+    public AccountConfig Account { get; set; }
 
     public Uri ServiceUrl => WellKnownServers.LetsEncryptV2;
 
-    public LetsEncrypt()
+    public LetsEncryptConfig()
     {
-        Account = new Account();
+        Account = new AccountConfig();
     }
 }

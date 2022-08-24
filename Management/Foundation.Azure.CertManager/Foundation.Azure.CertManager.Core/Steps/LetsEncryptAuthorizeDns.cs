@@ -1,12 +1,23 @@
 ﻿using Certes;
+using Foundation.Azure.CertManager.Core.Configuration;
 using Foundation.Processing.Pipeline;
+using Microsoft.Extensions.Logging;
 
 namespace Foundation.Azure.CertManager.Core.Steps;
 
 public class LetsEncryptAuthorizeDns : Command
 {
-    public async Task<Result> ExecuteAsync(Context context)
+    private readonly ILogger _log;
+
+    public LetsEncryptAuthorizeDns(ILogger<LetsEncryptAuthorizeDns> log)
     {
+        _log = log;
+    }
+
+    public async Task<Result> ExecuteAsync(Context context, CertificateConfig domain)
+    {
+        _log.LogInformation($"{domain.DomainName} - Create lets encript authorize dns.");
+
         if (context.Order == null)
             throw new ArgumentException("Order can not be null.");
 

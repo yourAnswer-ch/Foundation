@@ -2,6 +2,10 @@
 {
     public interface IPipelineBuilder
     {
-        void AddCommand<T>() where T : ICommand;
+        void AddCommand<TCommand>() where TCommand : ICommand;
+
+        void AddCommand<TCommand, TRollback>() 
+            where TCommand : ICommand 
+            where TRollback : ICommand;
     }
 }

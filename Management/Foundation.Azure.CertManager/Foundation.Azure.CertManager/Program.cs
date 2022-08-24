@@ -27,7 +27,7 @@ var stack = DefaultAzureStack.Create
             builder.AddCommand<LetsEncryptCreateAccount>();
             builder.AddCommand<LetsEncryptCreateOrder>();
             builder.AddCommand<LetsEncryptAuthorizeDns>();
-            builder.AddCommand<AzureCreateTxtRecord>();
+            builder.AddCommand<AzureCreateTxtRecord, AzureRemoveTxtRecord>();
             builder.AddCommand<LetsEncryptValidate>();
             builder.AddCommand<LetsEncryptDownloadCert>();
             builder.AddCommand<AzureStoreCert>();
@@ -44,9 +44,9 @@ var pipeline = provider.GetRequiredService<IPipeline>();
 var log = provider.GetRequiredService<ILoggerFactory>().CreateLogger("CertManager");
 var config = provider.GetRequiredService<IConfiguration>().GetCertManagerConfig();
 
-foreach (var domain in config.Domains)
+foreach (var domain in config.Certificates)
 {
-    log.LogInformation($"Process domain: {domain.Name} resource group: {domain.ResourceGroup}");
+    log.LogInformation($"Process domain: {domain.DomainName} resource group: {domain.ResourceGroup}");
 
     var context = new Context();
     

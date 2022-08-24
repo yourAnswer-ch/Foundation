@@ -1,6 +1,5 @@
 ﻿using Certes;
 using Certes.Acme;
-using Microsoft.Azure.Management.Fluent;
 
 namespace Foundation.Azure.CertManager.Core;
 
@@ -10,7 +9,6 @@ public class Context
     {
         DnsTokens = new List<string>();
         Challenges = new List<IChallengeContext>();
-        Exceptions = new List<Exception>();
     }
 
     public AcmeContext? AcmeContext { get; set; }
@@ -24,12 +22,4 @@ public class Context
     public byte[]? Certificate { get; set; }    
 
     public List<string> DnsTokens { get; }
-
-    public string? HttpToken { get; set; }
-
-    public string? HttpKey { get; set; }
-
-    public List<Exception> Exceptions { get; }
-
-    public bool Errors => Exceptions.Count > 0;
 }
