@@ -7,11 +7,13 @@ using System.Diagnostics;
 namespace Foundation.Processing.Pipeline;
 
 public class Pipeline : IPipeline
-{
+{    
     private readonly ILogger _log;
     private readonly IServiceProvider _provieder;
     private readonly IList<ICommandDefinition> _commands;
     private readonly ExceptionFormatrs _formaters;
+
+    public IList<Exception> Exceptions { get; private set; }
 
     internal Pipeline(IServiceProvider provider, IList<ICommandDefinition> commands, ExceptionFormatrs formaters)
     {
@@ -19,9 +21,10 @@ public class Pipeline : IPipeline
         _commands = commands;
         _log = provider.GetRequiredService<ILogger<Pipeline>>();
         _formaters = formaters;
+        Exceptions = new List<Exception>();
     }
 
-    public async Task ExecuteAsync(object? parameters = null)
+    public async Task<bool> ExecuteAsync(object? parameters = null)
     {
         var commandName = "";
 
@@ -64,36 +67,49 @@ public class Pipeline : IPipeline
                 if (result.FlowControl == FlowControl.Exit)
                 {
                     _log.LogWarning("Pipeline - Exit pipeline.");
-                    return;
+                    return false;
                 }                 
 
                 stopwatch.Stop();
                 _log.LogInformation($"Pipeline - Command: {definition.Name} successfuly executed. Duration {stopwatch.ElapsedMilliseconds}");
             }
+
+            return true;
         }
         catch(Exception ex)
         {
-            var message = _formaters.Format(ex, commandName);
-            _log.LogError($"Pipeline - Command: {commandName} failed.", ex);
+            Exceptions.Add(ex);
+            
+            _log.LogError(_formaters.Format(ex, commandName), ex);
+            
             await Rollback(queue, context);
+
+            return false;
         }
     }
 
     private async Task Rollback(Queue<ICommand> queue, IPipelineContext context)
     {
-        _log.LogWarning("Pipeline - Start rollback");
-
-        while (queue.Count > 0)
+        try
         {
-            var command = queue.Dequeue();
-            try
+            _log.LogWarning("Pipeline - Start rollback");
+
+            while (queue.Count > 0)
             {
-                await command.ExecuteAsync(context);
+                var command = queue.Dequeue();
+                try
+                {
+                    await command.ExecuteAsync(context);
+                }
+                catch (Exception ex)
+                {
+                    _log.LogError($"Pipeline - Rollback command: {command.GetType().Name} fail too rollback.", ex);
+                }
             }
-            catch (Exception ex)
-            {
-                _log.LogError($"Pipeline - Rollback command: {command.GetType().Name} fail too rollback.", ex);
-            }
+        }
+        catch(Exception ex)
+        {
+            _log.LogWarning(ex, $"Pipeline - Rollback failed: {ex.Message}");
         }
     }
 }

@@ -2,5 +2,7 @@
 
 public interface IPipeline
 {
-    Task ExecuteAsync(object parameters);
+    IList<Exception> Exceptions { get; }
+
+    Task<bool> ExecuteAsync(object parameters);
 }
