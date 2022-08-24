@@ -68,7 +68,7 @@ public class Pipeline : IPipeline
                 if (result.FlowControl == FlowControl.Exit)
                 {
                     _log.LogWarning("Pipeline - Exit pipeline.");
-                    return false;
+                    return true;
                 }                 
 
                 stopwatch.Stop();
