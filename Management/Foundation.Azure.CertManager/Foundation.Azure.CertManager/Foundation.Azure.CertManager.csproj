@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="Foundation.Configuration.Defaults" Version="7.0.18377" />
-    <PackageReference Include="Foundation.Processing.Pipeline" Version="7.0.18406" />
+    <PackageReference Include="Foundation.Processing.Pipeline" Version="7.0.18407" />
     <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="7.0.18347" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.4.0" />
   </ItemGroup>
