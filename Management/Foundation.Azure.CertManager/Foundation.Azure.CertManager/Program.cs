@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using SlackBotMessages.Models;
 using SlackBotMessages;
 using Certes;
-using System.Reflection;
 
 var stack = DefaultAzureStack.Create
     .AddConfiguration()
@@ -65,68 +64,23 @@ foreach (var domain in config.Certificates)
     if (context.IsValid)
         continue;
 
-    if(success)
+    var report = new SlackReport(
+       username: "Certificate maintinace",
+       iconUrl: "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
+       successText: $"Certificate successfully renewed - Domain: {domain.DomainName}",
+       errorText: $"Certificate renewal faild - Domain: {domain.DomainName}",
+       errorMessageFallback: "Exceptions occurd check logs for details",
+       errorMessagePretext: $"Exceptions occurd check logs for details {Emoji.X}");
+
+    await report.SendMessage(slack, success, () =>
     {
-        await SendSuccessMessage(slack, domain);
-    }
-    else
-    {
-        await SendErrorMessage(slack, pipeline.Exceptions, domain);
-    }
-}
-
-static async Task SendErrorMessage(ISlackBotService slackBot, IEnumerable<Exception> exceptions, CertificateConfig domain)
-{
-    var text = $"Certificate renewal faild - Domain: {domain.DomainName}";
-    var message = new Message(text)
-    {
-        Username = "Certificate maintinace",
-        IconUrl = "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
-        Attachments = new List<Attachment>
-                {
-                    new Attachment
-                    {
-                        Fallback = "Exceptions occurd check logs for details",
-                        Pretext = $"Exceptions occurd check logs for details {Emoji.X}",
-                        Text = exceptions.Select(e => Format(e)).Aggregate((a, b) => $"{a}\n{b}"),
-                        Color = "danger",
-                    },
-                }
-    };
-
-    await slackBot.SendMessageAsync(message);
-
-    string Format(Exception ex)
-    {
-        if (ex == null)
-            return "unknown exception";
-
-        if (ex is TargetInvocationException m && m.InnerException != null)
-            return $"{m.GetType().Name}: {m.Message}";
-        
-        return $"{ex.GetType().Name}: {ex.Message}";
-    }
-
-}
-
-static async Task SendSuccessMessage(ISlackBotService slackBot, CertificateConfig domain)
-{
-    var text = $"Certificate successfully renewed - Domain: {domain.DomainName}";
-    var message = new Message(text)
-    {
-        Username = "Certificate maintinace",
-        IconUrl = "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
-        Attachments = new List<Attachment>
-                {
-                    new Attachment
-                    {
-                        Fallback = "Verify the following domain",
-                        Pretext = $"Verify the following domain {Emoji.HeavyCheckMark}",
-                        Text = $"https://{domain.DomainName}",
-                        Color = "good",
-                    },
-                }
-    };
-
-    await slackBot.SendMessageAsync(message);
+        return new Attachment[] { new Attachment
+        {
+            Fallback = "Verify the following domain",
+            Pretext = $"Verify the following domain {Emoji.HeavyCheckMark}",
+            Text = $"https://{domain.DomainName}",
+            Color = "good",
+        } };
+    },
+    () => pipeline.Exceptions);
 }

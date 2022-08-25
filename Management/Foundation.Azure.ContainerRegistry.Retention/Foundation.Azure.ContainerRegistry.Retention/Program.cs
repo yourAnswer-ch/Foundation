@@ -1,4 +1,3 @@
-using Foundation.Azure.ContainerRegistry.Retention;
 using Foundation.Azure.ContainerRegistry.Retention.Core;
 using Foundation.Processing.Pipeline;
 using Foundation.Processing.Pipeline.Abstractions;
@@ -8,7 +7,6 @@ using Foundation.ServiceBuilder.AzureDefault;
 using Foundation.Notification.Slack;
 using SlackBotMessages.Models;
 using SlackBotMessages;
-using System.Reflection;
 
 var report = new SlackReport(
    username: "Container Registy maintinace",
@@ -45,54 +43,9 @@ var context = new CommandContext();
 
 var success = await pipeline.ExecuteAsync(new { Context = context });
 
-if (success)
+await report.SendMessage(slackBot, success, () =>
 {
-    await SendSuccessMessage(slackBot, context.Messages);
-}
-else
-{
-    await SendErrorMessage(slackBot, pipeline.Exceptions);
-}
-
-await SendSuccessMessage(slackBot, context.Messages);
-
-static async Task SendErrorMessage(ISlackBotService slackBot, IEnumerable<Exception> exceptions)
-{
-    var text = $"Container Registy - Errors occurred during processing";
-    var message = new Message(text)
-    {
-        Username = "Container Registy maintinace",
-        IconUrl = "https://azure.microsoft.com/svghandler/container-registry/?width=300&height=300",
-        Attachments = new List<Attachment>
-        {
-            new Attachment
-            {
-                Color = "danger",
-                Text = exceptions.Select(e => Format(e)).Aggregate((a, b) => $"{a}\n{b}"),
-                Fallback = "Exceptions occurd check logs for details",
-                Pretext = $"Exceptions occurd check logs for details {Emoji.X}",
-            },
-        }
-    };
-
-    await slackBot.SendMessageAsync(message);
-
-    string Format(Exception ex)
-    {
-        if (ex == null)
-            return "unknown exception";
-
-        if (ex is TargetInvocationException m && m.InnerException != null)
-            return $"{m.GetType().Name}: {m.Message}";
-
-        return $"{ex.GetType().Name}: {ex.Message}";
-    }
-
-}
-
-static async Task SendSuccessMessage(ISlackBotService slackBot, IEnumerable<string> messages)
-{
-    var attachments = messages.Select(e =>
+    return context.Messages.Select(e =>
     {
         return new Attachment
         {
@@ -102,14 +55,4 @@ static async Task SendSuccessMessage(ISlackBotService slackBot, IEnumerable<stri
             Pretext = $"Deletet images:",
         };
     });
-
-    var text = $"Container Registy following images got cleand up.";
-    var message = new Message(text)
-    {
-        Username = "Container Registy maintinace",
-        IconUrl = "https://azure.microsoft.com/svghandler/container-registry/?width=300&height=300",
-        Attachments = attachments.ToList()
-    };
-
-    await slackBot.SendMessageAsync(message);
-}
+}, () => pipeline.Exceptions);
