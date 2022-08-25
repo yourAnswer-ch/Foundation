@@ -7,4 +7,6 @@ public interface IMessagePump
     void Append(LogEntry logEntry);
 
     void Start();
+
+    void Stop();
 }

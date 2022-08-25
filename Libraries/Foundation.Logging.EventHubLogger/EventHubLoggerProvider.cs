@@ -33,7 +33,8 @@ public class EventHubLoggerProvider : ILoggerProvider
         _messagePump.Start();
     }
 
-    void IDisposable.Dispose() {
+    void IDisposable.Dispose() {        
         GC.SuppressFinalize(this);
+        _messagePump.Stop();
     }
 }
