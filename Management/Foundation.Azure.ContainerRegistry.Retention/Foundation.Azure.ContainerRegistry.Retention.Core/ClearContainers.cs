@@ -34,7 +34,7 @@ public class ClearContainers : Command
             await foreach (var manifest in imageManifests)
             {
                 var t = manifest.LastUpdatedOn;
-                if(count++ < 20 || manifest.LastUpdatedOn > expiration)
+                if (count++ < 20 || manifest.LastUpdatedOn > expiration)
                 {
                     _log.LogInformation($"Skip image: {manifest.RepositoryName} - last update: {manifest.LastUpdatedOn} - created: {manifest.CreatedOn}");
                     continue;
@@ -42,7 +42,7 @@ public class ClearContainers : Command
 
                 RegistryArtifact image = repository.GetArtifact(manifest.Digest);
                 var tags = string.Join('|', manifest.Tags);
-                context.Messages.Add($"Image: {manifest.RepositoryName} - tags: {tags} - last update: {manifest.LastUpdatedOn.ToString("dd/MM/yyyy HH:mm")}");
+                context.AddMessage(manifest.RepositoryName, $"Image: {manifest.RepositoryName} - tags: {tags} - last update: {manifest.LastUpdatedOn.ToString("dd/MM/yyyy HH:mm")}");
                 _log.LogInformation($"## Delete image: {manifest.RepositoryName} - last update: {manifest.LastUpdatedOn} - tags: {tags} - digest: {manifest.Digest}");
                 foreach (var tagName in manifest.Tags)
                 {
@@ -59,10 +59,15 @@ public class ClearContainers : Command
 
 public class CommandContext
 {
-    public IList<string> Messages { get; }
+    public IList<KeyValuePair<string, string>> Messages { get; }
+
+    public void AddMessage(string repository, string meddage)
+    {
+        Messages.Add(new KeyValuePair<string, string>(repository, meddage));
+    }
 
     public CommandContext()
     {
-        Messages = new List<string>();
+        Messages = new List<KeyValuePair<string, string>>();
     }
 }

@@ -43,13 +43,18 @@ var context = new CommandContext();
 
 var success = await pipeline.ExecuteAsync(new { Context = context });
 
+if (success && context.Messages.Count == 0)
+    return;
+
 await report.SendMessage(slackBot, success, () =>
 {
-    return context.Messages.Select(e =>
+    return context.Messages
+    .GroupBy(g => g.Key)
+    .Select(g =>
     {
         return new Attachment
         {
-            Text = e,
+            Text = g.Select(e => e.Value).Aggregate((a, b) => $"{a}\n{b}"),
             Color = "good",
             Fallback = "Deletet images:",
             Pretext = $"Deletet images:",
