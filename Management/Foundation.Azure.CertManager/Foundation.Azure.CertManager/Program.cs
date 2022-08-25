@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using SlackBotMessages.Models;
 using SlackBotMessages;
 using Certes;
-
+using System.Reflection;
 
 var stack = DefaultAzureStack.Create
     .AddConfiguration()
@@ -88,13 +88,25 @@ static async Task SendErrorMessage(ISlackBotService slackBot, IEnumerable<Except
                     {
                         Fallback = "Exceptions occurd check logs for details",
                         Pretext = $"Exceptions occurd check logs for details {Emoji.X}",
-                        Text = exceptions.Select(e => $"{e.GetType().Name}: {e.Message}").Aggregate((a, b) => $"{a}\n{b}"),
+                        Text = exceptions.Select(e => Format(e)).Aggregate((a, b) => $"{a}\n{b}"),
                         Color = "danger",
                     },
                 }
     };
 
     await slackBot.SendMessageAsync(message);
+
+    string Format(Exception ex)
+    {
+        if (ex == null)
+            return "unknown exception";
+
+        if (ex is TargetInvocationException m && m.InnerException != null)
+            return $"{m.GetType().Name}: {m.Message}";
+        
+        return $"{ex.GetType().Name}: {ex.Message}";
+    }
+
 }
 
 static async Task SendSuccessMessage(ISlackBotService slackBot, CertificateConfig domain)

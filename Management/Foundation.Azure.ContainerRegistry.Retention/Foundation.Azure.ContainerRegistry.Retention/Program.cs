@@ -27,3 +27,5 @@ var pipeline = provider.GetRequiredService<IPipeline>();
 
 await pipeline.ExecuteAsync(null);
 
+
+//https://azure.microsoft.com/svghandler/container-registry/?width=300&height=300
