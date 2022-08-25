@@ -54,10 +54,10 @@ await report.SendMessage(slackBot, success, () =>
     {
         return new Attachment
         {
-            Text = g.Select(e => e.Value).Aggregate((a, b) => $"{a}\n{b}"),
             Color = "good",
-            Fallback = "Deletet images:",
-            Pretext = $"Deletet images:",
+            Text = g.Select(e => e.Value).Aggregate((a, b) => $"{a}\n{b}"),            
+            Fallback = $"Repository: {g.Key}",
+            Pretext = $"Repository: {g.Key}",
         };
     });
 }, () => pipeline.Exceptions);
