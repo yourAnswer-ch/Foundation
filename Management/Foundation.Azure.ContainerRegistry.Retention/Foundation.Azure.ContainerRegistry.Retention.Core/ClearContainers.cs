@@ -15,7 +15,7 @@ public class ClearContainers : Command
         _client = client;
     }
 
-    public async Task ExecuteAsync(CommandContext context)
+    public async Task<Result> ExecuteAsync(CommandContext context)
     {
         var expiration = DateTime.UtcNow.Subtract(TimeSpan.FromDays(180));
 
@@ -42,7 +42,7 @@ public class ClearContainers : Command
 
                 RegistryArtifact image = repository.GetArtifact(manifest.Digest);
                 var tags = string.Join('|', manifest.Tags);
-                context.Messages.Add($"Image: {manifest.RepositoryName} - tags: {tags} - last update: {manifest.LastUpdatedOn}");
+                context.Messages.Add($"Image: {manifest.RepositoryName} - tags: {tags} - last update: {manifest.LastUpdatedOn.ToString("dd/MM/yyyy HH:mm")}");
                 _log.LogInformation($"## Delete image: {manifest.RepositoryName} - last update: {manifest.LastUpdatedOn} - tags: {tags} - digest: {manifest.Digest}");
                 foreach (var tagName in manifest.Tags)
                 {
@@ -52,6 +52,8 @@ public class ClearContainers : Command
                 await image.DeleteAsync();
             }
         }
+
+        return Result.Next();
     }
 }
 

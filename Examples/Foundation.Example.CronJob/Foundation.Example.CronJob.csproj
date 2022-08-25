@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="7.0.18347" />
+    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="7.0.18420" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.4.0" />
   </ItemGroup>
 
