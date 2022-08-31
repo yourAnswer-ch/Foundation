@@ -2,8 +2,8 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 10080
+EXPOSE 10443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG NUGET_KEY
