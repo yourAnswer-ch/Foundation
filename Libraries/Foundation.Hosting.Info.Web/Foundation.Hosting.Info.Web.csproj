@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Foundation.Hosting.Info" Version="7.0.18323" />
+    <PackageReference Include="Foundation.Hosting.Info" Version="7.0.18650" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 
