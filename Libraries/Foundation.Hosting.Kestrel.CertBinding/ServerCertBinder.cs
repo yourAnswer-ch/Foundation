@@ -50,19 +50,22 @@ public static class ServerCertBinder
             var sslProtocol = ParseEnum(binding.Certificate?.Protocols, SslProtocols.Tls13);
 
             o.Protocols = httpProtocol;
-            o.UseHttps(httpsConfig =>
+            if (certificate != null)
             {
-                httpsConfig.SslProtocols = sslProtocol;
-                
-                if(certificate != null)
-                    httpsConfig.ServerCertificate = certificate;
-
-                if(binding.Certificates != null && binding.Certificates.Count > 0)
+                o.UseHttps(httpsConfig =>
                 {
-                    var selector = new CertSelector(binding.Certificates, c => DownloadCertificate(services, c));
-                    httpsConfig.ServerCertificateSelector = selector.SelectCert;
-                }
-            });
+                    httpsConfig.SslProtocols = sslProtocol;
+
+                    if (certificate != null)
+                        httpsConfig.ServerCertificate = certificate;
+
+                    if (binding.Certificates != null && binding.Certificates.Count > 0)
+                    {
+                        var selector = new CertSelector(binding.Certificates, c => DownloadCertificate(services, c));
+                        httpsConfig.ServerCertificateSelector = selector.SelectCert;
+                    }
+                });
+            }
         });
     }
 
