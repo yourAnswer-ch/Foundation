@@ -25,6 +25,10 @@ public class Stack : IStack
     {
         _configurationBuilder = new ConfigurationBuilder();
         builder?.Invoke(_configurationBuilder);
+
+        if (_configurationBuilder?.Build() is IConfiguration configuration)
+            _servicesCollection.AddSingleton(configuration);
+
         return this;
     }
 
@@ -69,8 +73,8 @@ public class Stack : IStack
 
     public virtual IServiceProvider Build(Action<IServiceProvider>? initializer = null)
     {
-        if (_configurationBuilder?.Build() is IConfiguration configuration)
-            _servicesCollection.AddSingleton(configuration);
+        //if (_configurationBuilder?.Build() is IConfiguration configuration)
+        //    _servicesCollection.AddSingleton(configuration);
 
         var provider = _servicesCollection.BuildServiceProvider();
         initializer?.Invoke(provider);
