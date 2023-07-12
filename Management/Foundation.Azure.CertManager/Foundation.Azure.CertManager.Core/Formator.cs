@@ -37,3 +37,4 @@ public static class Formator
         return builder.ToString();
     }
 }
+
