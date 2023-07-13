@@ -1,4 +1,5 @@
 ﻿using Certes;
+using Certes.Acme;
 using Foundation.Azure.CertManager.Core.Configuration;
 using Foundation.Processing.Pipeline;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,8 @@ public class LetsEncryptCreateAccount : Command
     public async Task<Result> ExecuteAsync(Context context, CertificateConfig domain)
     {
         _log.LogInformation($"{domain.DomainName} - Create lets encript account.");
-        context.AcmeContext = new AcmeContext(_config.LetsEncrypt.ServiceUrl);
+        //context.AcmeContext = new AcmeContext(_config.LetsEncrypt.ServiceUrl);
+        context.AcmeContext = new AcmeContext(WellKnownServers.LetsEncryptV2);
         context.Account = await context.AcmeContext.NewAccount(_config.LetsEncrypt.Account.EMail, true);
 
         return Result.Next();

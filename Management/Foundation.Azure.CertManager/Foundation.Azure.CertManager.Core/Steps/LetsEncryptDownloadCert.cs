@@ -24,9 +24,6 @@ public class LetsEncryptDownloadCert : Command
         if (string.IsNullOrWhiteSpace(domain.DomainName))
             throw new ArgumentException("Domain name can not be null;");
 
-        _log.LogInformation($"{domain.DomainName} - Wait for 60s...");
-        await Task.Delay(TimeSpan.FromSeconds(60));
-
         var csrinfo = GetCsrInfo(domain);
         var privateKey = KeyFactory.NewKey(KeyAlgorithm.RS256);
         

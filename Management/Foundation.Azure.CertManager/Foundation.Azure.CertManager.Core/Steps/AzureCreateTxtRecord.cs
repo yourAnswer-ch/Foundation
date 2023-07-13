@@ -32,13 +32,14 @@ public class AzureCreateTxtRecord : AzureManagement
         foreach (var token in context.DnsTokens)
         {
             update = record.WithText(token);
+            _log.LogInformation($"{domain.DomainName} - Add token: {token}");
         }
 
         if (update != null)
         {
             await update.Attach().ApplyAsync();
         }
-
+       
         return Result.Next();
     }
 }
