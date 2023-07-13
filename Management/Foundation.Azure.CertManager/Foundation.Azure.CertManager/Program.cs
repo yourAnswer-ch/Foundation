@@ -27,8 +27,6 @@ var stack = DefaultAzureStack.Create
         
         s.AddPipeline(builder =>
         {
-            //builder.AddCommand<LetsEncryptCreateAccount>();
-
             builder.AddCommand<AzureCheckIfIsExpired>();
             builder.AddCommand<LetsEncryptCreateAccount>();
             builder.AddCommand<LetsEncryptCreateOrder>();
