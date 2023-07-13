@@ -14,10 +14,12 @@ namespace Foundation.Azure.CertManager.Core.Steps;
 public class AzureCreateTxtRecord : Command // AzureManagement
 {
     private readonly ILogger _log;
+    private readonly CertificatesConfig _config;
 
     public AzureCreateTxtRecord(IConfiguration config, ILogger<AzureCreateTxtRecord> log) //: base(config)
     {     
         _log = log;
+        _config = config.GetCertManagerConfig();
     }
 
 
@@ -25,7 +27,12 @@ public class AzureCreateTxtRecord : Command // AzureManagement
     {
         _log.LogInformation($"{domain.DomainName} - Azure create txt record for validation.");
 
-        var armClient = new ArmClient(new DefaultAzureCredential());
+        var armClient = new ArmClient(
+            new ClientSecretCredential(
+                _config.AdTenant.TenantId,
+                _config.AdTenant.ClientId,
+                _config.AdTenant.ClientSecret));
+
         var subscription = await armClient.GetDefaultSubscriptionAsync();
 
         ResourceGroupResource resourceGroup = await subscription.GetResourceGroupAsync(domain.ResourceGroup);

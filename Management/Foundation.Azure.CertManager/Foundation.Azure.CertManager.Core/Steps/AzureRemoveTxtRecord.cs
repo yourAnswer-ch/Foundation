@@ -13,17 +13,24 @@ namespace Foundation.Azure.CertManager.Core.Steps;
 public class AzureRemoveTxtRecord : Command
 {
     private readonly ILogger _log;
+    private readonly CertificatesConfig _config;
 
     public AzureRemoveTxtRecord(IConfiguration config, ILogger<AzureRemoveTxtRecord> log)
     {
         _log = log;
+        _config = config.GetCertManagerConfig();
     }
 
     public async Task<Result> ExecuteAsync(CertificateConfig domain)
     {
         _log.LogInformation($"{domain.DomainName} - Azure remove txt record.");
 
-        var armClient = new ArmClient(new DefaultAzureCredential());
+        var armClient = new ArmClient(
+        new ClientSecretCredential(
+            _config.AdTenant.TenantId,
+            _config.AdTenant.ClientId,
+            _config.AdTenant.ClientSecret));
+
         var subscription = await armClient.GetDefaultSubscriptionAsync();
 
         ResourceGroupResource resourceGroup = await subscription.GetResourceGroupAsync(domain.ResourceGroup);
