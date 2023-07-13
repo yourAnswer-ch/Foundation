@@ -13,8 +13,6 @@ public class Context
 
     public AcmeContext? AcmeContext { get; set; }
 
-    public IAccountContext? Account { get; set; }
-
     public List<IChallengeContext> Challenges { get; } 
 
     public IOrderContext? Order { get; set; }

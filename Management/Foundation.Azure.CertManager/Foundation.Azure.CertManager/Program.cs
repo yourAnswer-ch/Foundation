@@ -23,8 +23,12 @@ var stack = DefaultAzureStack.Create
             e.AddCertificateClient(new Uri("https://kv-fd-certificates.vault.azure.net/"));
         });
 
+        s.AddMemoryCache();
+        
         s.AddPipeline(builder =>
-        {            
+        {
+            //builder.AddCommand<LetsEncryptCreateAccount>();
+
             builder.AddCommand<AzureCheckIfIsExpired>();
             builder.AddCommand<LetsEncryptCreateAccount>();
             builder.AddCommand<LetsEncryptCreateOrder>();
