@@ -9,6 +9,4 @@ internal class KestrelBindingConfig
     public string Protocols { get; set; } = "HTTP2|HTTP3";
 
     public CertificateConfig? Certificate { get; set; }
-
-    public List<CertificateConfig> Certificates { get; set; } = new List<CertificateConfig>();
 }
