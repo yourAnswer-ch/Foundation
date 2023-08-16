@@ -9,4 +9,6 @@ public static class ServiceExtension
         services.AddHostedService<CertRefreshService>();
         services.AddSingleton<CertificationStore>();
     }
+
+    public static void Main(string[] args) { }
 }
