@@ -10,5 +10,6 @@ public static class ServiceExtension
         services.AddSingleton<CertificationStore>();
     }
 
+    //Only to satisfy compiler
     public static void Main(string[] args) { }
 }
