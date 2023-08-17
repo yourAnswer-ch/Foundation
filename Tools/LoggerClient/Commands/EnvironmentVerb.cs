@@ -55,7 +55,7 @@ internal class EnvironmentVerb : IAction
 
     private static readonly IDictionary<EnvironmentEnum, string> _environments = new Dictionary<EnvironmentEnum, string>
         {
-            {EnvironmentEnum.dev, "https://kv-flowcpt-dev.vault.azure.net/"},
+            {EnvironmentEnum.dev, "https://kv-flowcpt-prd.vault.azure.net/"},
             {EnvironmentEnum.prd, "https://kv-flowcpt-prd.vault.azure.net/"},
         };
 }

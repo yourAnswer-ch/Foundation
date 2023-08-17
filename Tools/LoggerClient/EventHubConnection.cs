@@ -1,4 +1,4 @@
-using Microsoft.Azure.EventHubs;
+using Azure.Messaging.EventHubs.Producer;
 
 namespace CloudLogger;
 
@@ -12,9 +12,9 @@ internal class EventHubConnection
 
     public EventHubConnection(string connectionString)
     {
-        var builder = new EventHubsConnectionStringBuilder(connectionString);
-        Host = builder.Endpoint.Host;
+        var builder = new EventHubProducerClient(connectionString);
+        Host = builder.EventHubName; //  .Endpoint.Host;
         ConnectionString = connectionString;
-        EntryPath = builder.EntityPath;
+        EntryPath = builder.FullyQualifiedNamespace; // .EntityPath;
     }
 }
