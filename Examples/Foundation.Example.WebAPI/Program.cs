@@ -13,7 +13,6 @@ builder.WebHost.ConfigureKestrel(o =>
     o.ConfigureBindings();
 });
 
-
 builder.Configuration.AddAzureKeyVault();
 
 builder.Services.AddAzureClients(builder =>
