@@ -1,5 +1,6 @@
+using Azure.Messaging.EventHubs.Consumer;
 using CloudLogger.Filtering;
-using Microsoft.Azure.EventHubs;
+using Microsoft.Azure.Amqp.Framing;
 
 namespace CloudLogger;
 
@@ -41,21 +42,20 @@ internal class LogReceiverHost
         }
     }
 
-    public async Task Connect(EventHubConnection connection, DateTime startDateTime)
+    public async Task Connect(EventHubConnection connection, bool startWithEarliestEvent) //DateTime startDateTime)
     {
         await Mutex.WaitAsync();
         try
         {
             Connection = connection;
-            var factory = EventHubClient.CreateFromConnectionString(Connection.ConnectionString);
-            var runtimeInformation = await factory.GetRuntimeInformationAsync();
+            var client = new EventHubConsumerClient(
+                EventHubConsumerClient.DefaultConsumerGroupName, 
+                connection.ConnectionString);
 
-            foreach (var partitionId in runtimeInformation.PartitionIds)
-            {
-                var receiver = new LogReceiver(_filter, _writer);
-                receiver.LaunchProcess(factory, partitionId, EventPosition.FromEnqueuedTime(startDateTime));
-                _receivers.Add(receiver);
-            }
+            var receiver = new LogReceiver(_filter, _writer);
+            //receiver.LaunchProcess(client, EventPosition.FromEnqueuedTime(startDateTime));
+            receiver.LaunchProcess(client, startWithEarliestEvent);
+            _receivers.Add(receiver);
         }
         finally
         {
@@ -76,19 +76,18 @@ internal class LogReceiverHost
         await Mutex.WaitAsync();
         try
         {
-            var conncection = Connection?.ConnectionString;
-            if (conncection == null)
-                throw new ArgumentNullException(nameof(conncection));
+            var connection = Connection?.ConnectionString;
+            if (connection == null)
+                throw new ArgumentNullException(nameof(connection));
 
-            var factory = EventHubClient.CreateFromConnectionString(conncection);
-            var runtimeInformation = await factory.GetRuntimeInformationAsync();
+            //var factory = EventHubClient.CreateFromConnectionString(conncection);
+            var client = new EventHubConsumerClient(
+                EventHubConsumerClient.DefaultConsumerGroupName,
+            connection);
 
-            foreach (var partitionId in runtimeInformation.PartitionIds)
-            {
-                var receiver = new LogReceiver(_filter, _writer);
-                receiver.LaunchProcess(factory, partitionId, EventPosition.FromEnqueuedTime(DateTime.Now - time));
-                _receivers.Add(receiver);
-            }
+            var receiver = new LogReceiver(_filter, _writer);
+            receiver.LaunchProcess(client, true);
+            _receivers.Add(receiver);
         }
         finally
         {

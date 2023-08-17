@@ -1,8 +1,9 @@
 using System.Diagnostics;
 using CloudLogger.Filtering;
 using Foundation.Logging.EventHubLogger.Interface;
-using Microsoft.Azure.EventHubs;
-
+using Azure.Messaging.EventHubs;
+using Azure.Messaging.EventHubs.Consumer;
+using Microsoft.Extensions.Azure;
 
 namespace CloudLogger;
 
@@ -35,39 +36,29 @@ internal class LogReceiver
 
     public bool IsRunning => _source?.IsCancellationRequested ?? false;       
 
-    public void LaunchProcess(EventHubClient factory, string partitionId, EventPosition position)
+    public void LaunchProcess(EventHubConsumerClient factory, bool startWithEarliestEvent)
     {
         _source = new CancellationTokenSource();            
         _currenTask = Task.Factory.StartNew(
-            () => ProcessMessage(factory, partitionId, position, _source.Token),
+            () => ProcessMessage(factory, startWithEarliestEvent, _source.Token),
             _source.Token, TaskCreationOptions.LongRunning, TaskScheduler.Current);
     }
 
-    private async Task ProcessMessage(EventHubClient factory, string partitionId, EventPosition position, CancellationToken token)
+    private async Task ProcessMessage(EventHubConsumerClient client, bool startWithEarliestEvent, CancellationToken token)
     {
         try
         {
-            var receiver = factory.CreateReceiver("$Default", partitionId, position);
-            Trace.WriteLine($"Receiver for partition: '{partitionId}' created.");
-
+            //var receiver = factory.CreateReceiver("$Default", partitionId, position);
+            //Trace.WriteLine($"Receiver for partition: '{partitionId}' created.");
+           
             try
             {
                 while (!token.IsCancellationRequested)
                 {
-                    var messages = await receiver.ReceiveAsync(100);
-
-                    if (messages == null)
-                        continue;
-
-                    foreach (var message in messages)
+                    await foreach (var messages in client.ReadEventsAsync(startWithEarliestEvent, cancellationToken: token))
                     {
-                        if(message.Body.Array == null)
-                            continue;
-
-                        var body = new MemoryStream(message.Body.Array);
-                        var entry = body.Deserialize();
-
-                        _block.WaitOne();
+                        var stream = messages.Data.EventBody.ToStream();
+                        var entry = stream.Deserialize();
 
                         LastUpdate = entry.Timestamp;
 
@@ -78,14 +69,14 @@ internal class LogReceiver
             }
             finally
             {
-                await receiver.CloseAsync();
-                Trace.WriteLine($"Receiver for partition: '{partitionId}' closed.");
+                //await receiver.CloseAsync();
+                //Trace.WriteLine($"Receiver for partition: '{partitionId}' closed.");
             }
         }
-        catch(QuotaExceededException)
-        {
-            ReportException($"Exceeded the maximum number of allowed receivers per partition in a consumer group which is 5.");
-        }
+        //catch(QuotaExceededException)
+        //{
+        //    ReportException($"Exceeded the maximum number of allowed receivers per partition in a consumer group which is 5.");
+        //}
         catch (Exception ex)
         {
             ReportException($"Receiver stoped: {ex.Message}");
