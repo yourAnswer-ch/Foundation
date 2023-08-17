@@ -1,9 +1,7 @@
 using System.Diagnostics;
 using CloudLogger.Filtering;
 using Foundation.Logging.EventHubLogger.Interface;
-using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Consumer;
-using Microsoft.Extensions.Azure;
 
 namespace CloudLogger;
 
@@ -48,8 +46,7 @@ internal class LogReceiver
     {
         try
         {
-            //var receiver = factory.CreateReceiver("$Default", partitionId, position);
-            //Trace.WriteLine($"Receiver for partition: '{partitionId}' created.");
+            Trace.WriteLine($"Receiver created.");
            
             try
             {
@@ -69,11 +66,11 @@ internal class LogReceiver
             }
             finally
             {
-                //await receiver.CloseAsync();
-                //Trace.WriteLine($"Receiver for partition: '{partitionId}' closed.");
+                await client.CloseAsync();
+                Trace.WriteLine($"Receiver closed.");
             }
         }
-        //catch(QuotaExceededException)
+        //catch (QuotaExceededException)
         //{
         //    ReportException($"Exceeded the maximum number of allowed receivers per partition in a consumer group which is 5.");
         //}

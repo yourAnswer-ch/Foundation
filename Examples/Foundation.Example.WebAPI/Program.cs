@@ -21,6 +21,7 @@ builder.Services.AddAzureClients(builder =>
     builder.AddCertificateClient(new Uri("https://kv-fd-certificates.vault.azure.net/")).WithName("KV-FD-Certificates");
 });
 
+builder.Services.AddCertService();
 
 builder.Logging.AddEventHubLogger();
 

@@ -26,7 +26,8 @@ public class CertRefreshService : IHostedService
 
         _store.LoadCertificates();
 
-        Task.Run(async () => await ScheduleLoop(cancellationToken), cancellationToken);
+        Task.Factory.StartNew(async () => await ScheduleLoop(cancellationToken),
+            cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
         return Task.CompletedTask;
     }
