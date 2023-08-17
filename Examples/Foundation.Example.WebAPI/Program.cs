@@ -17,7 +17,7 @@ builder.WebHost.ConfigureKestrel(o =>
 builder.Configuration.AddAzureKeyVault();
 
 builder.Services.AddAzureClients(builder =>
-{
+{    
     builder.AddCertificateClient(new Uri("https://kv-fd-certificates.vault.azure.net/")).WithName("KV-FD-Certificates");
 });
 
