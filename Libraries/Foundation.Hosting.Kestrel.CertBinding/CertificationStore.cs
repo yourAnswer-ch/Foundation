@@ -28,10 +28,12 @@ public class CertificationStore
 
     internal X509Certificate2 GetCertificat(ConnectionContext context, string name)
     {
-
-        foreach(var h in context.Features)
+        if (context != null)
         {
-            _log.LogInformation($"Feature: {h.Key}: {h.Value}");
+            foreach (var h in context.Features)
+            {
+                _log.LogInformation($"Feature: {h.Key}: {h.Value}");
+            }
         }
 
         if (_certificates.Count == 0)
