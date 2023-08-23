@@ -1,6 +1,5 @@
 ﻿using Azure.Security.KeyVault.Certificates;
 using Foundation.Hosting.Kestrel.CertBinding.Configuration;
-using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -26,18 +25,13 @@ public class CertificationStore
         _config = config.GetKestrelConfig();
     }
 
-    internal X509Certificate2 GetCertificat(ConnectionContext context, string name)
+    internal X509Certificate2 GetCertificat(string name)
     {
-        if (context != null)
-        {
-            foreach (var h in context.Features)
-            {
-                _log.LogInformation($"Feature: {h.Key}: {h.Value}");
-            }
-        }
-
         if (_certificates.Count == 0)
             throw new ArgumentException("No Certificates available");
+
+        if (string.IsNullOrWhiteSpace(name))
+            return _certificates.First().Certificate;
 
         var cert = _certificates.FirstOrDefault(x => x.Matches(name));
         if (cert != null)

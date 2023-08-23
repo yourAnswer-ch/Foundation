@@ -14,6 +14,6 @@ internal class CertSelector
 
     public X509Certificate2 SelectCert(ConnectionContext context, string name)
     {
-        return _store.GetCertificat(context, name);
+        return _store.GetCertificat(name);
     }
 }
