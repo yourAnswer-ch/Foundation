@@ -6,7 +6,7 @@ namespace Foundation.Hosting.Kestrel.CertBinding;
 
 public static partial class CertificationExtension
 {
-    [GeneratedRegex("DNS Name=(?<host>(?=.{1,253}$)(?:(?!-)[A-Za-z0-9-*]{1,63}(?<!-)\\.?)+)")]
+    [GeneratedRegex("(DNS Name=|DNS:)(?<host>(?=.{1,253}$)(?:(?!-)[A-Za-z0-9-*]{1,63}(?<!-)\\.?)+)")]
     private static partial Regex HostPattern();
     
     public static string[] GetSubjectAlternativeNames(this X509Certificate2 cert)
