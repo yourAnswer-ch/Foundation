@@ -83,11 +83,13 @@ public class CertificationStore
         var dnsName = cert.GetNameInfo(X509NameType.DnsName, false);
         var alternativeNames = cert.GetSubjectAlternativeNames();
 
+        var hosts = alternativeNames.Concat(new[] { dnsName }).Distinct();
+        var entry = new CertificateEntry(cert, hosts);
+
         _log.Log(
             verify ? LogLevel.Information : LogLevel.Warning,
-            $"Retrieved certificate - Name: {name} - Source: {source} - DNS Name: {dnsName} - Verify: {verify}");
+            $"Retrieved certificate - Name: {name} - Source: {source} - DNS Name: {entry} - Verify: {verify}");
 
-        var hosts = alternativeNames.Concat(new[] { dnsName }).Distinct();
-        return new CertificateEntry(cert, hosts);
+        return entry;
     }
 }
