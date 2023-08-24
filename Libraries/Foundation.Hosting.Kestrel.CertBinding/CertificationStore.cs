@@ -84,12 +84,6 @@ public class CertificationStore
         var dnsName = cert.GetNameInfo(X509NameType.DnsName, false);
         var alternativeNames = cert.GetSubjectAlternativeNames();
 
-        foreach (var ext in cert.Extensions) {
-            var asndata = new AsnEncodedData(ext.Oid, ext.RawData);
-            _log.LogInformation($"Name: {asndata.Oid?.FriendlyName} - Oid: {asndata.Oid?.Value} - Value: {asndata.Format(false)}");
-        }
-
-
         var hosts = alternativeNames.Concat(new[] { dnsName }).Distinct();
         var entry = new CertificateEntry(cert, hosts);
 
