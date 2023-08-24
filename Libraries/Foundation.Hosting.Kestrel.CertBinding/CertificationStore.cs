@@ -3,6 +3,7 @@ using Foundation.Hosting.Kestrel.CertBinding.Configuration;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Foundation.Hosting.Kestrel.CertBinding;
@@ -82,6 +83,12 @@ public class CertificationStore
         
         var dnsName = cert.GetNameInfo(X509NameType.DnsName, false);
         var alternativeNames = cert.GetSubjectAlternativeNames();
+
+        foreach (var ext in cert.Extensions) {
+            var asndata = new AsnEncodedData(ext.Oid, ext.RawData);
+            _log.LogInformation($"Name: {asndata.Oid?.FriendlyName} - Oid: {asndata.Oid?.Value} - Value: {asndata.Format(false)}");
+        }
+
 
         var hosts = alternativeNames.Concat(new[] { dnsName }).Distinct();
         var entry = new CertificateEntry(cert, hosts);
