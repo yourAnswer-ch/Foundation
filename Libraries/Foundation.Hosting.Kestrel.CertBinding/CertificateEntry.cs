@@ -6,17 +6,17 @@ internal class CertificateEntry
 {
     public X509Certificate2 Certificate {  get; private set; } 
 
-    public string Name { get; private set; }
+    public string[] Names { get; private set; }
 
-    internal CertificateEntry(X509Certificate2 certificate, string name)
+    internal CertificateEntry(X509Certificate2 certificate, IEnumerable<string> names)
     {
-        Name = name;
+        Names = names.ToArray();
         Certificate = certificate;        
     }
 
     public bool Matches(string hostname)
     {
-        return IsMatch(hostname, Name);
+        return Names.Any(e => IsMatch(hostname, e));
     }
 
     private bool IsMatch(string sni, string pattern)
@@ -42,5 +42,10 @@ internal class CertificateEntry
             return true;
 
         return string.Equals(patternLabel, sniLabel, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    public override string ToString()
+    {
+        return string.Join(", ", Names);
     }
 }

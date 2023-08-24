@@ -38,7 +38,7 @@ public class CertificationStore
             return cert.Certificate;
 
         cert = _certificates.First();
-        _log.LogWarning($"No matching certificate found for host: '{name}'. Certificate: {cert.Name} got selected.");
+        _log.LogWarning($"No matching certificate found for host: '{name}'. Certificate: {cert} got selected.");
         
         return cert.Certificate;
     }
@@ -78,14 +78,16 @@ public class CertificationStore
             throw new ArgumentException($"ServerCertBinder - CertificateClient not found - Name: {name}");
 
         X509Certificate2 cert = client.DownloadCertificate(name);
-
-        var dnsName = cert.GetNameInfo(X509NameType.DnsName, false);
         var verify = cert.Verify();
+        
+        var dnsName = cert.GetNameInfo(X509NameType.DnsName, false);
+        var alternativeNames = cert.GetSubjectAlternativeNames();
 
         _log.Log(
             verify ? LogLevel.Information : LogLevel.Warning,
             $"Retrieved certificate - Name: {name} - Source: {source} - DNS Name: {dnsName} - Verify: {verify}");
 
-        return new CertificateEntry(cert, dnsName);
+        var hosts = alternativeNames.Concat(new[] { dnsName }).Distinct();
+        return new CertificateEntry(cert, hosts);
     }
 }
