@@ -20,6 +20,9 @@ parameters:
 - name: 'vstsFeed'
   default: '2d453fef-16a6-4802-a154-ee007cf87da0/69b88f5e-321a-4194-af0f-848884079628'
   type: string
+- name: 'dotnetVersion'
+  default: '7.x'
+  type: string
 
 jobs:
 - job: Build_and_deploy
@@ -32,12 +35,12 @@ jobs:
 
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk 7.x'
+    displayName: 'Use .NET Core sdk ${{ parameters.dotnetVersion }}'
     inputs:
       packageType: 'sdk'
-      version: '7.x'
-      includePreviewVersions: true      
-
+      version: '${{ parameters.dotnetVersion }}'
+      includePreviewVersions: false 
+      
   - task: DotNetCoreCLI@2
     displayName: 'restore packages'
     inputs:
