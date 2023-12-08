@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -20,8 +20,8 @@
   <ItemGroup>
     <PackageReference Include="Foundation.Configuration.Defaults" Version="7.0.18659" />
     <PackageReference Include="Foundation.Notification.Slack" Version="7.0.18660" />
-    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="7.0.18662" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.0" />
+    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="7.0.18968" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>
