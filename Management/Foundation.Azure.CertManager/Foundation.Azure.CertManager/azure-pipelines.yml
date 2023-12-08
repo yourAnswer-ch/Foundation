@@ -15,4 +15,3 @@ jobs:
     kubernetesDeploymentName: 'cronjobs/cert-maintainer-dev'
     kubernetesContainerName: 'cert-maintainer'
     containerRepository: 'azure/cert-maintainer'
-    dotnetVersion: '8.x'
