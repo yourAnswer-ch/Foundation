@@ -56,7 +56,6 @@ public class Stack : IStack
             throw new ArgumentException("Stack - Add configuration bevore adding logging.");
 
         var configuration = (IConfiguration)_configurationBuilder.Build();
-        //_servicesCollection.AddSingleton(configuration);
         _servicesCollection.AddLogging(b =>
         {
             builder?.Invoke(b, _configurationBuilder.Build());
@@ -83,9 +82,6 @@ public class Stack : IStack
 
     public virtual IServiceProvider Build(Action<IServiceProvider>? initializer = null)
     {
-        //if (_configurationBuilder?.Build() is IConfiguration configuration)
-        //    _servicesCollection.AddSingleton(configuration);
-
         var provider = _servicesCollection.BuildServiceProvider();
         initializer?.Invoke(provider);
         return provider;
