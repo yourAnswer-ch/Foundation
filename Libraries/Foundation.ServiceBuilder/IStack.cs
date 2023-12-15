@@ -18,5 +18,7 @@ public interface IStack
 
     IStack AddServices(Action<IServiceCollection>? builder);
 
+    IStack AddServices(Action<IServiceCollection, IConfiguration>? builder = null);
+
     IServiceProvider Build(Action<IServiceProvider>? initializer = null);
 }
