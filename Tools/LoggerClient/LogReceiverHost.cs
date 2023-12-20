@@ -4,14 +4,11 @@ using Microsoft.Azure.Amqp.Framing;
 
 namespace CloudLogger;
 
-internal class LogReceiverHost
+internal class LogReceiverHost(Columns columns, LogFilter filter, LogWriter writer)
 {
     public EventHubConnection? Connection { get; private set; }
 
-    private readonly LogFilter _filter;
-    private readonly LogWriter _writer;
-
-    private readonly List<LogReceiver> _receivers;
+    private readonly List<LogReceiver> _receivers = [];
     private static readonly SemaphoreSlim Mutex = new(1);
 
     public DateTime LastUpdate => _receivers.Any() ? _receivers.Max(e => e.LastUpdate) : DateTime.Now;
@@ -52,7 +49,7 @@ internal class LogReceiverHost
                 EventHubConsumerClient.DefaultConsumerGroupName, 
                 connection.ConnectionString);
 
-            var receiver = new LogReceiver(_filter, _writer);
+            var receiver = new LogReceiver(columns, filter, writer);
             //receiver.LaunchProcess(client, EventPosition.FromEnqueuedTime(startDateTime));
             receiver.LaunchProcess(client, startWithEarliestEvent);
             _receivers.Add(receiver);
@@ -61,13 +58,6 @@ internal class LogReceiverHost
         {
             Mutex.Release();
         }
-    }
-
-    public LogReceiverHost(LogFilter filter, LogWriter writer)
-    {
-        _filter = filter;
-        _writer = writer;
-        _receivers = new List<LogReceiver>();
     }
 
     public async Task Rewind(TimeSpan time)
@@ -85,7 +75,7 @@ internal class LogReceiverHost
                 EventHubConsumerClient.DefaultConsumerGroupName,
             connection);
 
-            var receiver = new LogReceiver(_filter, _writer);
+            var receiver = new LogReceiver(columns, filter, writer);
             receiver.LaunchProcess(client, true);
             _receivers.Add(receiver);
         }

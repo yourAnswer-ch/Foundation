@@ -9,9 +9,9 @@ internal class FileLogWriter : LogWriter
 
     public string FileName { get; set; }
 
-    public override void WriteMessage(LogEntry logEntry)
+    public override void WriteMessage(Columns columns, LogEntry logEntry)
     {
-        base.WriteMessage(logEntry);
+        base.WriteMessage(columns, logEntry);
 
         if (Disabled) return;
 

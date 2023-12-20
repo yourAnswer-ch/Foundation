@@ -6,21 +6,61 @@ internal class LogWriter
 {
     internal static object Mutex = new object();
 
-    public virtual void WriteMessage(LogEntry logEntry)
+    public virtual void WriteMessage(Columns columns, LogEntry log)
     {
-        var message = logEntry.ToString(Program.showName);
-        var color = GetColor((int) logEntry.LogLevel);
+        var color = GetColor((int)log.LogLevel);
         lock (Console.Out)
         {
-            if (Console.ForegroundColor == color)
-            {
-                Console.WriteLine(message);
-            }
-            else
-            {
+            if (Console.ForegroundColor != color)
                 Console.ForegroundColor = color;
-                Console.WriteLine(message);
+
+            if (columns.ShowTimestamp)
+            {
+                Console.Out.Write("[");
+                Console.Out.Write(log.Timestamp.ToString("HH:mm:ss.ffff ddMMyy"));
+                Console.Out.Write("] ");
             }
+
+            if (columns.ShowLogLevel)
+            {
+                Console.Out.Write(log.LogLevel.ToString().PadRight(11));
+                Console.Out.Write(" ");
+            }
+
+            if (columns.ShowHost)
+            {
+                Console.Out.Write("[");
+                Console.Out.Write(log.Host);
+                Console.Out.Write("] ");
+            }
+
+            if (columns.ShowApp)
+            {
+                Console.Out.Write("[");
+                Console.Out.Write(log.App);
+                Console.Out.Write("] ");
+            }
+
+            if (columns.ShowName)
+            {
+                Console.Out.Write("[");
+                Console.Out.Write(log.Name);
+                Console.Out.Write("] ");
+            }
+
+            if (columns.ShowCorrelationId && !string.IsNullOrEmpty(log.CorrelationId))
+            {
+                Console.Out.Write("[");
+                Console.Out.Write(log.CorrelationId);
+                Console.Out.Write("] ");
+            }
+
+            if (columns.ShowMessage)
+            {
+                Console.Out.Write(log.Message);
+            }
+
+            Console.Out.WriteLine();
         }
     }
 

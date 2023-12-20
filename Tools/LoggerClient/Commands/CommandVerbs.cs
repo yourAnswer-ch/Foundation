@@ -14,7 +14,7 @@ internal static class CommandVerbs
         typeof(FilterVerb),
         typeof(EnvironmentVerb),
         typeof(ReplayVerb),
-        typeof(ShownameVerb)
+        typeof(ColumnVerb)
     }.ToArray();
 
 

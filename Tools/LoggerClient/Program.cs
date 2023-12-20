@@ -8,6 +8,7 @@ public class Program
 {
     internal static bool leave;
     internal static bool showName = false;
+    internal static Columns columns = new Columns();
     internal static LogFilter? filter;
     internal static LogReceiverHost? host;
     internal static FileLogWriter? writer;    
@@ -18,7 +19,7 @@ public class Program
         writer = new FileLogWriter(@"spool.log");
 
         filter = new LogFilter();
-        host = new LogReceiverHost(filter, writer);
+        host = new LogReceiverHost(columns, filter, writer);
 
         CommandVerbs.ParseStart(args);
 

@@ -5,10 +5,8 @@ using Azure.Messaging.EventHubs.Consumer;
 
 namespace CloudLogger;
 
-internal class LogReceiver
+internal class LogReceiver(Columns columns, LogFilter filter, LogWriter writer)
 {
-    private readonly LogFilter _filter;
-    private readonly LogWriter _writer;
     private readonly ManualResetEvent _block = new ManualResetEvent(true);
 
     private Task? _currenTask;
@@ -59,8 +57,8 @@ internal class LogReceiver
 
                         LastUpdate = entry.Timestamp;
 
-                        if (_filter.Match(entry) && !token.IsCancellationRequested)
-                            _writer.WriteMessage(entry);
+                        if (filter.Match(entry) && !token.IsCancellationRequested)
+                            writer.WriteMessage(columns, entry);
                     }
                 }
             }
@@ -94,11 +92,5 @@ internal class LogReceiver
             }
             _source?.Cancel();
         //}
-    }
-
-    public LogReceiver(LogFilter filter, LogWriter writer)
-    {
-        _filter = filter;
-        _writer = writer;
     }
 }
