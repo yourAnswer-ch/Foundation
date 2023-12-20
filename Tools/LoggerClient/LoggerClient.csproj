@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Resources\datastream02.ico</ApplicationIcon>
+    <PublishAot>False</PublishAot>
+    <Trimming></Trimming>
   </PropertyGroup>
 
   <ItemGroup>
