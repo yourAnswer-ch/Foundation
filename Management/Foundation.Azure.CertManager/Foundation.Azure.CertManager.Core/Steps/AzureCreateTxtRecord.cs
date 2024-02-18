@@ -33,11 +33,13 @@ public class AzureCreateTxtRecord : Command // AzureManagement
         //        _config.AdTenant.ClientId,
         //        _config.AdTenant.ClientSecret));
 
-        var armClient = new ArmClient(
-            new DefaultAzureCredential(
-                new DefaultAzureCredentialOptions { 
-                    TenantId = _config.AdTenant.TenantId
-                } ));
+        //var armClient = new ArmClient(
+        //    new DefaultAzureCredential(
+        //        new DefaultAzureCredentialOptions { 
+        //            TenantId = _config.AdTenant.TenantId
+        //        } ));
+
+        var armClient = new ArmClient(new DefaultAzureCredential());
 
         var subscription = await armClient.GetDefaultSubscriptionAsync();
 
