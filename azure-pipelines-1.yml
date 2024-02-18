@@ -34,9 +34,10 @@ steps:
     PackageVersion: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
 
 - task: Docker@2
+  displayName: 'Build image'
   inputs:
     containerRegistry: 'Kaformatik Registry'
-    repository: 'CRKaformatik'
+    repository: 'azure/cert-maintainer'
     command: 'build'
     Dockerfile: '**/Foundation.Azure.CertManager/Dockerfile'
     buildContext: 'Management/Foundation.Azure.CertManager'
@@ -46,10 +47,10 @@ steps:
     arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
 
 - task: Docker@2
-  displayName: 'Push DEV image'
+  displayName: 'Push image'
   inputs:
     containerRegistry: 'Kaformatik Registry'
-    repository: 'CRKaformatik'
+    repository: 'azure/cert-maintainer'
     command: 'push'
     Dockerfile: '**/Foundation.Azure.CertManager/Dockerfile'
     buildContext: 'Management/Foundation.Azure.CertManager'
