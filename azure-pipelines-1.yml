@@ -18,6 +18,13 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
+- task: AzureKeyVault@2
+  displayName: 'Azure Key Vault: KV-Build-Secrets'
+  inputs:
+    azureSubscription: 'Azure-Pipelin-Access'
+    KeyVaultName: 'KV-Build-Secrets'
+    RunAsPreJob: true
+
 - task: Docker@2
   inputs:
     containerRegistry: 'Kaformatik Registry'
