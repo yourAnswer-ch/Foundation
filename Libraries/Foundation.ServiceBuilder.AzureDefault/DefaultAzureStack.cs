@@ -59,4 +59,32 @@ public class DefaultAzureStack : Stack
             builder?.Invoke(b);
         });
     }
+
+
+    public IStack AddLoggingWithoutEventHubLogger()
+    {
+        return AddLoggingWithoutEventHubLogger(_ => { });
+    }
+
+    public IStack AddLoggingWithoutEventHubLogger(Action<ILoggingBuilder, IConfiguration>? builder)
+    {
+        return base.AddLogging((b, c) =>
+        {
+            b.AddConsole();
+            b.AddTraceSource("Sherlock");
+            b.AddConfiguration(c.GetSection("Logging"));
+            builder?.Invoke(b, c);
+        });
+    }
+
+    public IStack AddLoggingWithoutEventHubLogger(Action<ILoggingBuilder>? builder)
+    {
+        return base.AddLogging((b, c) =>
+        {
+            b.AddConsole();
+            b.AddTraceSource("Sherlock");
+            b.AddConfiguration(c.GetSection("Logging"));
+            builder?.Invoke(b);
+        });
+    }
 }
