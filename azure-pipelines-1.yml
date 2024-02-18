@@ -8,10 +8,10 @@ trigger:
 
 parameters:
 - name: 'versionMajor'
-  default: '3'
+  default: '8'
   type: string
 - name: 'versionMinor'
-  default: '1'
+  default: '0'
   type: string
 
 pool:
