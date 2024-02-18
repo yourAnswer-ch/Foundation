@@ -6,6 +6,14 @@
 trigger:
 - main
 
+parameters:
+- name: 'versionMajor'
+  default: '3'
+  type: string
+- name: 'versionMinor'
+  default: '1'
+  type: string
+
 pool:
   vmImage: ubuntu-latest
 
