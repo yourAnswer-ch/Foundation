@@ -37,7 +37,7 @@ steps:
   inputs:
     containerRegistry: 'Kaformatik Registry'
     repository: 'CRKaformatik'
-    command: 'buildAndPush'
+    command: 'build'
     Dockerfile: '**/Foundation.Azure.CertManager/Dockerfile'
     buildContext: 'Management/Foundation.Azure.CertManager'
     tags: |
