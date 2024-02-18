@@ -44,3 +44,15 @@ steps:
       $(Build.BuildId)
       latest
     arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
+
+- task: Docker@2
+  displayName: 'Push DEV image'
+  inputs:
+    containerRegistry: 'Kaformatik Registry'
+    repository: 'CRKaformatik'
+    command: 'push'
+    Dockerfile: '**/Foundation.Azure.CertManager/Dockerfile'
+    buildContext: 'Management/Foundation.Azure.CertManager'
+    tags: |
+      $(Build.BuildId)
+      latest
