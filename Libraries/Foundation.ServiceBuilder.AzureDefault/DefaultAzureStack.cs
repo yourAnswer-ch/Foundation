@@ -5,23 +5,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Foundation.ServiceBuilder.AzureDefault;
 
-public class DefaultAzureStack : Stack
+public static class DefaultSettings
 {
-    public static new IStack Create => new DefaultAzureStack();
-
-    public override IStack AddConfiguration()
+    public static IStack AddDefaultConfiguration(this IStack stack)
     {
-        return AddConfiguration(null);
+        return stack.AddDefaultConfiguration(null);
     }
 
-    public override IStack AddConfiguration(Action<IConfigurationBuilder>? builder)
+    public static IStack AddDefaultConfiguration(this IStack stack, Action<IConfigurationBuilder>? builder)
     {
         var environment = Environment.GetEnvironmentVariable("ENVIRONMENT");
 
         if (string.IsNullOrWhiteSpace(environment))
             environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-        return base.AddConfiguration(b =>
+        return stack.AddConfiguration(b =>
         {
             b.AddJsonFile("appsettings.json", false);
             if (!string.IsNullOrWhiteSpace(environment))
@@ -31,14 +29,14 @@ public class DefaultAzureStack : Stack
         });
     }
 
-    public override IStack AddLogging()
+    public static IStack AddDefaultLogging(this IStack stack)
     {
-        return AddLogging(_ => { });
+        return stack.AddDefaultLogging(_ => { });
     }
 
-    public override IStack AddLogging(Action<ILoggingBuilder, IConfiguration>? builder)
+    public static IStack AddDefaultLogging(this IStack stack, Action<ILoggingBuilder, IConfiguration>? builder)
     {
-        return base.AddLogging((b, c) =>
+        return stack.AddLogging((b, c) =>
         {
             b.AddConsole();                
             b.AddEventHubLogger();
@@ -48,9 +46,9 @@ public class DefaultAzureStack : Stack
         });
     }
 
-    public override IStack AddLogging(Action<ILoggingBuilder>? builder)
+    public static IStack AddDefaultLogging(this IStack stack, Action<ILoggingBuilder>? builder)
     {
-        return base.AddLogging((b, c) =>
+        return stack.AddLogging((b, c) =>
         {
             b.AddConsole();
             b.AddEventHubLogger();

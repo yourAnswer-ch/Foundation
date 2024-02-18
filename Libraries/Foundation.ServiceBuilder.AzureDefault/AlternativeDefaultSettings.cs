@@ -5,12 +5,12 @@ namespace Foundation.ServiceBuilder.AzureDefault;
 
 public static class AlternativeDefaultSettings
 {
-    public static IStack AddLoggingWithoutEventHubLogger(this IStack stack)
+    public static IStack AddDefaultLoggingWithoutEventHubLogger(this IStack stack)
     {
-        return stack.AddLoggingWithoutEventHubLogger(_ => { });
+        return stack.AddDefaultLoggingWithoutEventHubLogger(_ => { });
     }
 
-    public static IStack AddLoggingWithoutEventHubLogger(this IStack stack, Action<ILoggingBuilder, IConfiguration>? builder)
+    public static IStack AddDefaultLoggingWithoutEventHubLogger(this IStack stack, Action<ILoggingBuilder, IConfiguration>? builder)
     {
         return stack.AddLogging((b, c) =>
         {
@@ -21,7 +21,7 @@ public static class AlternativeDefaultSettings
         });
     }
 
-    public static IStack AddLoggingWithoutEventHubLogger(this IStack stack, Action<ILoggingBuilder>? builder)
+    public static IStack AddDefaultLoggingWithoutEventHubLogger(this IStack stack, Action<ILoggingBuilder>? builder)
     {
         return stack.AddLogging((b, c) =>
         {
