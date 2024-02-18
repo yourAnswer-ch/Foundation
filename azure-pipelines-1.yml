@@ -39,7 +39,7 @@ steps:
     repository: 'CRKaformatik'
     command: 'buildAndPush'
     Dockerfile: '**/Foundation.Azure.CertManager/Dockerfile'
-    buildContext: 
+    buildContext: 'Management/Foundation.Azure.CertManager'
     tags: |
       $(Build.BuildId)
       latest
