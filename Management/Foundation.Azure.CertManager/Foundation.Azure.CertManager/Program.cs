@@ -5,6 +5,7 @@ using Foundation.Processing.Pipeline.Abstractions;
 using Foundation.Azure.CertManager.Core.Configuration;
 using Foundation.Azure.CertManager.Core.Steps;
 using Foundation.Azure.CertManager.Core;
+using Foundation.ServiceBuilder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,24 +14,24 @@ using SlackBotMessages.Models;
 using SlackBotMessages;
 using Certes;
 
-var stack = DefaultAzureStack.Create
-    .AddConfiguration()
-    .AddLogging()
+var stack = Stack.Create
+    .AddDefaultConfiguration()
+    .AddDefaultLoggingWithoutEventHubLogger()
     .AddServices(s =>
     {
         s.AddAzureClients(e =>
         {
-            e.AddCertificateClient(new Uri("https://kv-fd-certificates.vault.azure.net/"));
+            e.AddCertificateClient(new Uri("https://kv-main.vault.azure.net/"));
         });
 
         s.AddMemoryCache();
         
         s.AddPipeline(builder =>
         {
-            builder.AddCommand<AzureCheckIfIsExpired>();
-            builder.AddCommand<LetsEncryptCreateAccount>();
-            builder.AddCommand<LetsEncryptCreateOrder>();
-            builder.AddCommand<LetsEncryptAuthorizeDns>();
+            //builder.AddCommand<AzureCheckIfIsExpired>();
+            //builder.AddCommand<LetsEncryptCreateAccount>();
+            //builder.AddCommand<LetsEncryptCreateOrder>();
+            //builder.AddCommand<LetsEncryptAuthorizeDns>();
             builder.AddCommand<AzureCreateTxtRecord, AzureRemoveTxtRecord>();
             builder.AddCommand<LetsEncryptValidate>();
             builder.AddCommand<LetsEncryptDownloadCert>();
@@ -76,8 +77,7 @@ foreach (var domain in config.Certificates)
 
     await report.SendMessage(slack, success, () =>
     {
-        return new Attachment[] { new Attachment
-        {
+        return new Attachment[] { new() {
             Fallback = "Verify the following domain",
             Pretext = $"Verify the following domain {Emoji.HeavyCheckMark}",
             Text = $"https://{domain.DomainName}",

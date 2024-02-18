@@ -27,11 +27,17 @@ public class AzureCreateTxtRecord : Command // AzureManagement
     {
         _log.LogInformation($"{domain.DomainName} - Azure create txt record for validation.");
 
+        //var armClient = new ArmClient(
+        //    new ClientSecretCredential(
+        //        _config.AdTenant.TenantId,
+        //        _config.AdTenant.ClientId,
+        //        _config.AdTenant.ClientSecret));
+
         var armClient = new ArmClient(
-            new ClientSecretCredential(
-                _config.AdTenant.TenantId,
-                _config.AdTenant.ClientId,
-                _config.AdTenant.ClientSecret));
+            new DefaultAzureCredential(
+                new DefaultAzureCredentialOptions { 
+                    TenantId = _config.AdTenant.TenantId
+                } ));
 
         var subscription = await armClient.GetDefaultSubscriptionAsync();
 

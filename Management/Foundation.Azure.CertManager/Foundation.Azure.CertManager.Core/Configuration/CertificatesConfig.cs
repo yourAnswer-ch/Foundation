@@ -6,7 +6,7 @@ public class CertificatesConfig
     {
         AdTenant = new AdTenantConfig();
         LetsEncrypt = new LetsEncryptConfig();
-        Certificates = new List<CertificateConfig>();
+        Certificates = [];
     }
 
     public int DaysBeforeExpired { get; set; } = 30;
