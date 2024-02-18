@@ -28,10 +28,10 @@ var stack = Stack.Create
         
         s.AddPipeline(builder =>
         {
-            //builder.AddCommand<AzureCheckIfIsExpired>();
-            //builder.AddCommand<LetsEncryptCreateAccount>();
-            //builder.AddCommand<LetsEncryptCreateOrder>();
-            //builder.AddCommand<LetsEncryptAuthorizeDns>();
+            builder.AddCommand<AzureCheckIfIsExpired>();
+            builder.AddCommand<LetsEncryptCreateAccount>();
+            builder.AddCommand<LetsEncryptCreateOrder>();
+            builder.AddCommand<LetsEncryptAuthorizeDns>();
             builder.AddCommand<AzureCreateTxtRecord, AzureRemoveTxtRecord>();
             builder.AddCommand<LetsEncryptValidate>();
             builder.AddCommand<LetsEncryptDownloadCert>();
@@ -67,22 +67,27 @@ foreach (var domain in config.Certificates)
     if (context.IsValid)
         continue;
 
-    var report = new SlackReport(
-       username: "Certificate maintinace",
-       iconUrl: "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
-       successText: $"Certificate successfully renewed - Domain: {domain.DomainName}",
-       errorText: $"Certificate renewal faild - Domain: {domain.DomainName}",
-       errorMessageFallback: "Exceptions occurd check logs for details",
-       errorMessagePretext: $"Exceptions occurd check logs for details {Emoji.X}");
-
-    await report.SendMessage(slack, success, () =>
+    foreach (var exception in pipeline.Exceptions)
     {
-        return new Attachment[] { new() {
-            Fallback = "Verify the following domain",
-            Pretext = $"Verify the following domain {Emoji.HeavyCheckMark}",
-            Text = $"https://{domain.DomainName}",
-            Color = "good",
-        } };
-    },
-    () => pipeline.Exceptions);
+        log.LogError(0, exception, $"Certificate renewal faild - Domain: {domain.DomainName}");
+    }
+
+    //var report = new SlackReport(
+    //   username: "Certificate maintinace",
+    //   iconUrl: "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
+    //   successText: $"Certificate successfully renewed - Domain: {domain.DomainName}",
+    //   errorText: $"Certificate renewal faild - Domain: {domain.DomainName}",
+    //   errorMessageFallback: "Exceptions occurd check logs for details",
+    //   errorMessagePretext: $"Exceptions occurd check logs for details {Emoji.X}");
+
+    //await report.SendMessage(slack, success, () =>
+    //{
+    //    return new Attachment[] { new() {
+    //        Fallback = "Verify the following domain",
+    //        Pretext = $"Verify the following domain {Emoji.HeavyCheckMark}",
+    //        Text = $"https://{domain.DomainName}",
+    //        Color = "good",
+    //    } };
+    //},
+    //() => pipeline.Exceptions);
 }
