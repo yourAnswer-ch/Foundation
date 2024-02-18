@@ -10,14 +10,6 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-
 - task: AzureKeyVault@2
   displayName: 'Azure Key Vault: KV-Build-Secrets'
   inputs:
@@ -25,10 +17,22 @@ steps:
     KeyVaultName: 'KV-Build-Secrets'
     RunAsPreJob: true
 
+- task: bleddynrichards.Assembly-Info-Task.Assembly-Info-NetCore.Assembly-Info-NetCore@2
+  displayName: 'Set assembly versions'
+  inputs:
+    VersionNumber: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+    FileVersionNumber: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+    InformationalVersion: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+    PackageVersion: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+
 - task: Docker@2
   inputs:
     containerRegistry: 'Kaformatik Registry'
     repository: 'CRKaformatik'
     command: 'buildAndPush'
     Dockerfile: '**/Foundation.Azure.CertManager/Dockerfile'
-    buildContext: 'Management/Foundation.Azure.CertManager'
+    buildContext: 
+    tags: |
+      $(Build.BuildId)
+      latest
+    arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
