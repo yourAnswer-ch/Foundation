@@ -4,6 +4,7 @@ using Foundation.Processing.Pipeline.Abstractions;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Foundation.ServiceBuilder.AzureDefault;
+using Foundation.ServiceBuilder;
 using Foundation.Notification.Slack;
 using SlackBotMessages.Models;
 using SlackBotMessages;
@@ -16,9 +17,9 @@ var report = new SlackReport(
    errorMessageFallback: "Exceptions occurd check logs for details",
    errorMessagePretext: $"Exceptions occurd check logs for details {Emoji.X}");
 
-var stack = DefaultAzureStack.Create
-    .AddConfiguration()
-    .AddLogging()
+var stack = Stack.Create
+    .AddDefaultConfiguration()
+    .AddDefaultLogging()
     .AddServices(s =>
     {
         s.AddAzureClients(e =>
