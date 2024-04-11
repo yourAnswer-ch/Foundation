@@ -14,7 +14,7 @@ using Azure.Identity;
 
 var stack = Stack.Create
     .AddDefaultConfiguration()
-    .AddDefaultLoggingWithoutEventHubLogger()
+    .AddDefaultLogging()
     .AddServices((s, c) =>
     {
         var config = c.GetCertManagerConfig();
