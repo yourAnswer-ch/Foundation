@@ -1,5 +1,4 @@
-﻿using Foundation.Notification.Slack;
-using Foundation.ServiceBuilder.AzureDefault;
+﻿using Foundation.ServiceBuilder.AzureDefault;
 using Foundation.Processing.Pipeline;
 using Foundation.Processing.Pipeline.Abstractions;
 using Foundation.Azure.CertManager.Core.Configuration;
@@ -10,18 +9,22 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SlackBotMessages.Models;
-using SlackBotMessages;
 using Certes;
+using Azure.Identity;
 
 var stack = Stack.Create
     .AddDefaultConfiguration()
-    .AddDefaultLoggingWithoutEventHubLogger()
-    .AddServices(s =>
+    .AddDefaultLogging()
+    .AddServices((s, c) =>
     {
+        var config = c.GetCertManagerConfig();
         s.AddAzureClients(e =>
-        {
-            e.AddCertificateClient(new Uri("https://kv-main.vault.azure.net/"));
+        {       
+            e.AddCertificateClient(new Uri(config.KeyVault.BaseUrl!));
+            e.UseCredential(new DefaultAzureCredential(new DefaultAzureCredentialOptions
+            {
+                TenantId = config.AdTenant.TenantId
+            }));
         });
 
         s.AddMemoryCache();
@@ -41,12 +44,10 @@ var stack = Stack.Create
             builder.AddExceptionFormater<AcmeRequestException>(Formator.Exception);
         });
 
-        s.AddSlackBot();
     });
 
 var provider = stack.Build();
 
-var slack = provider.GetRequiredService<ISlackBotService>();
 var pipeline = provider.GetRequiredService<IPipeline>();
 
 
@@ -62,32 +63,5 @@ foreach (var domain in config.Certificates)
     var success = await pipeline.ExecuteAsync(new { 
         Context = context, 
         Domain = domain 
-    });
-
-    if (context.IsValid)
-        continue;
-
-    foreach (var exception in pipeline.Exceptions)
-    {
-        log.LogError(0, exception, $"Certificate renewal faild - Domain: {domain.DomainName}");
-    }
-
-    //var report = new SlackReport(
-    //   username: "Certificate maintinace",
-    //   iconUrl: "https://azure.microsoft.com/svghandler/key-vault/?width=300&height=300",
-    //   successText: $"Certificate successfully renewed - Domain: {domain.DomainName}",
-    //   errorText: $"Certificate renewal faild - Domain: {domain.DomainName}",
-    //   errorMessageFallback: "Exceptions occurd check logs for details",
-    //   errorMessagePretext: $"Exceptions occurd check logs for details {Emoji.X}");
-
-    //await report.SendMessage(slack, success, () =>
-    //{
-    //    return new Attachment[] { new() {
-    //        Fallback = "Verify the following domain",
-    //        Pretext = $"Verify the following domain {Emoji.HeavyCheckMark}",
-    //        Text = $"https://{domain.DomainName}",
-    //        Color = "good",
-    //    } };
-    //},
-    //() => pipeline.Exceptions);
+    });       
 }

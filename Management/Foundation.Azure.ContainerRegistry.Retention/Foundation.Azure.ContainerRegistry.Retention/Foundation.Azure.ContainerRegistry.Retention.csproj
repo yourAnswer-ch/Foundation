@@ -28,16 +28,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.1.0" />
-    <PackageReference Include="Foundation.Configuration.KeyVault" Version="7.0.18967" />
-    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="7.0.18966" />
-    <PackageReference Include="Foundation.Notification.Slack" Version="7.0.18660" />
-    <PackageReference Include="Foundation.Processing.Pipeline" Version="7.0.18655" />
-    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="7.0.18968" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.1" />
+    <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.1.1" />
+    <PackageReference Include="Foundation.Configuration.KeyVault" Version="8.0.19259" />
+    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="8.0.19257" />
+    <PackageReference Include="Foundation.Notification.Slack" Version="8.0.19263" />
+    <PackageReference Include="Foundation.Processing.Pipeline" Version="8.0.19258" />
+    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="8.0.19267" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,9 +13,12 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
   <ItemGroup>
-    <PackageReference Include="Foundation.Hosting.Info" Version="7.0.18965" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Foundation.Hosting.Info" Version="8.0.19254" />
   </ItemGroup>
 
 </Project>
