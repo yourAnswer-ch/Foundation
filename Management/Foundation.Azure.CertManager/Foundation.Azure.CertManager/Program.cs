@@ -10,15 +10,21 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Certes;
+using Azure.Identity;
 
 var stack = Stack.Create
     .AddDefaultConfiguration()
     .AddDefaultLoggingWithoutEventHubLogger()
-    .AddServices(s =>
+    .AddServices((s, c) =>
     {
+        var config = c.GetCertManagerConfig();
         s.AddAzureClients(e =>
-        {
-            e.AddCertificateClient(new Uri("https://kv-main.vault.azure.net/"));
+        {       
+            e.AddCertificateClient(new Uri(config.KeyVault.BaseUrl!));
+            e.UseCredential(new DefaultAzureCredential(new DefaultAzureCredentialOptions
+            {
+                TenantId = config.AdTenant.TenantId
+            }));
         });
 
         s.AddMemoryCache();
