@@ -1,0 +1,59 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- Kaformatik
+
+parameters:
+- name: 'versionMajor'
+  default: '8'
+  type: string
+- name: 'versionMinor'
+  default: '0'
+  type: string
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: AzureKeyVault@2
+  displayName: 'Azure Key Vault: KV-Build-Secrets'
+  inputs:
+    azureSubscription: 'Azure-Pipelin-Access'
+    KeyVaultName: 'KV-Build-Secrets'
+    RunAsPreJob: true
+
+- task: bleddynrichards.Assembly-Info-Task.Assembly-Info-NetCore.Assembly-Info-NetCore@2
+  displayName: 'Set assembly versions'
+  inputs:
+    VersionNumber: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+    FileVersionNumber: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+    InformationalVersion: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+    PackageVersion: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
+
+- task: Docker@2
+  displayName: 'Build image'
+  inputs:
+    containerRegistry: 'Kaformatik Registry'
+    repository: 'azure/cert-maintainer'
+    command: 'build'
+    Dockerfile: '**/Foundation.Azure.CertManager/Dockerfile'
+    buildContext: 'Management/Foundation.Azure.CertManager'
+    tags: |
+      $(Build.BuildId)
+      latest
+    arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
+
+- task: Docker@2
+  displayName: 'Push image'
+  inputs:
+    containerRegistry: 'Kaformatik Registry'
+    repository: 'azure/cert-maintainer'
+    command: 'push'
+    Dockerfile: '**/Foundation.Azure.CertManager/Dockerfile'
+    buildContext: 'Management/Foundation.Azure.CertManager'
+    tags: |
+      $(Build.BuildId)
+      latest
