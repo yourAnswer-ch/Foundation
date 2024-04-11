@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Azure.CertManage
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Processing.Pipeline", "..\..\Libraries\Foundation.Processing.Pipeline\Foundation.Processing.Pipeline.csproj", "{CD9043FB-47C8-4313-92FE-7D1D4FD2648F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Notification.Slack", "..\..\Libraries\Foundation.Notification.Slack\Foundation.Notification.Slack.csproj", "{83890784-DD86-4393-BFE9-10F69868D316}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{CD9043FB-47C8-4313-92FE-7D1D4FD2648F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD9043FB-47C8-4313-92FE-7D1D4FD2648F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD9043FB-47C8-4313-92FE-7D1D4FD2648F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{83890784-DD86-4393-BFE9-10F69868D316}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83890784-DD86-4393-BFE9-10F69868D316}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83890784-DD86-4393-BFE9-10F69868D316}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83890784-DD86-4393-BFE9-10F69868D316}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
