@@ -25,12 +25,6 @@ public class AzureRemoveTxtRecord : Command
     {
         _log.LogInformation($"{domain.DomainName} - Azure remove txt record.");
 
-        //var armClient = new ArmClient(
-        //new ClientSecretCredential(
-        //    _config.AdTenant.TenantId,
-        //    _config.AdTenant.ClientId,
-        //    _config.AdTenant.ClientSecret));
-
         var armClient = new ArmClient(
             new DefaultAzureCredential(
                 new DefaultAzureCredentialOptions

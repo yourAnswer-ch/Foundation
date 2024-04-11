@@ -28,10 +28,10 @@ var stack = Stack.Create
         
         s.AddPipeline(builder =>
         {
-            //builder.AddCommand<AzureCheckIfIsExpired>();
-            //builder.AddCommand<LetsEncryptCreateAccount>();
-            //builder.AddCommand<LetsEncryptCreateOrder>();
-            //builder.AddCommand<LetsEncryptAuthorizeDns>();
+            builder.AddCommand<AzureCheckIfIsExpired>();
+            builder.AddCommand<LetsEncryptCreateAccount>();
+            builder.AddCommand<LetsEncryptCreateOrder>();
+            builder.AddCommand<LetsEncryptAuthorizeDns>();
             builder.AddCommand<AzureCreateTxtRecord, AzureRemoveTxtRecord>();
             builder.AddCommand<LetsEncryptValidate>();
             builder.AddCommand<LetsEncryptDownloadCert>();
@@ -41,7 +41,7 @@ var stack = Stack.Create
             builder.AddExceptionFormater<AcmeRequestException>(Formator.Exception);
         });
 
-        s.AddSlackBot();
+        //s.AddSlackBot();
     });
 
 var provider = stack.Build();
@@ -77,12 +77,12 @@ foreach (var domain in config.Certificates)
 
     await report.SendMessage(slack, success, () =>
     {
-        return new Attachment[] { new() {
+        return [ new() {
             Fallback = "Verify the following domain",
             Pretext = $"Verify the following domain {Emoji.HeavyCheckMark}",
             Text = $"https://{domain.DomainName}",
             Color = "good",
-        } };
+        } ];
     },
     () => pipeline.Exceptions);
 }
