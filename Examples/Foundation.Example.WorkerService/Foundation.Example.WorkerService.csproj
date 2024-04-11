@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Foundation.Configuration.Defaults" Version="8.0.19119" />
-    <PackageReference Include="Foundation.Configuration.KeyVault" Version="8.0.19122" />
+    <PackageReference Include="Foundation.Configuration.Defaults" Version="8.0.19262" />
+    <PackageReference Include="Foundation.Configuration.KeyVault" Version="8.0.19259" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />

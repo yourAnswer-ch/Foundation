@@ -18,7 +18,7 @@
 	</ItemGroup>
 	
   <ItemGroup>
-    <PackageReference Include="Foundation.Hosting.Info" Version="8.0.19123" />
+    <PackageReference Include="Foundation.Hosting.Info" Version="8.0.19254" />
   </ItemGroup>
 
 </Project>

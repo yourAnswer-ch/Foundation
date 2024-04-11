@@ -18,9 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Foundation.Configuration.Defaults" Version="8.0.19119" />
-    <PackageReference Include="Foundation.Notification.Slack" Version="8.0.19118" />
-    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="8.0.19202" />
+    <PackageReference Include="Foundation.Configuration.Defaults" Version="8.0.19262" />
+    <PackageReference Include="Foundation.Notification.Slack" Version="8.0.19263" />
+    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="8.0.19260" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.2" />
   </ItemGroup>
 
