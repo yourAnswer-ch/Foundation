@@ -24,7 +24,13 @@ internal class EnvironmentVerb : IAction
 
         try
         {
-            var credential = new DefaultAzureCredential(true);
+            //var credential = new DefaultAzureCredential(
+            //    new DefaultAzureCredentialOptions
+            //    {
+            //        TenantId = "719063d3-d297-4fb1-b874-9ddc0df73352"
+            //    });
+
+            var credential = new InteractiveBrowserCredential();
 
             var client = new SecretClient(vaultUri: new Uri(_environments[EnvironmentEnum]), credential: credential);
             var secret = client.GetSecret("Logging--EventHub--Client--ConnectionString");
@@ -54,8 +60,8 @@ internal class EnvironmentVerb : IAction
     }
 
     private static readonly IDictionary<EnvironmentEnum, string> _environments = new Dictionary<EnvironmentEnum, string>
-        {
-            {EnvironmentEnum.dev, "https://kv-flowcpt-dev.vault.azure.net/"},
-            {EnvironmentEnum.prd, "https://kv-flowcpt-prd.vault.azure.net/"},
-        };
+    {
+        {EnvironmentEnum.dev, "https://kv-flowcpt-dev.vault.azure.net/"},
+        {EnvironmentEnum.prd, "https://kv-flowcpt-prd.vault.azure.net/"},
+    };
 }

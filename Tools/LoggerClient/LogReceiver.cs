@@ -7,7 +7,7 @@ namespace CloudLogger;
 
 internal class LogReceiver(Columns columns, LogFilter filter, LogWriter writer)
 {
-    private readonly ManualResetEvent _block = new ManualResetEvent(true);
+    private readonly ManualResetEvent _block = new(true);
 
     private Task? _currenTask;
     private CancellationTokenSource? _source;
@@ -64,7 +64,7 @@ internal class LogReceiver(Columns columns, LogFilter filter, LogWriter writer)
             }
             finally
             {
-                await client.CloseAsync();
+                await client.CloseAsync(token);
                 Trace.WriteLine($"Receiver closed.");
             }
         }

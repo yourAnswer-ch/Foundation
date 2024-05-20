@@ -8,7 +8,7 @@ public class Program
 {
     internal static bool leave;
     internal static bool showName = false;
-    internal static Columns columns = new Columns();
+    internal static Columns columns = new();
     internal static LogFilter? filter;
     internal static LogReceiverHost? host;
     internal static FileLogWriter? writer;    
