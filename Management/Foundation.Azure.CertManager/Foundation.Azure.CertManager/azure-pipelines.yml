@@ -1,4 +1,7 @@
 trigger:
+  branches:
+    include: 
+    - Kaformatik
   paths:
     include:
     - Management/Foundation.Azure.CertManager
