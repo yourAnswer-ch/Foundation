@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Foundation.Services.ImageProcessor.Core.Filters.Images;
+﻿namespace Foundation.Services.ImageProcessor.Core.Filters.Images;
 
 public enum ScaleMode
 {
+    Default,
     Square,
     Box,
     Fit,

@@ -20,11 +20,17 @@ public partial class ImageFilter : IFilter
             case ScaleMode.Box:
                 ScaleBox(image, parameters.Item2);
                 break;
+
             case ScaleMode.Fit:
                 ScaleFit(image, parameters.Item2);
                 break;
+
             case ScaleMode.Exact:
                 ScaleExact(image, parameters.Item2);
+                break;
+
+            case ScaleMode.Default:
+                ScaleBox(image, parameters.Item2);
                 break;
         }   
 
@@ -88,7 +94,7 @@ public partial class ImageFilter : IFilter
             return (ScaleMode.Exact, ParseSize(query["exact"]));
         }
 
-        throw new ArgumentException("Invalid parameters");
+        return (ScaleMode.Exact, new Size(600, 600));
     }
 
     private Size ParseSize(string value)

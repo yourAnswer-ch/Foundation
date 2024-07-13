@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Services.ImageProcessor", "Foundation.Services.ImageProcessor\Foundation.Services.ImageProcessor.csproj", "{2C949C1A-51E7-471A-96B8-74EC62D2AAB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Services.ImageProcessor", "Foundation.Services.ImageProcessor\Foundation.Services.ImageProcessor.csproj", "{2C949C1A-51E7-471A-96B8-74EC62D2AAB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.Services.ImageProcessor.Core", "Foundation.Services.ImageProcessor.Core\Foundation.Services.ImageProcessor.Core.csproj", "{8D124C4D-4FBE-4747-9F24-3E708453BC41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Foundation.Services.ImageProcessor.Core", "Foundation.Services.ImageProcessor.Core\Foundation.Services.ImageProcessor.Core.csproj", "{8D124C4D-4FBE-4747-9F24-3E708453BC41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
