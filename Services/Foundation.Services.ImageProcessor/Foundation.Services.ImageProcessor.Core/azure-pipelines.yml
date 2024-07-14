@@ -1,0 +1,12 @@
+trigger:
+  paths:
+    include:
+    - Services/Foundation.Services.ImageProcessor/Foundation.Services.ImageProcessor.Core
+
+jobs:
+- template: /Build/nuget-package.yml
+  parameters:  
+    versionMajor: 8
+    versionMinor: 0
+    dotnetVersion: '8.x'
+    projects: '**/Services/Foundation.Services.ImageProcessor/Foundation.Services.ImageProcessor.Core/Foundation.Services.ImageProcessor.Core.csproj'
