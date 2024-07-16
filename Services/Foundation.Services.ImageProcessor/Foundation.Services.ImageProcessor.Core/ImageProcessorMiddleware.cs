@@ -34,7 +34,6 @@ public class ImageProcessorMiddleware(RequestDelegate next, ImageFilter imageFil
                 context.Response.ContentType = properties.ContentType;
                 await stream.CopyToAsync(context.Response.Body);
             }
-
         }
         finally
         {

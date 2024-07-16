@@ -32,10 +32,13 @@ public partial class ImageFilter : IFilter
             case ScaleMode.Default:
                 ScaleBox(image, parameters.Item2);
                 break;
-        }   
+        }
 
         context.Response.ContentType = "image/webp";
         await image.WriteAsync(context.Response.Body, MagickFormat.WebP);
+        //context.Response.ContentType = "image/jpeg";
+        //await image.WriteAsync(context.Response.Body, MagickFormat.Jpeg);
+        context.Response.Body.Close();
     }
 
     private void ScaleFit(MagickImage image, Size dimension)
@@ -97,8 +100,11 @@ public partial class ImageFilter : IFilter
         return (ScaleMode.Exact, new Size(600, 600));
     }
 
-    private Size ParseSize(string value)
+    private Size ParseSize(string? value)
     {
+        if(string.IsNullOrEmpty(value))
+            return new Size(600, 600);  
+
         var match = GetSizePattern().Match(value);
 
         if (!match.Success)
