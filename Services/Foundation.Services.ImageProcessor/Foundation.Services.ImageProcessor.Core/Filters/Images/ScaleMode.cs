@@ -2,7 +2,7 @@
 
 public enum ScaleMode
 {
-    Default,
+    Original,
     Square,
     Box,
     Fit,

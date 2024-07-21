@@ -6,7 +6,6 @@ public static class MiddlewareExtensions
 {
     public static IApplicationBuilder UseImageProcessor(this IApplicationBuilder app)
     {
-        app.UseMiddleware<ImageProcessorMiddleware>();
-        return app;
+        return app.UseMiddleware<ImageProcessorMiddleware>();
     }
 }
