@@ -24,10 +24,7 @@ public class ImageProcessorMiddleware(
     public async Task InvokeAsync(HttpContext context)
     {
         if (!context.Request.Path.StartsWithSegments("/files", out var remainingPath))
-        {
-            await next(context);
             return;
-        }
 
         var stopwatch = Stopwatch.StartNew();
         try
@@ -57,7 +54,6 @@ public class ImageProcessorMiddleware(
         finally
         {
             LogRequest(context, stopwatch);
-            await next(context);
         }
     }
 
