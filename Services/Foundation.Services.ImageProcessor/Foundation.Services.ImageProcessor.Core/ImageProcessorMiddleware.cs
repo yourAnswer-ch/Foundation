@@ -11,8 +11,8 @@ using System.Diagnostics;
 namespace Foundation.Services.ImageProcessor.Core;
 
 public class ImageProcessorMiddleware(
-    RequestDelegate next, 
-    ImageFilter imageFilter, 
+    RequestDelegate next,
+    ImageFilter imageFilter,
     ILogger<ImageProcessorMiddleware> log,
     IAzureClientFactory<BlobServiceClient> factory)
 {
@@ -23,12 +23,15 @@ public class ImageProcessorMiddleware(
 
     public async Task InvokeAsync(HttpContext context)
     {
+        if (!context.Request.Path.StartsWithSegments("/files", out var remainingPath))
+        {
+            await next(context);
+            return;
+        }
+
         var stopwatch = Stopwatch.StartNew();
         try
         {
-            if (!context.Request.Path.StartsWithSegments("/files", out var remainingPath))
-                return;
-
             var client = GetBlobClient(remainingPath);
 
             var exist = await client.ExistsAsync();
@@ -40,7 +43,7 @@ public class ImageProcessorMiddleware(
 
             BlobProperties properties = await client.GetPropertiesAsync();
             var stream = await client.OpenReadAsync();
-           
+
             if (properties.ContentType.StartsWith("image/"))
             {
                 await imageFilter.Filter(context, stream, properties.ContentType);
@@ -82,7 +85,7 @@ public class ImageProcessorMiddleware(
         // Set the response content type and status code
         context.Response.ContentType = "application/problem+json";
         context.Response.StatusCode = 404;
-      
+
         // Write the JSON response
         await context.Response.WriteAsync(json);
     }
