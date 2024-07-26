@@ -4,5 +4,5 @@ namespace Foundation.Services.ImageProcessor.Core.Filters.Images;
 
 public interface IFilter
 {
-    Task Filter(HttpContext context, Stream stream, string mimeType);
+    Task<(Stream stream, string mimetype)> Filter(HttpContext context, Stream stream, string mimeType);
 }

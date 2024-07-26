@@ -1,4 +1,5 @@
-﻿using Foundation.Services.ImageProcessor.Core.Configuration;
+﻿using Foundation.Services.ImageProcessor.Core.Caching;
+using Foundation.Services.ImageProcessor.Core.Configuration;
 using Foundation.Services.ImageProcessor.Core.Filters.Images;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,7 @@ public static class ImageProcessorExtension
         });
 
         services.AddSingleton<ImageFilter>();
+        services.AddTransient<CacheService>();
 
         return services;
     }

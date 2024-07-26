@@ -10,51 +10,56 @@ public partial class ImageFilter : IFilter
     [GeneratedRegex(@"\A(?<Width>\d+)x(?<Height>\d+)|(?<Size>\d+)\z")]
     private static partial Regex GetSizePattern();
 
-    public async Task Filter(HttpContext context, Stream stream, string mimeType)
+    public async Task<(Stream stream, string mimetype)> Filter(HttpContext context, Stream stream, string mimeType)
     {
+        var acceptHeader = context.Request.Headers[HeaderNames.Accept];
         var parameters = ParseParameters(context.Request.Query);
 
         switch (parameters.Item1)
         {
             case ScaleMode.Box:
                 var image = ScaleBox(stream, parameters.Item2);
-                await WriteImage(context, image, mimeType);
-                break;
+                return await WriteImage(image, acceptHeader, mimeType);
 
             case ScaleMode.Fit:
                 image = ScaleFit(stream, parameters.Item2);
-                await WriteImage(context, image, mimeType);
-                break;
+                return await WriteImage(image, acceptHeader, mimeType);
 
             case ScaleMode.Exact:
                 image = ScaleExact(stream, parameters.Item2);
-                await WriteImage(context, image, mimeType);
-                break;
+                return await WriteImage(image, acceptHeader, mimeType);
 
             case ScaleMode.Original:
-                context.Response.ContentType = mimeType;
-                await stream.CopyToAsync(context.Response.Body);
-                break;
+                //context.Response.ContentType = mimeType;
+                //await stream.CopyToAsync(context.Response.Body);
+                return (stream, mimeType);
         }
+
+        throw new InvalidOperationException("Invalid scale mode");
     }
 
-    private async Task WriteImage(HttpContext context, MagickImage image, string mimeType)    
-    {        
+    private async Task<(Stream stream, string mimetype)> WriteImage(MagickImage image, IList<string> acceptHeader, string mimeType)    
+    {
+        var output = new MemoryStream();
+
         // code may can be improoved
-        if (context.Request.Headers.TryGetValue("Accept", out var accept))
-        {
-            var result = StringWithQualityHeaderValue.ParseList(accept);
+        //if (context.Request.Headers.TryGetValue("Accept", out var accept))
+        //{
+            var result = StringWithQualityHeaderValue.ParseList(acceptHeader);
             if (result.Any(e => e.Value == "webp"))
             {
-                context.Response.ContentType = "image/webp";
-                await image.WriteAsync(context.Response.Body, MagickFormat.WebP);
-                return;
+                //context.Response.ContentType = "image/webp";
+                await image.WriteAsync(output, MagickFormat.WebP);
+                output.Seek(0, SeekOrigin.Begin);
+                return (output, "image/webp");
             }
-        }
-        
-        context.Response.ContentType = mimeType;        
+        //}
+
         var format = GetMagickFormatFromMimeType(mimeType);
-        await image.WriteAsync(context.Response.Body, format);
+
+        await image.WriteAsync(output, format);
+        output.Seek(0, SeekOrigin.Begin);
+        return (output, mimeType);
     }
 
     private MagickImage ScaleFit(Stream stream, Size dimension)

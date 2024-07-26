@@ -7,12 +7,15 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Diagnostics;
+using Foundation.Services.ImageProcessor.Core.Caching;
+using System.IO;
 
 namespace Foundation.Services.ImageProcessor.Core;
 
 public class ImageProcessorMiddleware(
     RequestDelegate next,
     ImageFilter imageFilter,
+    CacheService cacheService,
     ILogger<ImageProcessorMiddleware> log,
     IAzureClientFactory<BlobServiceClient> factory)
 {
@@ -39,14 +42,34 @@ public class ImageProcessorMiddleware(
             }
 
             BlobProperties properties = await client.GetPropertiesAsync();
-            var stream = await client.OpenReadAsync();
+            //var stream = await client.OpenReadAsync();
 
             if (properties.ContentType.StartsWith("image/"))
             {
-                await imageFilter.Filter(context, stream, properties.ContentType);
+                var result = await cacheService.TryGetFileFromCache(context.Request.Path);
+                if (result != null)
+                {
+                    context.Response.ContentType = result.Value.Item2;
+                    await result.Value.Item1.CopyToAsync(context.Response.Body);
+                }
+                else
+                {
+                    var stream = await client.OpenReadAsync();
+                    context.Response.ContentType = properties.ContentType;
+
+                    var filterd = await imageFilter.Filter(context, stream, properties.ContentType);
+
+                    await cacheService.SaveFileToCache(context.Request.Path, filterd.stream, filterd.mimetype);
+
+                    filterd.stream.Seek(0, SeekOrigin.Begin);
+
+                    context.Response.ContentType = filterd.mimetype;
+                    await filterd.stream.CopyToAsync(context.Response.Body);
+                }
             }
             else
             {
+                var stream = await client.OpenReadAsync();
                 context.Response.ContentType = properties.ContentType;
                 await stream.CopyToAsync(context.Response.Body);
             }
