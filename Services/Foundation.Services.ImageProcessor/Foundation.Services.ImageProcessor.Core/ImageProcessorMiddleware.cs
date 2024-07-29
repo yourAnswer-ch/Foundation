@@ -44,7 +44,7 @@ public class ImageProcessorMiddleware(
             BlobProperties properties = await client.GetPropertiesAsync();
 
             IFilter filter = GetFilter(properties.ContentType);
-            await filter.Filter(client, context, properties.ContentType);
+            await filter.Filter(context, client, properties);
         }
         finally
         {

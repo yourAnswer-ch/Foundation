@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Foundation.Services.ImageProcessor.Core.Caching;
 using ImageMagick;
 using Microsoft.AspNetCore.Http;
@@ -25,17 +26,18 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
         return $"{sourcePath}/image-{parameters}.{GetFileExtension(format)}";
     }
 
-    public async Task Filter(BlobClient client, HttpContext context, string contentType)
+    public async Task Filter(HttpContext context, BlobClient client, BlobProperties properties) 
     {
         var acceptHeader = context.Request.Headers[HeaderNames.Accept];
 
         var parameters = ParseParameters(context.Request.Query);
-        var format = EveluateFileFormat(context, contentType);
+        var format = EveluateFileFormat(context, properties.ContentType);
+        var eTag = properties.ETag.ToString();
 
         if (parameters.mode == ScaleMode.Original)
         {
             var original = await client.OpenReadAsync();
-            await WriteRawImage(context, original, contentType);
+            await WriteRawImage(context, original, properties.ContentType, eTag);
             return;
         }
 
@@ -43,26 +45,30 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
         var result = await cacheService.TryGetFileFromCache(cachepath);
         if (result != null)
         {
-            await WriteRawImage(context, result.Value.stream, result.Value.contentType);
+            await WriteRawImage(context, result.Value.stream, result.Value.contentType, eTag);
             return;
         }
 
         var stream = await client.OpenReadAsync();
         var image = TransformImage(stream, parameters.mode, parameters.size);
 
-        await WriteImage(context, image, format);
+        await WriteImage(context, image, format, eTag);
         await WriteCach(image, cachepath, format);
     }
 
-    private async Task WriteImage(HttpContext context, MagickImage image, IMagickFormatInfo format)
+    private async Task WriteImage(HttpContext context, MagickImage image, IMagickFormatInfo format, string eTag)
     {
         context.Response.ContentType = format.MimeType!;
+        context.Response.Headers.ETag = eTag;
+        context.Response.Headers.CacheControl = "public,max-age=604800";
         await image.WriteAsync(context.Response.Body, format.Format);
     }
 
-    private async Task WriteRawImage(HttpContext context, Stream stream, string contentType)
+    private async Task WriteRawImage(HttpContext context, Stream stream, string contentType, string eTag)
     {
         context.Response.ContentType = contentType;
+        context.Response.Headers.ETag = eTag;
+        context.Response.Headers.CacheControl = "public,max-age=604800";        
         await stream.CopyToAsync(context.Response.Body);
     }
 
