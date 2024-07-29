@@ -26,12 +26,12 @@ public class ImageProcessorMiddleware(
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!context.Request.Path.StartsWithSegments("/files", out var sourcePath))
-            return;
-
         var stopwatch = Stopwatch.StartNew();
         try
-        {
+        {   
+            if (!context.Request.Path.StartsWithSegments("/files", out var sourcePath))
+                return;
+         
             var client = GetBlobClient(sourcePath);
 
             var exist = await client.ExistsAsync();
@@ -45,10 +45,17 @@ public class ImageProcessorMiddleware(
 
             IFilter filter = GetFilter(properties.ContentType);
             await filter.Filter(context, client, properties);
+            
+            LogRequest(context, stopwatch);
+        }
+        catch(Exception ex)
+        {
+            log.LogError(ex, "Error processing request - Path: {0}", context.Request.Path);
+            throw;
         }
         finally
-        {
-            LogRequest(context, stopwatch);
+        {            
+            await next(context);
         }
     }
 
