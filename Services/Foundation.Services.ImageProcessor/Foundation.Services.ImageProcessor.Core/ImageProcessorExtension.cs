@@ -1,6 +1,5 @@
 ﻿using Foundation.Services.ImageProcessor.Core.Caching;
 using Foundation.Services.ImageProcessor.Core.Configuration;
-using Foundation.Services.ImageProcessor.Core.Filters.Images;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +15,6 @@ public static class ImageProcessorExtension
             builder.AddBlobServiceClient(configuration.GetBlobStorageConnectionString()).WithName("FlowcptStorageAccount");
         });
 
-        services.AddSingleton<ImageFilter>();
         services.AddTransient<CacheService>();
 
         return services;

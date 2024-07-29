@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using System.Diagnostics;
-using Foundation.Services.ImageProcessor.Core.Caching;
-using System.IO;
+using Foundation.Services.ImageProcessor.Core.Filters.Default;
+using Foundation.Services.ImageProcessor.Core.Filters;
 
 namespace Foundation.Services.ImageProcessor.Core;
 
 public class ImageProcessorMiddleware(
     RequestDelegate next,
-    ImageFilter imageFilter,
-    CacheService cacheService,
+    IServiceProvider provider,
     ILogger<ImageProcessorMiddleware> log,
     IAzureClientFactory<BlobServiceClient> factory)
 {
@@ -26,13 +26,13 @@ public class ImageProcessorMiddleware(
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!context.Request.Path.StartsWithSegments("/files", out var remainingPath))
+        if (!context.Request.Path.StartsWithSegments("/files", out var sourcePath))
             return;
 
         var stopwatch = Stopwatch.StartNew();
         try
         {
-            var client = GetBlobClient(remainingPath);
+            var client = GetBlobClient(sourcePath);
 
             var exist = await client.ExistsAsync();
             if (!exist)
@@ -42,41 +42,25 @@ public class ImageProcessorMiddleware(
             }
 
             BlobProperties properties = await client.GetPropertiesAsync();
-            //var stream = await client.OpenReadAsync();
 
-            if (properties.ContentType.StartsWith("image/"))
-            {
-                var result = await cacheService.TryGetFileFromCache(context.Request.Path);
-                if (result != null)
-                {
-                    context.Response.ContentType = result.Value.Item2;
-                    await result.Value.Item1.CopyToAsync(context.Response.Body);
-                }
-                else
-                {
-                    var stream = await client.OpenReadAsync();
-                    context.Response.ContentType = properties.ContentType;
-
-                    var filterd = await imageFilter.Filter(context, stream, properties.ContentType);
-
-                    await cacheService.SaveFileToCache(context.Request.Path, filterd.stream, filterd.mimetype);
-
-                    filterd.stream.Seek(0, SeekOrigin.Begin);
-
-                    context.Response.ContentType = filterd.mimetype;
-                    await filterd.stream.CopyToAsync(context.Response.Body);
-                }
-            }
-            else
-            {
-                var stream = await client.OpenReadAsync();
-                context.Response.ContentType = properties.ContentType;
-                await stream.CopyToAsync(context.Response.Body);
-            }
+            IFilter filter = GetFilter(properties.ContentType);
+            await filter.Filter(client, context, properties.ContentType);
         }
         finally
         {
             LogRequest(context, stopwatch);
+        }
+    }
+
+    private IFilter GetFilter(string contentType)
+    {
+        if (contentType.StartsWith("image/"))
+        {
+            return ActivatorUtilities.CreateInstance<ImageFilter>(provider);
+        }
+        else
+        {
+            return ActivatorUtilities.CreateInstance<RawFileFilter>(provider);
         }
     }
 

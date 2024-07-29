@@ -13,21 +13,21 @@ public class CacheService(IAzureClientFactory<BlobServiceClient> factory)
 
     private async Task<BlobContainerClient> GetBlobContainerClient()
     {
-        if(_container != null)
+        if (_container != null)
             return _container;
 
         var client = factory.CreateClient(ClientId);
-        _container =  client.GetBlobContainerClient("cache");
+        _container = client.GetBlobContainerClient("cache");
         await _container.CreateIfNotExistsAsync();
         return _container;
     }
 
-    public async Task<(Stream, string)?> TryGetFileFromCache(string path)
+    public async Task<(Stream stream, string contentType)?> TryGetFileFromCache(string path)
     {
         var container = await GetBlobContainerClient();
         var blob = container.GetBlobClient(path);
         var exists = await blob.ExistsAsync();
-        if(!exists)
+        if (!exists)
             return default;
 
         BlobProperties properties = await blob.GetPropertiesAsync();
@@ -36,11 +36,28 @@ public class CacheService(IAzureClientFactory<BlobServiceClient> factory)
         return (stream, properties.ContentType);
     }
 
-    public async Task SaveFileToCache(string path, Stream stream, string contentType)
+    public async Task SaveFileToCache(Stream stream, string path, string contentType)
     {
         var container = await GetBlobContainerClient();
         var blob = container.GetBlobClient(path);
         await blob.UploadAsync(stream, true);
+        var headers = new BlobHttpHeaders
+        {
+            ContentType = contentType
+        };
+
+        await blob.SetHttpHeadersAsync(headers);
+    }
+
+    public async Task SaveFileToCache(string path, string contentType, Func<Stream, Task> writer)
+    {
+        var container = await GetBlobContainerClient();
+        var blob = container.GetBlobClient(path);
+
+        using (var stream = await blob.OpenWriteAsync(true))
+        {
+            await writer(stream);
+        }
 
         var headers = new BlobHttpHeaders
         {
