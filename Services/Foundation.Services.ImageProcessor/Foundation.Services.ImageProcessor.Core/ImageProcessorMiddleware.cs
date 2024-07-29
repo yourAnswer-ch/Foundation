@@ -26,12 +26,14 @@ public class ImageProcessorMiddleware(
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var stopwatch = Stopwatch.StartNew();
+        
         try
         {   
             if (!context.Request.Path.StartsWithSegments("/files", out var sourcePath))
                 return;
-         
+            
+            var stopwatch = Stopwatch.StartNew();
+            
             var client = GetBlobClient(sourcePath);
 
             var exist = await client.ExistsAsync();
