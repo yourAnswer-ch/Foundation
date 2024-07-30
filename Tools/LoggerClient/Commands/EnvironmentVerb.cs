@@ -24,13 +24,13 @@ internal class EnvironmentVerb : IAction
 
         try
         {
-            //var credential = new DefaultAzureCredential(
-            //    new DefaultAzureCredentialOptions
-            //    {
-            //        TenantId = "719063d3-d297-4fb1-b874-9ddc0df73352"
-            //    });
+            var credential = new DefaultAzureCredential(
+                new DefaultAzureCredentialOptions
+                {
+                    TenantId = "719063d3-d297-4fb1-b874-9ddc0df73352"
+                });
 
-            var credential = new InteractiveBrowserCredential();
+            //var credential = new InteractiveBrowserCredential();
 
             var client = new SecretClient(vaultUri: new Uri(_environments[EnvironmentEnum]), credential: credential);
             var secret = client.GetSecret("Logging--EventHub--Client--ConnectionString");
