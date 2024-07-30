@@ -26,7 +26,7 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
         return $"{sourcePath}/image-{parameters}.{GetFileExtension(format)}";
     }
 
-    public async Task Filter(HttpContext context, BlobClient client, BlobProperties properties) 
+    public async Task Filter(HttpContext context, BlobClient client, BlobProperties properties)
     {
         var acceptHeader = context.Request.Headers[HeaderNames.Accept];
 
@@ -36,24 +36,27 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
 
         if (parameters.mode == ScaleMode.Original)
         {
-            var original = await client.OpenReadAsync();
-            await WriteRawImage(context, original, properties.ContentType, eTag);
-            return;
+            using (var original = await client.OpenReadAsync())
+            {
+                await WriteRawImage(context, original, properties.ContentType, eTag);
+                return;
+            }
         }
 
         var cachepath = CalculateCacheKey(client.Uri.AbsolutePath, format, parameters.mode, parameters.size);
-        var result = await cacheService.TryGetFileFromCache(cachepath);
-        if (result != null)
-        {
-            await WriteRawImage(context, result.Value.stream, result.Value.contentType, eTag);
+
+        if (await cacheService.TryGetFileFromCache(cachepath,
+            async (s, c) => await WriteRawImage(context, s, c, eTag)))
             return;
+
+        using (var stream = await client.OpenReadAsync())
+        {
+            using (var image = TransformImage(stream, parameters.mode, parameters.size))
+            {
+                await WriteImage(context, image, format, eTag);
+                await WriteCach(image, cachepath, format);
+            }
         }
-
-        var stream = await client.OpenReadAsync();
-        var image = TransformImage(stream, parameters.mode, parameters.size);
-
-        await WriteImage(context, image, format, eTag);
-        await WriteCach(image, cachepath, format);
     }
 
     private async Task WriteImage(HttpContext context, MagickImage image, IMagickFormatInfo format, string eTag)
@@ -68,7 +71,7 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
     {
         context.Response.ContentType = contentType;
         context.Response.Headers.ETag = eTag;
-        context.Response.Headers.CacheControl = "public,max-age=604800";        
+        context.Response.Headers.CacheControl = "public,max-age=604800";
         await stream.CopyToAsync(context.Response.Body);
     }
 
@@ -176,7 +179,7 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
     }
 
     private IMagickFormatInfo EveluateFileFormat(HttpContext context, string sourceType)
-    {        
+    {
         var acceptHeader = context.Request.Headers[HeaderNames.Accept];
         var result = StringWithQualityHeaderValue.ParseList(acceptHeader);
         if (result.Any(e => e.Value == "webp"))

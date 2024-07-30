@@ -8,9 +8,11 @@ namespace Foundation.Services.ImageProcessor.Core.Filters.Default
     {
         public async Task Filter(HttpContext context, BlobClient client, BlobProperties properties)
         {
-            var stream = await client.OpenReadAsync();
-            context.Response.ContentType = properties.ContentType;
-            await stream.CopyToAsync(context.Response.Body);
+            using (var stream = await client.OpenReadAsync())
+            {
+                context.Response.ContentType = properties.ContentType;
+                await stream.CopyToAsync(context.Response.Body);
+            }
         }
     }
 }

@@ -22,22 +22,24 @@ public class CacheService(IAzureClientFactory<BlobServiceClient> factory)
         return _container;
     }
 
-    public async Task<(Stream stream, string contentType)?> TryGetFileFromCache(string path)
+    public async Task<bool> TryGetFileFromCache(string path, Func<Stream, string, Task> writer)
     {
         var container = await GetBlobContainerClient();
         var blob = container.GetBlobClient(path);
         var exists = await blob.ExistsAsync();
         if (!exists)
-            return default;
+            return false;
 
         BlobProperties properties = await blob.GetPropertiesAsync();
 
-        if(properties.ContentLength == 0)
-            return default;
+        if (properties.ContentLength == 0)
+            return false;
 
-        var stream = await blob.OpenReadAsync();
-
-        return (stream, properties.ContentType);
+        using (var stream = await blob.OpenReadAsync())
+        {
+            await writer(stream, properties.ContentType);
+            return true;
+        }
     }
 
     public async Task SaveFileToCache(Stream stream, string path, string contentType)
