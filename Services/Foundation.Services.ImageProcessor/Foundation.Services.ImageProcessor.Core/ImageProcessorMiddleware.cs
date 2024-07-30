@@ -77,7 +77,11 @@ public class ImageProcessorMiddleware(
         stopwatch.Stop();
 
         var logLevel = context.Response.StatusCode >= 400 ? LogLevel.Warning : LogLevel.Information;
-        log.Log(logLevel, "Request file - Path: {0} - Status: {1} - Duration {2:N0}ms", context.Request.Path, context.Response.StatusCode, stopwatch.ElapsedMilliseconds);
+        log.Log(logLevel, "Request file - Path: {0} - ContentType: {1} - Status: {2} - Duration {3:N0}ms", 
+            context.Request.Path,
+            context.Response.ContentType, 
+            context.Response.StatusCode, 
+            stopwatch.ElapsedMilliseconds);
     }
 
     private async Task ReturnNotfound(HttpContext context)
