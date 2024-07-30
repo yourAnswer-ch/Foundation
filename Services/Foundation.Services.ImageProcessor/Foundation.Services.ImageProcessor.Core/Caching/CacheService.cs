@@ -31,6 +31,10 @@ public class CacheService(IAzureClientFactory<BlobServiceClient> factory)
             return default;
 
         BlobProperties properties = await blob.GetPropertiesAsync();
+
+        if(properties.ContentLength == 0)
+            return default;
+
         var stream = await blob.OpenReadAsync();
 
         return (stream, properties.ContentType);

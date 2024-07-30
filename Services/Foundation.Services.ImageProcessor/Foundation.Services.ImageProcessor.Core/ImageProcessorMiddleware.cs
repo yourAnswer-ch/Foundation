@@ -25,8 +25,7 @@ public class ImageProcessorMiddleware(
     // https://saflowcptdev.blob.core.windows.net/profiles/3K6ehNLhnRsPfWhzjugmea/6O76ONdIxUOlO9U2Sf7GqI/0McKfF64pp25ZVpmq3kQT4
 
     public async Task InvokeAsync(HttpContext context)
-    {
-        
+    {        
         try
         {   
             if (!context.Request.Path.StartsWithSegments("/files", out var sourcePath))

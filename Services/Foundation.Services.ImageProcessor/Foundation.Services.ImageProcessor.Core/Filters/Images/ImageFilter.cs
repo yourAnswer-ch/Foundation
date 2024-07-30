@@ -176,7 +176,7 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
     }
 
     private IMagickFormatInfo EveluateFileFormat(HttpContext context, string sourceType)
-    {
+    {        
         var acceptHeader = context.Request.Headers[HeaderNames.Accept];
         var result = StringWithQualityHeaderValue.ParseList(acceptHeader);
         if (result.Any(e => e.Value == "webp"))
@@ -189,8 +189,16 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
 
     static IMagickFormatInfo GetMagickFormatFromMimeType(string mimeType)
     {
-        var format = MagickNET.SupportedFormats.FirstOrDefault(f => string.Equals(f.MimeType, mimeType, StringComparison.OrdinalIgnoreCase));
-        return format ?? throw new ArgumentException($"Unknown MIME type: {mimeType}");
+        return mimeType.ToLower() switch
+        {
+            "image/jpeg" => MagickNET.SupportedFormats.First(e => e.Format == MagickFormat.Jpeg),
+            "image/png" => MagickNET.SupportedFormats.First(e => e.Format == MagickFormat.Png),
+            "image/gif" => MagickNET.SupportedFormats.First(e => e.Format == MagickFormat.Gif),
+            "image/tiff" => MagickNET.SupportedFormats.First(e => e.Format == MagickFormat.Tiff),
+            "image/bmp" => MagickNET.SupportedFormats.First(e => e.Format == MagickFormat.Bmp),
+            "image/webp" => MagickNET.SupportedFormats.First(e => e.Format == MagickFormat.WebP),
+            _ => throw new ArgumentException($"Unknown MIME type: {mimeType}"),
+        };
     }
 
     private string GetFileExtension(IMagickFormatInfo info)
