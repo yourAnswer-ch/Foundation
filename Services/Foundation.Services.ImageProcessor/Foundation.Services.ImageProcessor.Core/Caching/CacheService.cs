@@ -1,22 +1,22 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Foundation.Services.ImageProcessor.Core.Configuration;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 
 namespace Foundation.Services.ImageProcessor.Core.Caching;
 
-public class CacheService(IAzureClientFactory<BlobServiceClient> factory)
+public class CacheService(IAzureClientFactory<BlobServiceClient> factory, IConfiguration configuration)
 {
-    private const string ProfilesContainer = "profiles";
-    private const string ClientId = "FlowcptStorageAccount";
-
     private BlobContainerClient? _container;
+    private readonly FileHandlerConfiguration? config = configuration.GetFileHandlerConfig();
 
     private async Task<BlobContainerClient> GetBlobContainerClient()
     {
         if (_container != null)
             return _container;
 
-        var client = factory.CreateClient(ClientId);
+        var client = factory.CreateClient(config!.ClientId);
         _container = client.GetBlobContainerClient("cache");
         await _container.CreateIfNotExistsAsync();
         return _container;
