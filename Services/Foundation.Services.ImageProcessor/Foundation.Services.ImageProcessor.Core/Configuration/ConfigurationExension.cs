@@ -10,6 +10,11 @@ public static class ConfigurationExension
     {
         return config.GetSection(key).Get<string>();
     }
+
+    public static FileHandlerConfiguration? GetFileHandlerConfig(this IConfiguration config, string key = "FileHandler")
+    {
+        return config.GetSection(key).Get<FileHandlerConfiguration>();
+    }
 }
 
 public enum OutputFormat

@@ -10,25 +10,32 @@ using System.Text.Json;
 using System.Diagnostics;
 using Foundation.Services.ImageProcessor.Core.Filters.Default;
 using Foundation.Services.ImageProcessor.Core.Filters;
+using Microsoft.Extensions.Configuration;
+using Foundation.Services.ImageProcessor.Core.Configuration;
 
 namespace Foundation.Services.ImageProcessor.Core;
 
 public class ImageProcessorMiddleware(
     RequestDelegate next,
-    IServiceProvider provider,
+    IConfiguration configuration,
+    IServiceProvider provider,    
     ILogger<ImageProcessorMiddleware> log,
     IAzureClientFactory<BlobServiceClient> factory)
 {
-    private const string ProfilesContainer = "profiles";
-    private const string ClientId = "FlowcptStorageAccount";
+
+    private FileHandlerConfiguration? config = configuration.GetFileHandlerConfig();
+
     // https://saflowcptdev.blob.core.windows.net/profiles/3K6ehNLhnRsPfWhzjugmea/6XpV5QaK3nsDxNmSsVeTPA/1JutRAEbEZdsSwrMYJZqN8
     // https://saflowcptdev.blob.core.windows.net/profiles/3K6ehNLhnRsPfWhzjugmea/6O76ONdIxUOlO9U2Sf7GqI/0McKfF64pp25ZVpmq3kQT4
 
     public async Task InvokeAsync(HttpContext context)
     {        
         try
-        {   
-            if (!context.Request.Path.StartsWithSegments("/files", out var sourcePath))
+        {
+            if (config == null)
+                throw new InvalidOperationException("FileHandler configuration is missing");
+
+            if (!context.Request.Path.StartsWithSegments($"/{config.Path}", out var sourcePath))
                 return;
             
             var stopwatch = Stopwatch.StartNew();
@@ -107,8 +114,11 @@ public class ImageProcessorMiddleware(
 
     private BlobClient GetBlobClient(PathString path)
     {
-        var client = factory.CreateClient(ClientId);
-        var container = client.GetBlobContainerClient($"{ProfilesContainer}");
+        if (config == null)
+            throw new InvalidOperationException("FileHandler configuration is missing");
+
+        var client = factory.CreateClient(config.ClientId);
+        var container = client.GetBlobContainerClient(config.Container);
         return container.GetBlobClient(path);
     }
 }
