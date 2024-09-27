@@ -1,6 +1,4 @@
-﻿using Azure.Identity;
-using Foundation.Services.ImageProcessor.Core.Filters.Images;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace Foundation.Services.ImageProcessor.Core.Configuration;
 
@@ -15,22 +13,4 @@ public static class ConfigurationExension
     {
         return config.GetSection(key).Get<FileHandlerConfiguration>();
     }
-}
-
-public enum OutputFormat
-{
-    Same,
-    Jpeg,
-    Png,
-    WebP
-}
-
-public class ImageFilterConfiguration
-{
-    public string MimeTypes { get; set; } = "*";
-
-    public ScaleMode DefaultMode { get; set; } = ScaleMode.Box;
-
-    public Size DefaultSize { get; set; } = new Size();
-    
 }

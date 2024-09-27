@@ -12,18 +12,19 @@ using Foundation.Services.ImageProcessor.Core.Filters.Default;
 using Foundation.Services.ImageProcessor.Core.Filters;
 using Microsoft.Extensions.Configuration;
 using Foundation.Services.ImageProcessor.Core.Configuration;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace Foundation.Services.ImageProcessor.Core;
 
 public class ImageProcessorMiddleware(
     RequestDelegate next,
     IConfiguration configuration,
-    IServiceProvider provider,    
+    IServiceProvider provider,
     ILogger<ImageProcessorMiddleware> log,
     IAzureClientFactory<BlobServiceClient> factory)
 {
 
-    private FileHandlerConfiguration? config = configuration.GetFileHandlerConfig();
+    private readonly FileHandlerConfiguration? config = configuration.GetFileHandlerConfig();
 
     // https://saflowcptdev.blob.core.windows.net/profiles/3K6ehNLhnRsPfWhzjugmea/6XpV5QaK3nsDxNmSsVeTPA/1JutRAEbEZdsSwrMYJZqN8
     // https://saflowcptdev.blob.core.windows.net/profiles/3K6ehNLhnRsPfWhzjugmea/6O76ONdIxUOlO9U2Sf7GqI/0McKfF64pp25ZVpmq3kQT4
@@ -49,6 +50,8 @@ public class ImageProcessorMiddleware(
                 return;
             }
 
+            await AppendCorsHeaders(context);
+
             BlobProperties properties = await client.GetPropertiesAsync();
 
             IFilter filter = GetFilter(properties.ContentType);
@@ -64,6 +67,29 @@ public class ImageProcessorMiddleware(
         finally
         {            
             await next(context);
+        }
+    }
+
+    private async Task AppendCorsHeaders(HttpContext context)
+    {
+        var corsService = provider.GetService<ICorsService>();
+        var corsPolicyProvider = provider.GetService<ICorsPolicyProvider>();
+
+        if (corsService == null || corsPolicyProvider == null)
+            return;
+
+        var policy = config?.CorsPolicy;
+
+        if (string.IsNullOrWhiteSpace(policy))
+            return;
+
+        // Retrieve the CORS policy
+        var corsPolicy = await corsPolicyProvider.GetPolicyAsync(context, policy);
+        if (corsPolicy != null)
+        {
+            // Evaluate and apply the CORS policy
+            var corsResult = corsService.EvaluatePolicy(context, corsPolicy);
+            corsService.ApplyResult(corsResult, context.Response);
         }
     }
 
