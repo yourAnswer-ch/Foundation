@@ -11,6 +11,7 @@ ARG NUGET_SOURCE
 
 WORKDIR /src
 COPY ["Foundation.Azure.ContainerRegistry.Retention/Foundation.Azure.ContainerRegistry.Retention.csproj", "Foundation.Azure.ContainerRegistry.Retention/"]
+COPY ["Foundation.Azure.ContainerRegistry.Retention/Foundation.Azure.ContainerRegistry.Retention.Core.csproj", "Foundation.Azure.ContainerRegistry.Retention.Core/"]
 
 RUN dotnet nuget add source --valid-authentication-types basic --store-password-in-clear-text --username Docker --password $NUGET_KEY --name FlairFindr $NUGET_SOURCE
 RUN dotnet restore "Foundation.Azure.ContainerRegistry.Retention/Foundation.Azure.ContainerRegistry.Retention.csproj"
