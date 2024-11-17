@@ -1,0 +1,12 @@
+trigger:
+  paths:
+    include:
+    - Libraries/Foundation.SignalRProxy
+
+jobs:
+- template: /Build/nuget-package.yml
+  parameters:  
+    versionMajor: 9
+    versionMinor: 0
+    dotnetVersion: '9.x'
+    projects: '**/Libraries/Foundation.SignalRProxy/Foundation.SignalRProxy.csproj'
