@@ -8,7 +8,6 @@ jobs:
   parameters:
     versionMajor: 9
     versionMinor: 0
-    dotnetVersion: '9.x'
     context: 'Management/Foundation.Azure.ContainerRegistry.Retention'
     dockerfilePath: '**/Foundation.Azure.ContainerRegistry.Retention/Dockerfile'    
     uploadToReleaseRegistry: $(uploadToReleaseRegistry)
