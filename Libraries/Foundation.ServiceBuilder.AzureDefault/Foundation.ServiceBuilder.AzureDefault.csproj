@@ -14,9 +14,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Foundation.Configuration.KeyVault" Version="8.0.19306" />
-    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="8.0.19280" />
-    <PackageReference Include="Foundation.ServiceBuilder" Version="8.0.19141" />
+    <PackageReference Include="Foundation.Configuration.KeyVault" Version="9.0.19405" />
+    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="9.0.19403" />
+    <PackageReference Include="Foundation.ServiceBuilder" Version="9.0.19406" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="9.0.0" />
