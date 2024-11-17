@@ -1,7 +1,7 @@
 trigger:
   paths:
     include:
-    - Libraries/Foundation.SignalRProxy
+    - Libraries/Foundation.SignalRRelay
 
 jobs:
 - template: /Build/nuget-package.yml
@@ -9,4 +9,4 @@ jobs:
     versionMajor: 9
     versionMinor: 0
     dotnetVersion: '9.x'
-    projects: '**/Libraries/Foundation.SignalRProxy/Foundation.SignalRProxy.csproj'
+    projects: '**/Libraries/Foundation.SignalRRelay/Foundation.SignalRRelay.csproj'
