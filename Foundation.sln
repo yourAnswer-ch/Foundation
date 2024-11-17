@@ -51,6 +51,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{88D46B58
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{96D52534-B991-48A7-98F8-3312B1AC8D02}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.SignalRRelay", "Libraries\Foundation.SignalRProxy\Foundation.SignalRRelay.csproj", "{74CA037C-7BC3-4138-8687-9F91F6D6E412}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +139,10 @@ Global
 		{447BDA2B-5F81-44EF-96A6-1AF7041E56E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{447BDA2B-5F81-44EF-96A6-1AF7041E56E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{447BDA2B-5F81-44EF-96A6-1AF7041E56E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74CA037C-7BC3-4138-8687-9F91F6D6E412}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74CA037C-7BC3-4138-8687-9F91F6D6E412}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74CA037C-7BC3-4138-8687-9F91F6D6E412}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74CA037C-7BC3-4138-8687-9F91F6D6E412}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -162,6 +168,7 @@ Global
 		{805448F6-1104-4C59-BB5A-ABA404D5307E} = {116B4413-73AD-4273-8021-872F84143022}
 		{40F01D62-5A7E-4A38-8944-3F34089519E7} = {116B4413-73AD-4273-8021-872F84143022}
 		{447BDA2B-5F81-44EF-96A6-1AF7041E56E5} = {88D46B58-FD80-41AC-BD0A-D2892796794A}
+		{74CA037C-7BC3-4138-8687-9F91F6D6E412} = {02A55AEE-4C59-4C87-891B-8DC76353743A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {14311958-3F09-4D91-A97A-9004BF560B3A}

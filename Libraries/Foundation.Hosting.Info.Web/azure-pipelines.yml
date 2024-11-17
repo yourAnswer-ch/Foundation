@@ -6,7 +6,7 @@ trigger:
 jobs:
 - template: /Build/nuget-package.yml
   parameters:  
-    versionMajor: 8
+    versionMajor: 9
     versionMinor: 0
-    dotnetVersion: '8.x'
+    dotnetVersion: '9.x'
     projects: '**/Libraries/Foundation.Hosting.Info.Web/Foundation.Hosting.Info.Web.csproj'

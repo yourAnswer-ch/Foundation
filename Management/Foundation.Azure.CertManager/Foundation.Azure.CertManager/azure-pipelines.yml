@@ -9,6 +9,9 @@ trigger:
 jobs:
 - template: /Build/docker-image.yml
   parameters:
+    versionMajor: 9
+    versionMinor: 0
+    dotnetVersion: '9.x'
     context: 'Management/Foundation.Azure.CertManager'
     dockerfilePath: '**/Foundation.Azure.CertManager/Dockerfile'    
     uploadToReleaseRegistry: $(uploadToReleaseRegistry)

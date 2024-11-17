@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>fd1496f9-d1f0-47f5-8c59-f34585ae0829</UserSecretsId>
@@ -29,15 +29,15 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.1.1" />
-    <PackageReference Include="Foundation.Configuration.KeyVault" Version="8.0.19259" />
-    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="8.0.19257" />
-    <PackageReference Include="Foundation.Notification.Slack" Version="8.0.19263" />
-    <PackageReference Include="Foundation.Processing.Pipeline" Version="8.0.19258" />
-    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="8.0.19267" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+    <PackageReference Include="Foundation.Configuration.KeyVault" Version="8.0.19306" />
+    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="8.0.19280" />
+    <PackageReference Include="Foundation.Notification.Slack" Version="8.0.19286" />
+    <PackageReference Include="Foundation.Processing.Pipeline" Version="8.0.19281" />
+    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="8.0.19283" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.8.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
   </ItemGroup>
 
   <ItemGroup>
