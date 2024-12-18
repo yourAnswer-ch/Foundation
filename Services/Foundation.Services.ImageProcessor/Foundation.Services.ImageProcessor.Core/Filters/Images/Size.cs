@@ -4,13 +4,13 @@ public class Size
 {
     public Size() { }
 
-    public Size(int width, int hight)
+    public Size(uint width, uint hight)
     {
         Width = width;
         Height = hight;
     }
 
-    public int Width { get; set; } = 1024;
+    public uint Width { get; set; } = 1024;
 
-    public int Height { get; set; } = 768;
+    public uint Height { get; set; } = 768;
 }

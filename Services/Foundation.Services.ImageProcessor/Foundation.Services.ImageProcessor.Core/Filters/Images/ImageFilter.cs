@@ -104,12 +104,12 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
 
         var square = new MagickGeometry(dimension.Width, dimension.Height)
         {
-            X = Math.Max(0, (image.Width - dimension.Width) / 2),
-            Y = Math.Max(0, (image.Height - dimension.Height) / 2)
+            X = Convert.ToInt32(Math.Max(0, (image.Width - dimension.Width) / 2)),
+            Y = Convert.ToInt32(Math.Max(0, (image.Height - dimension.Height) / 2))
         };
 
         image.Crop(square);
-        image.RePage();
+        image.ResetPage();
         return image;
     }
 
@@ -166,13 +166,13 @@ public partial class ImageFilter(CacheService cacheService) : IFilter
         if (!match.Success)
             throw new ArgumentException("Invalid size");
 
-        if (match.Groups.TryGetValue("Size", out var group) && int.TryParse(group.Value, out int size))
+        if (match.Groups.TryGetValue("Size", out var group) && uint.TryParse(group.Value, out uint size))
             return new Size(size, size);
 
         if (match.Groups.TryGetValue("Width", out var groupWidth) &&
            match.Groups.TryGetValue("Height", out var groupHeight) &&
-           int.TryParse(groupWidth.Value, out int width) &&
-           int.TryParse(groupHeight.Value, out int height))
+           uint.TryParse(groupWidth.Value, out uint width) &&
+           uint.TryParse(groupHeight.Value, out uint height))
             return new Size(width, height);
 
         throw new ArgumentException("Invalid size");
