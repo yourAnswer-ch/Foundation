@@ -11,12 +11,13 @@ public class AssemblyStatus
 
     public string ProductVersion { get; private set; }
 
-    public string Version => ProductVersion == "-" ? FileVersion : ProductVersion;
+    public string Version { get; private set; }
 
     public AssemblyStatus() {
         Name = "Unknown";
         FileVersion = "-";
         ProductVersion = "-";
+        Version = "-";
     }
 
     public AssemblyStatus(Assembly assembly)
@@ -26,13 +27,15 @@ public class AssemblyStatus
         Name = assembly.GetName()?.Name ?? "Unknown";
         FileVersion = fvi.FileVersion ?? "-";
         ProductVersion = fvi.ProductVersion ?? "-";
+        Version = !string.IsNullOrEmpty(fvi.FileVersion) ? fvi.FileVersion : $"{fvi.ProductMajorPart}.{fvi.ProductMinorPart}.{fvi.ProductBuildPart}";
     }
 
     public AssemblyStatus(AssemblyName assembly)
     {
         Name = assembly.Name ?? "Unknown";
+        Version = assembly.Version?.ToString() ?? "-";
         FileVersion = assembly.Version?.ToString() ?? "-";
-        ProductVersion = "-";
+        ProductVersion = "-";        
     }
 
     public override string ToString()

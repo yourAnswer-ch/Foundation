@@ -16,9 +16,9 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
-	
-  <ItemGroup>
-    <PackageReference Include="Foundation.Hosting.Info" Version="9.0.19400" />
-  </ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Foundation.Hosting.Info" Version="9.0.19400" />
+	</ItemGroup>
 
 </Project>
