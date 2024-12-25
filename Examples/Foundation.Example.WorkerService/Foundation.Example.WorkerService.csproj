@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Foundation.Configuration.Defaults" Version="9.0.19416" />
     <PackageReference Include="Foundation.Configuration.KeyVault" Version="9.0.19405" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.8.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.9.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
