@@ -2,15 +2,9 @@
 
 namespace Foundation.CosmosDb;
 
-public abstract class CosmosContainer : ICosmosDbContainer
+public abstract class CosmosContainer(ICosmosDb database) : ICosmosDbContainer
 {
     private Container? _container;
-    private readonly ICosmosDb _db;
-    
-    protected CosmosContainer(ICosmosDb db)
-    {
-        _db = db;
-    }
 
     protected abstract ContainerProperties CreateContainerProperties();
 
@@ -19,19 +13,17 @@ public abstract class CosmosContainer : ICosmosDbContainer
         return null;
     }
 
-    public async Task<Container> CreateIfNotExist()
+    public async Task<Container> GetOrCreateContainer()
     {
         if (_container != null)
             return _container;
 
-        var db = await _db.GetOrCreateDatabase();
+        var db = await database.GetOrCreateDatabase();
 
         var throughput = CreateThroughputProperties();
         var properties = CreateContainerProperties();
 
-        var response = (throughput != null) 
-            ? await db.CreateContainerIfNotExistsAsync(properties) 
-            : await db.CreateContainerIfNotExistsAsync(properties, throughput);
+        var response = await db.CreateContainerIfNotExistsAsync(properties, throughput);
 
         return _container = response.Container;
     }

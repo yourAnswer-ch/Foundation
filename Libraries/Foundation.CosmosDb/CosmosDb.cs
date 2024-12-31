@@ -1,5 +1,4 @@
-﻿using Azure.Identity;
-using Foundation.CosmosDb.Options;
+﻿using Foundation.CosmosDb.Options;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -7,18 +6,12 @@ using System.Net;
 
 namespace Foundation.CosmosDb;
 
-public class CosmosDb : ICosmosDb
+public class CosmosDb(CosmosDbOptions options) : ICosmosDb
 {
     private Database? _database;
     private CosmosClient? _client;
-    private CosmosDbOptions _options;
 
-    internal CosmosClient Client => _client ??= CreateClient(_options);
-
-    public CosmosDb(CosmosDbOptions options)
-    {
-        _options = options;
-    }
+    internal CosmosClient Client => _client ??= CreateClient(options);
 
     public static CosmosDb Create(IServiceProvider provider)
     {
@@ -39,27 +32,38 @@ public class CosmosDb : ICosmosDb
         if (_database != null)
             return _database;
 
-        var properties = _options.ThroughputMode switch
+        var properties = options.ThroughputMode switch
         {
             ThroughputMode.None => null,
-            ThroughputMode.Manual => ThroughputProperties.CreateManualThroughput(_options.Throughput),
-            ThroughputMode.Autoscale => ThroughputProperties.CreateAutoscaleThroughput(_options.Throughput),
+            ThroughputMode.Manual => ThroughputProperties.CreateManualThroughput(options.Throughput),
+            ThroughputMode.Autoscale => ThroughputProperties.CreateAutoscaleThroughput(options.Throughput),
             _ => throw new ArgumentException("CosmosDb ThroughputMode not valid")
         };
 
         var response = (properties != null) 
-            ? await Client.CreateDatabaseIfNotExistsAsync(_options.Database, properties)
-            : await Client.CreateDatabaseIfNotExistsAsync(_options.Database);
+            ? await Client.CreateDatabaseIfNotExistsAsync(options.Database, properties)
+            : await Client.CreateDatabaseIfNotExistsAsync(options.Database);
 
         if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Created)
-            throw new SystemException($"Cosmos db {_options.Database} has not been creatred");
+            throw new SystemException($"Cosmos db {options.Database} has not been creatred");
 
         return _database = response.Database;
     }
 
     protected virtual CosmosClient CreateClient(CosmosDbOptions options)
     {
-        return new CosmosClient(options.Endpoint, new DefaultAzureCredential(), new CosmosClientOptions());
+        var clientOptions = new CosmosClientOptions
+        {
+            SerializerOptions = new CosmosSerializationOptions
+            {
+                IgnoreNullValues = true,
+                PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase,
+            }
+        };
+
+        return new CosmosClient(options.Endpoint, options.Key, clientOptions);
+
+        //return new CosmosClient(options.Endpoint, new DefaultAzureCredential(), new CosmosClientOptions());
 
         //return new CosmosClient(options.Endpoint, new InteractiveBrowserCredential(), new CosmosClientOptions());
     }

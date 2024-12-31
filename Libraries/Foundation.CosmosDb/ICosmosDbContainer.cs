@@ -4,7 +4,7 @@ namespace Foundation.CosmosDb;
 
 public interface ICosmosDbContainer
 {
-    Task<Container> CreateIfNotExist();
+    Task<Container> GetOrCreateContainer();
 }
 
 

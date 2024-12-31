@@ -22,7 +22,7 @@ IServiceProvider provider = services.BuildServiceProvider();
 
 
 var db = provider.GetRequiredService<TestContainer>();
-var conatiner = await db.CreateIfNotExist();
+var conatiner = await db.GetOrCreateContainer();
 
 Console.WriteLine("Hello, World!");
 

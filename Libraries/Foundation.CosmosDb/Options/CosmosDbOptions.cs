@@ -12,20 +12,17 @@ public enum ThroughputMode
 public sealed partial class CosmosDbOptions : IValidateOptions<CosmosDbOptions>
 {
     [Url, Required(AllowEmptyStrings = false)]
-    public string Endpoint { get; set; }
+    public required string Endpoint { get; set; }
 
     [Required(AllowEmptyStrings = false)]
-    public string Database { get; set; }
+    public required string Database { get; set; }
 
     public ThroughputMode ThroughputMode { get; set; } = ThroughputMode.None;
 
     public int Throughput { get; set; } = 400;
 
-    public string Region { get; set; }
+    public string? Region { get; set; }
 
-    public string PrimaryKey { get; set; }
-
-    // Track all container registrations
-    public List<ContainerOptions> Containers { get; set; } = new();
+    public string? Key { get; set; }
 }
 
