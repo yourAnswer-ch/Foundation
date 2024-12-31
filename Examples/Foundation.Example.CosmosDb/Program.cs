@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 
+Console.WriteLine($"New guid ID: {Id.NewBase62Id}");
+
 var configuration = new ConfigurationBuilder()
     .AddUserSecrets<Program>()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)

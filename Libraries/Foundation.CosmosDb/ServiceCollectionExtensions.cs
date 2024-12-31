@@ -1,7 +1,6 @@
 ﻿using Foundation.CosmosDb.Options;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace Foundation.CosmosDb;
 
 public static class ServiceCollectionExtensions
@@ -35,7 +34,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddCosmosDbContainer<T>(
         this IServiceCollection services) where T : class, ICosmosDbContainer
     {
-
         services.AddSingleton<T>();
 
         return services;

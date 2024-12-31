@@ -7,4 +7,3 @@ public interface ICosmosDb
     Task<Database> GetOrCreateDatabase();
 }
 
-
