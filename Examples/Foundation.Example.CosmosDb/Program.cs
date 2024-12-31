@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 
 var configuration = new ConfigurationBuilder()
+    .AddUserSecrets<Program>()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .Build();
 
