@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Foundation.Example.CosmosDb": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "AZURE_TENANT_ID": "719063d3-d297-4fb1-b874-9ddc0df73352"
+      }
+    }
+  }
+}
