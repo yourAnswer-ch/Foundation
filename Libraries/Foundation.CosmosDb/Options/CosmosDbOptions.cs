@@ -17,6 +17,8 @@ public sealed partial class CosmosDbOptions : IValidateOptions<CosmosDbOptions>
     [Required(AllowEmptyStrings = false)]
     public required string Database { get; set; }
 
+    public bool UseCamelCase { get; set; } = true;
+
     public ThroughputMode ThroughputMode { get; set; } = ThroughputMode.None;
 
     public int Throughput { get; set; } = 400;

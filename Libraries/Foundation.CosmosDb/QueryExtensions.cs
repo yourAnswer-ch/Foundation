@@ -31,7 +31,7 @@ public static class QueryExtensions
         string query,
         IDictionary<string, object> parameters)
     {
-        return container.QueryItemsAsync<T>(CreateQuery(query, parameters));
+        return container.QueryItemsAsync<T>(query.CreateQuery(parameters, container.UseCamelCase));
     }
 
     public static IAsyncEnumerable<T> QueryItemsAsync<T>(
@@ -41,7 +41,7 @@ public static class QueryExtensions
         string partitionKey)
     {
         return container.QueryItemsAsync<T>(
-            CreateQuery(query, parameters),
+            query.CreateQuery(parameters, container.UseCamelCase),
             queryRequestOptions: new QueryRequestOptions
             {
                 PartitionKey = new PartitionKey(partitionKey)
@@ -57,7 +57,7 @@ public static class QueryExtensions
         string query,
         object parameters)
     {
-        return container.QueryItemsAsync<T>(CreateQueryFromObject(query, parameters));
+        return container.QueryItemsAsync<T>(query.CreateQueryFromObject(parameters, container.UseCamelCase));
     }
 
     public static IAsyncEnumerable<T> QueryItemsAsync<T>(
@@ -67,7 +67,7 @@ public static class QueryExtensions
         string partitionKey)
     {
         return container.QueryItemsAsync<T>(
-            CreateQueryFromObject(query, parameters),
+            query.CreateQueryFromObject(parameters, container.UseCamelCase),
             queryRequestOptions: new QueryRequestOptions
             {
                 PartitionKey = new PartitionKey(partitionKey)
@@ -98,39 +98,6 @@ public static class QueryExtensions
                 yield return document;
             }
         }
-    }
-    #endregion
-
-    #region internal functions
-    private static QueryDefinition CreateQuery(string query, IDictionary<string, object> parameters)
-    {
-        var queryDefinition = new QueryDefinition(query);
-        foreach (var parameter in parameters)
-        {
-            var key = parameter.Key.StartsWith('@') ? parameter.Key : $"@{parameter.Key}";
-            queryDefinition.WithParameter(key, parameter.Value);
-        }
-
-        return queryDefinition;
-    }
-
-    private static QueryDefinition CreateQueryFromObject(string query, object parameters)
-    {
-        var queryDefinition = new QueryDefinition(query);
-
-        if (parameters == null)
-            return queryDefinition;
-
-        var type = parameters.GetType();
-        var properties = type.GetProperties();
-
-        foreach (var property in properties)
-        {
-            var value = property.GetValue(parameters);
-            queryDefinition.WithParameter($"@{property.Name}", value);
-        }
-
-        return queryDefinition;
     }
     #endregion
 }

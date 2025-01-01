@@ -11,6 +11,8 @@ public class CosmosDb(CosmosDbOptions options) : ICosmosDb
     private Database? _database;
     private CosmosClient? _client;
 
+    public bool UseCamelCase => options.UseCamelCase;
+
     internal CosmosClient Client => _client ??= CreateClient(options);
 
     public static CosmosDb Create(IServiceProvider provider)
@@ -40,7 +42,7 @@ public class CosmosDb(CosmosDbOptions options) : ICosmosDb
             _ => throw new ArgumentException("CosmosDb ThroughputMode not valid")
         };
 
-        var response = (properties != null) 
+        var response = (properties != null)
             ? await Client.CreateDatabaseIfNotExistsAsync(options.Database, properties)
             : await Client.CreateDatabaseIfNotExistsAsync(options.Database);
 
@@ -57,7 +59,9 @@ public class CosmosDb(CosmosDbOptions options) : ICosmosDb
             SerializerOptions = new CosmosSerializationOptions
             {
                 IgnoreNullValues = true,
-                PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase,
+                PropertyNamingPolicy = UseCamelCase
+                    ? CosmosPropertyNamingPolicy.CamelCase
+                    : CosmosPropertyNamingPolicy.Default,
             }
         };
 

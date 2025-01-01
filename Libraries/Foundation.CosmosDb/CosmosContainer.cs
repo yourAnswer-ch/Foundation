@@ -6,6 +6,8 @@ public abstract class CosmosContainer(ICosmosDb database) : ICosmosDbContainer
 {
     private Container? _container;
 
+    public bool UseCamelCase => database.UseCamelCase;
+
     protected abstract ContainerProperties CreateContainerProperties();
 
     protected virtual ThroughputProperties? CreateThroughputProperties()
