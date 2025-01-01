@@ -65,7 +65,7 @@ var instance = new TestClass();
 
 instance.GlobalSetup();
 
-await instance.RunTest4();
+await instance.RunTest6();
 
 
 
@@ -102,7 +102,7 @@ public class TestClass
     {
         var query = new QueryDefinition("SELECT * FROM c");
 
-        var result = container.QueryAsync<JObject>(query);
+        var result = container.QueryItemsAsync<JObject>(query);
 
         var list = new List<JObject>();
 
@@ -137,7 +137,7 @@ public class TestClass
     {
         var query = new QueryDefinition("SELECT * FROM c");
 
-        var result = container.QueryAsync<JObject>(query);
+        var result = container.QueryItemsAsync<JObject>(query);
 
         var list = await result.ToListAsync();
     }
@@ -145,23 +145,9 @@ public class TestClass
     [Benchmark]
     public async Task RunTest4()
     {
-        //var result = container.QueryAsync<JObject>(
-        //    "SELECT * FROM c WHERE c.id = @id", 
-        //    new Dictionary<string,object> { { "@id", "1b75c739-6b08-44bc-8698-ff8459de6b8a"} });
-
-        var result = container.QueryAsync<JObject>(
+        var result = container.QueryItemsAsync<JObject>(
             "SELECT * FROM c WHERE c.id = @id",
             new Dictionary<string, object> { { "id", "0529ddfc-c723-416d-a2c4-a5969aa7c5c1" } });
-
-        //var result = container.QueryAsync<JObject>(
-        //    "SELECT * FROM c");
-
-
-        //var result = container.QueryAsync<JObject>("SELECT * FROM c WHERE c.id = '0529ddfc-c723-416d-a2c4-a5969aa7c5c1'");
-
-        //var result = container.QueryAsync<JObject>(
-        //    "SELECT * FROM c WHERE c.id = @id",
-        //    new { id = "0529ddfc-c723-416d-a2c4-a5969aa7c5c1" });
 
         var list = await result.ToListAsync();
 
@@ -169,6 +155,29 @@ public class TestClass
         {
             Console.WriteLine(doc);
         }
+    }
+
+    [Benchmark]
+    public async Task RunTest5()
+    {
+        var result = container.QueryItemsAsync<JObject>(
+            "SELECT * FROM c WHERE c.id = @id",
+            new { id = "0529ddfc-c723-416d-a2c4-a5969aa7c5c1" });
+
+        var list = await result.ToListAsync();
+
+        foreach (var doc in list)
+        {
+            Console.WriteLine(doc);
+        }
+    }
+
+    [Benchmark]
+    public async Task RunTest6()
+    {
+        var result = await container.GetItemAsync<JObject>("0529ddfc-c723-416d-a2c4-a5969aa7c5c1", "3K6ehNLhnRsPfWhzjugmea_InventoryItems");
+               
+        Console.WriteLine(result);        
     }
 }
 

@@ -5,16 +5,16 @@ namespace Foundation.CosmosDb;
 public static class QueryExtensions
 {
     #region Query without parameters
-    public static IAsyncEnumerable<T> QueryAsync<T>(
+    public static IAsyncEnumerable<T> QueryItemsAsync<T>(
         this ICosmosDbContainer container,
         string query)
     {
-        return container.QueryAsync<T>(new QueryDefinition(query));
+        return container.QueryItemsAsync<T>(new QueryDefinition(query));
     }
 
-    public static IAsyncEnumerable<T> QueryAsync<T>(this ICosmosDbContainer container, string query, string partitionKey)
+    public static IAsyncEnumerable<T> QueryItemsAsync<T>(this ICosmosDbContainer container, string query, string partitionKey)
     {
-        return container.QueryAsync<T>(
+        return container.QueryItemsAsync<T>(
             new QueryDefinition(query),
             queryRequestOptions: new QueryRequestOptions
             {
@@ -26,21 +26,21 @@ public static class QueryExtensions
 
     #region Query with parameters in dictionary
 
-    public static IAsyncEnumerable<T> QueryAsync<T>(
+    public static IAsyncEnumerable<T> QueryItemsAsync<T>(
         this ICosmosDbContainer container,
         string query,
         IDictionary<string, object> parameters)
     {
-        return container.QueryAsync<T>(CreateQuery(query, parameters));
+        return container.QueryItemsAsync<T>(CreateQuery(query, parameters));
     }
 
-    public static IAsyncEnumerable<T> QueryAsync<T>(
+    public static IAsyncEnumerable<T> QueryItemsAsync<T>(
         this ICosmosDbContainer container,
         string query,
         IDictionary<string, object> parameters,
         string partitionKey)
     {
-        return container.QueryAsync<T>(
+        return container.QueryItemsAsync<T>(
             CreateQuery(query, parameters),
             queryRequestOptions: new QueryRequestOptions
             {
@@ -52,21 +52,21 @@ public static class QueryExtensions
 
     #region Query with paramters as anonym object
 
-    public static IAsyncEnumerable<T> QueryAsync<T>(
+    public static IAsyncEnumerable<T> QueryItemsAsync<T>(
         this ICosmosDbContainer container,
         string query,
         object parameters)
     {
-        return container.QueryAsync<T>(CreateQueryFromObject(query, parameters));
+        return container.QueryItemsAsync<T>(CreateQueryFromObject(query, parameters));
     }
 
-    public static IAsyncEnumerable<T> QueryAsync<T>(
+    public static IAsyncEnumerable<T> QueryItemsAsync<T>(
         this ICosmosDbContainer container,
         string query,
         object parameters,
         string partitionKey)
     {
-        return container.QueryAsync<T>(
+        return container.QueryItemsAsync<T>(
             CreateQueryFromObject(query, parameters),
             queryRequestOptions: new QueryRequestOptions
             {
@@ -78,7 +78,7 @@ public static class QueryExtensions
 
     #region Query with native objects
 
-    public static async IAsyncEnumerable<T> QueryAsync<T>(
+    public static async IAsyncEnumerable<T> QueryItemsAsync<T>(
         this ICosmosDbContainer container,
         QueryDefinition queryDefinition,
         string? continuationToken = null,
