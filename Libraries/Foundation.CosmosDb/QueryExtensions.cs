@@ -1,26 +1,95 @@
 ﻿using Microsoft.Azure.Cosmos;
 
-
 namespace Foundation.CosmosDb;
 
 public static class QueryExtensions
 {
-    //public static async IAsyncEnumerable<T> GetDocuments<T>(this ICosmosDbContainer container, string query, CancellationToken cancellationToken = default)
-    //{
-    //    var current = await container.GetOrCreateContainer();
+    #region Query without parameters
+    public static IAsyncEnumerable<T> QueryAsync<T>(
+        this ICosmosDbContainer container,
+        string query)
+    {
+        return container.QueryAsync<T>(new QueryDefinition(query));
+    }
 
-    //    current.GetItemQueryIterator<T>(query);
-    //}
+    public static IAsyncEnumerable<T> QueryAsync<T>(this ICosmosDbContainer container, string query, string partitionKey)
+    {
+        return container.QueryAsync<T>(
+            new QueryDefinition(query),
+            queryRequestOptions: new QueryRequestOptions
+            {
+                PartitionKey = new PartitionKey(partitionKey)
+            });
+    }
 
-    public static async IAsyncEnumerable<T> QueryAsync<T>(this ICosmosDbContainer container, QueryDefinition query, string? partitionKey = null)
+    #endregion
+
+    #region Query with parameters in dictionary
+
+    public static IAsyncEnumerable<T> QueryAsync<T>(
+        this ICosmosDbContainer container,
+        string query,
+        IDictionary<string, object> parameters)
+    {
+        return container.QueryAsync<T>(CreateQuery(query, parameters));
+    }
+
+    public static IAsyncEnumerable<T> QueryAsync<T>(
+        this ICosmosDbContainer container,
+        string query,
+        IDictionary<string, object> parameters,
+        string partitionKey)
+    {
+        return container.QueryAsync<T>(
+            CreateQuery(query, parameters),
+            queryRequestOptions: new QueryRequestOptions
+            {
+                PartitionKey = new PartitionKey(partitionKey)
+            });
+    }
+
+    #endregion
+
+    #region Query with paramters as anonym object
+
+    public static IAsyncEnumerable<T> QueryAsync<T>(
+        this ICosmosDbContainer container,
+        string query,
+        object parameters)
+    {
+        return container.QueryAsync<T>(CreateQueryFromObject(query, parameters));
+    }
+
+    public static IAsyncEnumerable<T> QueryAsync<T>(
+        this ICosmosDbContainer container,
+        string query,
+        object parameters,
+        string partitionKey)
+    {
+        return container.QueryAsync<T>(
+            CreateQueryFromObject(query, parameters),
+            queryRequestOptions: new QueryRequestOptions
+            {
+                PartitionKey = new PartitionKey(partitionKey)
+            });
+    }
+
+    #endregion
+
+    #region Query with native objects
+
+    public static async IAsyncEnumerable<T> QueryAsync<T>(
+        this ICosmosDbContainer container,
+        QueryDefinition queryDefinition,
+        string? continuationToken = null,
+        QueryRequestOptions? queryRequestOptions = null)
     {
         var current = await container.GetOrCreateContainer();
-        var options = partitionKey != null ? new QueryRequestOptions
-        {
-            PartitionKey = new PartitionKey(partitionKey)
-        } : null;
 
-        var result = current.GetItemQueryIterator<T>(query, requestOptions: options);
+        var result = current.GetItemQueryIterator<T>(
+            queryDefinition,
+            continuationToken,
+            queryRequestOptions);
 
         while (result != null && result.HasMoreResults)
         {
@@ -30,4 +99,37 @@ public static class QueryExtensions
             }
         }
     }
+    #endregion
+
+    #region internal functions
+    private static QueryDefinition CreateQuery(string query, IDictionary<string, object> parameters)
+    {
+        var queryDefinition = new QueryDefinition(query);
+        foreach (var parameter in parameters)
+        {
+            queryDefinition.WithParameter(parameter.Key, parameter.Value);
+        }
+
+        return queryDefinition;
+    }
+
+    private static QueryDefinition CreateQueryFromObject(string query, object parameters)
+    {
+        var queryDefinition = new QueryDefinition(query);
+
+        if (parameters == null)
+            return queryDefinition;
+
+        var type = parameters.GetType();
+        var properties = type.GetProperties();
+
+        foreach (var property in properties)
+        {
+            var value = property.GetValue(parameters);
+            queryDefinition.WithParameter($"@{property.Name}", value);
+        }
+
+        return queryDefinition;
+    }
+    #endregion
 }
