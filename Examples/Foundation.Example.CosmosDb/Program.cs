@@ -151,7 +151,7 @@ public class TestClass
 
         var result = container.QueryAsync<JObject>(
             "SELECT * FROM c WHERE c.id = @id",
-            new Dictionary<string, object> { { "@id", "0529ddfc-c723-416d-a2c4-a5969aa7c5c1" } });
+            new Dictionary<string, object> { { "id", "0529ddfc-c723-416d-a2c4-a5969aa7c5c1" } });
 
         //var result = container.QueryAsync<JObject>(
         //    "SELECT * FROM c");

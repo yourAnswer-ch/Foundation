@@ -107,7 +107,8 @@ public static class QueryExtensions
         var queryDefinition = new QueryDefinition(query);
         foreach (var parameter in parameters)
         {
-            queryDefinition.WithParameter(parameter.Key, parameter.Value);
+            var key = parameter.Key.StartsWith('@') ? parameter.Key : $"@{parameter.Key}";
+            queryDefinition.WithParameter(key, parameter.Value);
         }
 
         return queryDefinition;
