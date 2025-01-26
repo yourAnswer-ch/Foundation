@@ -16,7 +16,7 @@ var instance = new TestClass();
 
 instance.GlobalSetup();
 
-await instance.RunTest7();
+await instance.RunTest8();
 
 
 
@@ -135,6 +135,14 @@ public class TestClass
     public async Task RunTest7()
     {
         var result = await container.GetItemAsync<JObject>("SELECT * FROM c WHERE c.name = @name", new { Name = "New Item" });
+
+        Console.WriteLine(result);
+    }
+
+    [Benchmark]
+    public async Task RunTest8()
+    {
+        var result = await container.GetItemAsync<JObject>("TestID", "3K6ehNLhnRsPfWhzjugmea_InventoryItems");
 
         Console.WriteLine(result);
     }
