@@ -67,7 +67,7 @@ public class EventHubListenerService : BackgroundService
                     continue;
                 }
 
-                _log.LogInformation("Forward Message - Id: {0}", partitionEvent.Data.CorrelationId);
+                _log.LogInformation($"Forward Message - Id: {0}", partitionEvent.Data.CorrelationId);
                 await _hubContext.Clients.All.SendAsync("Update", type, payload);
             }
         }
