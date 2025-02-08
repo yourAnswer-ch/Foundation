@@ -1,4 +1,5 @@
-﻿using Foundation.CosmosDb.Options;
+﻿using Azure.Identity;
+using Foundation.CosmosDb.Options;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -65,9 +66,10 @@ public class CosmosDb(CosmosDbOptions options) : ICosmosDb
             }
         };
 
-        return new CosmosClient(options.Endpoint, options.Key, clientOptions);
+        if(!string.IsNullOrWhiteSpace(options.Key))
+            return new CosmosClient(options.Endpoint, options.Key, clientOptions);
 
-        //return new CosmosClient(options.Endpoint, new DefaultAzureCredential(), new CosmosClientOptions());
+        return new CosmosClient(options.Endpoint, new DefaultAzureCredential(), clientOptions);
 
         //return new CosmosClient(options.Endpoint, new InteractiveBrowserCredential(), new CosmosClientOptions());
     }
