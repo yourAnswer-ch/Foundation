@@ -69,7 +69,7 @@ public static class Base62Encoder
     }
 }
 
-public static class Id
+public static class UniqueId
 {
-    public static string NewBase62Id => Guid.CreateVersion7().ToBase62();
+    public static string Create() => Guid.CreateVersion7().ToBase62();
 }
