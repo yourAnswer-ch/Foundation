@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Foundation.Configuration.KeyVault" Version="9.0.19405" />
+    <PackageReference Include="Foundation.Configuration.KeyVault" Version="9.0.19507" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
   </ItemGroup>
