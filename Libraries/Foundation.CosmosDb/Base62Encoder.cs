@@ -12,10 +12,10 @@ public static class Base62Encoder
 
     public static string ToBase62(this Guid guid)
     {
-        return guid.ToByteArray().ToBase62(true); // It's important to set the leading zero to true, since we rely on the length of 22 chars for id validations
+        return guid.ToByteArray().ToBase62(); // It's important to set the leading zero to true, since we rely on the length of 22 chars for id validations
     }
 
-    private static string ToBase62(this byte[] bytes, bool zeroPadding = false)
+    public static string ToBase62(this byte[] bytes, bool zeroPadding = true)
     {
         if (bytes.Length != 16)
             throw new ArgumentOutOfRangeException(nameof(bytes), "Input must be 16 bytes");
@@ -67,9 +67,4 @@ public static class Base62Encoder
         quotLower += remUpper * Carry;  // max value is now 18446744073709551599
         quotLower += remLowerQuot;  // max value is now 18446744073709551615. So no overflow.
     }
-}
-
-public static class UniqueId
-{
-    public static string Create() => Guid.CreateVersion7().ToBase62();
 }
