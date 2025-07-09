@@ -4,7 +4,7 @@ namespace Foundation.CosmosDb;
 
 public static class GetItemExtensions
 {
-    public static async Task<T?> GetItemAsync<T>(
+    public static async Task<T?> GetItemByIdAsync<T>(
         this ICosmosDbContainer container,
         string id,
         string partitionKey)
