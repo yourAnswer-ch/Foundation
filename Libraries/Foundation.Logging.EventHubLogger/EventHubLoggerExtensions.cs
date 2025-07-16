@@ -1,8 +1,9 @@
+using Azure.Messaging.EventHubs.Producer;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
 
 namespace Foundation.Logging.EventHubLogger;
 
@@ -31,11 +32,28 @@ public static class EventHubLoggerExtensions
     private static void WriteLoggerParameters(this ILoggerFactory factory, string message)
     {
         var log = factory.CreateLogger(nameof(EventHubLogger));
-        log?.LogInformation(message);
+        log.LogInformation(message);
     }
 
-    public static IDisposable AddCorrelationId(this ILogger logger, string correlationId)
+    public static IDisposable? AddCorrelationId(this ILogger logger, string correlationId)
     {
         return logger.BeginScope(new CorrelationContext(correlationId));
+    }
+    
+    public static IServiceCollection AddEventHubLogger(this IServiceCollection services)
+    {
+        services.AddOptions<EventHubLoggerOptions>()
+            .BindConfiguration("Logging::EventHub")
+            .ValidateOnStart();
+        
+        services.AddSingleton<IMessagePump, MessagePump>();
+        services.AddAzureClients(builder =>
+        {
+            builder.AddClient<EventHubProducerClient, EventHubLoggerOptions>((options, credential) => 
+                new EventHubProducerClient(
+                    options.FullyQualifiedNamespace, options.AppName, credential)).WithName("EventHubLogger");
+        });
+
+        return services;
     }
 }

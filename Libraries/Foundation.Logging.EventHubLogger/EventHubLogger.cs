@@ -14,7 +14,7 @@ public class EventHubLogger : ILogger
     private readonly EventHubLoggerExternalScopeProvider _scopeProvider;
     private readonly IMessagePump _messagePump;
 
-    public string Name { get; }
+    private string Name { get; }
 
     public void Log<TState>(
         LogLevel logLevel,
@@ -51,7 +51,7 @@ public class EventHubLogger : ILogger
     {
         if (state is ICorrelationContext)
         {
-            return _scopeProvider?.Push(state) ?? null;
+            return _scopeProvider.Push(state) ?? null;
         }
 
         return null;

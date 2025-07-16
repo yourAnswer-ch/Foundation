@@ -10,12 +10,12 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
-    <PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.7.0" />
-    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.7.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.11.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+    <PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.8.0" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.12.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +23,12 @@
     <ProjectReference Include="..\..\Libraries\Foundation.Hosting.Info.Web\Foundation.Hosting.Info.Web.csproj" />
     <ProjectReference Include="..\..\Libraries\Foundation.Hosting.Kestrel.CertBinding\Foundation.Hosting.Kestrel.CertBinding.csproj" />
     <ProjectReference Include="..\..\Libraries\Foundation.Logging.EventHubLogger\Foundation.Logging.EventHubLogger.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Configuration.ConfigurationManager">
+      <HintPath>..\..\..\..\..\.nuget\packages\system.configuration.configurationmanager\6.0.0\lib\net6.0\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

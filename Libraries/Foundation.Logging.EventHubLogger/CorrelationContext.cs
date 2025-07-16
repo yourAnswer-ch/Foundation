@@ -1,12 +1,7 @@
 ﻿
 namespace Foundation.Logging.EventHubLogger;
 
-internal class CorrelationContext : ICorrelationContext
+internal class CorrelationContext(string correlationId) : ICorrelationContext
 {
-    public CorrelationContext(string correlationId)
-    {
-        CorrelationId = correlationId;
-    }
-
-    public string CorrelationId { get; }
+    public string CorrelationId { get; } = correlationId;
 }

@@ -1,19 +1,14 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Logging;
 
 namespace Foundation.Logging.EventHubLogger;
 
 public class EventHubLoggerOptions
 {
-    public string ConnectionString { get; set; }
+    [Required]
+    public required string FullyQualifiedNamespace { get; init; } 
 
-    public string AppName { get; set; }
+    public string AppName { get; init; } = "Default";
 
-    public LogLevel MinLevel { get; set; }
-
-    public EventHubLoggerOptions()
-    {
-        ConnectionString = "UseDevelopmentStorage=true";
-        AppName = "Default";
-        MinLevel = LogLevel.Information;
-    }
+    public LogLevel MinLevel { get; init; } = LogLevel.Information;
 }

@@ -3,18 +3,19 @@ using System.Diagnostics;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
 using Foundation.Logging.EventHubLogger.Interface;
+using Microsoft.Extensions.Azure;
 
 namespace Foundation.Logging.EventHubLogger;
 
-internal class MessagePump : IMessagePump
+internal class MessagePump(IAzureClientFactory<EventHubProducerClient> factory) : IMessagePump
 {
     private Task? _worker;
     private const int MaxBlockSize = 20;
     
-    private CancellationTokenSource _source;
-    private readonly EventHubProducerClient _client;    
-    private readonly BlockingCollection<LogEntry> _messages;    
-
+    private CancellationTokenSource _source = new();
+    private readonly BlockingCollection<LogEntry> _messages = new(); 
+    private readonly EventHubProducerClient _client = factory.CreateClient("EventHubLogger");
+    
     public  void Append(LogEntry logEntry)
     {
         _messages.Add(logEntry);
@@ -37,7 +38,7 @@ internal class MessagePump : IMessagePump
                     if (block == 0)
                     {
                         var item = _messages.Take(_source.Token);
-                        await _client.SendAsync(new EventData[] { new EventData(item.Serialize()) });
+                        await _client.SendAsync([new EventData(item.Serialize())]);
                     }
                     else
                     {
@@ -61,7 +62,10 @@ internal class MessagePump : IMessagePump
         }
     }
 
-    private async Task SendElements(EventHubProducerClient client, BlockingCollection<LogEntry> entries, int elements, CancellationToken token)
+    private static async Task SendElements(
+        EventHubProducerClient client, 
+        BlockingCollection<LogEntry> entries, 
+        int elements, CancellationToken token)
     {        
         var count = elements <= MaxBlockSize ? elements : MaxBlockSize;
         var list = new List<EventData>(count);
@@ -72,13 +76,6 @@ internal class MessagePump : IMessagePump
             list.Add(new EventData(message.Serialize()));
         }
 
-        await client.SendAsync(list);
-    }
-
-    public MessagePump(EventHubLoggerOptions options)
-    {
-        _source = new CancellationTokenSource();
-        _client = new EventHubProducerClient(options.ConnectionString);
-        _messages = new BlockingCollection<LogEntry>();
+        await client.SendAsync(list, token);
     }
 }

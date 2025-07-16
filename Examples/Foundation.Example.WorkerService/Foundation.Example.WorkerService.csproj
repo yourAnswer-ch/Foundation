@@ -11,10 +11,10 @@
   <ItemGroup>
     <PackageReference Include="Foundation.Configuration.Defaults" Version="9.0.19518" />
     <PackageReference Include="Foundation.Configuration.KeyVault" Version="9.0.19507" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.11.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.12.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
   </ItemGroup>
 
   <ItemGroup>

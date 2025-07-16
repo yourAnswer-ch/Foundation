@@ -34,10 +34,10 @@
     <PackageReference Include="Foundation.Notification.Slack" Version="9.0.19512" />
     <PackageReference Include="Foundation.Processing.Pipeline" Version="9.0.19506" />
     <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="9.0.19516" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.11.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.4" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.12.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
   </ItemGroup>
 
   <ItemGroup>

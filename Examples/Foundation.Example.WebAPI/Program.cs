@@ -15,9 +15,9 @@ builder.WebHost.ConfigureKestrel(o =>
 
 builder.Configuration.AddAzureKeyVault();
 
-builder.Services.AddAzureClients(builder =>
-{    
-    builder.AddCertificateClient(new Uri("https://kv-fd-certificates.vault.azure.net/")).WithName("KV-FD-Certificates");
+builder.Services.AddAzureClients(b =>
+{
+    b.AddCertificateClient(new Uri("https://kv-fd-certificates.vault.azure.net/")).WithName("KV-FD-Certificates");
 });
 
 builder.Services.AddCertService();
@@ -26,6 +26,7 @@ builder.Logging.AddEventHubLogger();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEventHubLogger();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

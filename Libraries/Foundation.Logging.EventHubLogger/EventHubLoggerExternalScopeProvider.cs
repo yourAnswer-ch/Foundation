@@ -4,38 +4,28 @@ namespace Foundation.Logging.EventHubLogger;
 
 public class EventHubLoggerExternalScopeProvider : IExternalScopeProvider
 {
-    private ICorrelationContext? _currentContext;
-
     public void ForEachScope<TState>(Action<object, TState> callback, TState state)
     {
         throw new NotImplementedException();
     }
 
-    public ICorrelationContext? Context => _currentContext;
+    public ICorrelationContext? Context { get; private set; }
 
     public IDisposable Push(object? state)
     {
-        _currentContext = state as ICorrelationContext;
+        Context = state as ICorrelationContext;
         return new CorrelationScope(this);
     }
 
-    class CorrelationScope : IDisposable
+    class CorrelationScope(EventHubLoggerExternalScopeProvider provider) : IDisposable
     {
-        private readonly EventHubLoggerExternalScopeProvider _provider;
         private bool _isDisposed;
-
-        public CorrelationScope(EventHubLoggerExternalScopeProvider provider)
-        {
-            _provider = provider;
-        }
 
         public void Dispose()
         {
-            if (!_isDisposed)
-            {
-                _provider._currentContext = null;
-                _isDisposed = true;
-            }
+            if (_isDisposed) return;
+            provider.Context = null;
+            _isDisposed = true;
         }
     }
 }
