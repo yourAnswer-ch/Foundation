@@ -8,13 +8,31 @@ namespace Foundation.Logging.EventHubLogger;
 
 public class EventHubLogger : ILogger
 {
+    private string _name;
+    private string _appName;
     private const int Indentation = 2;
-    private readonly EventHubLoggerOptions _options;
-    private readonly Func<string, LogLevel, bool> _filter;
+    private readonly LogLevel _minLogLevelToSend;
     private readonly EventHubLoggerExternalScopeProvider _scopeProvider;
-    private readonly IMessagePump _messagePump;
+    private readonly IMessageQueue _messageQueue;
 
-    private string Name { get; }
+    internal EventHubLogger(
+        string name,
+        string appName,
+        LogLevel minLogLevelToSend,        
+        EventHubLoggerExternalScopeProvider scopeProvider,
+        IMessageQueue queue)
+    {
+        _name = name;
+        _appName = appName;
+        _minLogLevelToSend = minLogLevelToSend;
+        _scopeProvider = scopeProvider;
+        _messageQueue = queue;
+    }
+
+    public bool IsEnabled(LogLevel logLevel)
+    {
+        return logLevel >= _minLogLevelToSend;
+    }
 
     public void Log<TState>(
         LogLevel logLevel,
@@ -23,13 +41,13 @@ public class EventHubLogger : ILogger
         Exception? exception,
         Func<TState, Exception?, string> formatter)
     {
-        if (!IsEnabled(logLevel))
+        if (logLevel < _minLogLevelToSend)
             return;
 
         var logEntry = new LogEntry
         {
-            App = _options.AppName,
-            Name = Name,
+            App = _appName,
+            Name = _name,
             Host = Environment.MachineName,
             EventId = eventId.Id,
             EventName = eventId.Name,
@@ -39,22 +57,12 @@ public class EventHubLogger : ILogger
             CorrelationId = _scopeProvider.Context?.CorrelationId ?? Activity.Current?.Id
         };
 
-        _messagePump.Append(logEntry);
+        _messageQueue.Append(logEntry);
     }
 
-    public bool IsEnabled(LogLevel logLevel)
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
     {
-        return _filter(Name, logLevel);
-    }
-
-    public IDisposable BeginScope<TState>(TState state)
-    {
-        if (state is ICorrelationContext)
-        {
-            return _scopeProvider.Push(state) ?? null;
-        }
-
-        return null;
+        return _scopeProvider.Push(state);
     }
 
     private string GetMessage<TState>(TState state, Exception? exception, Func<TState, Exception?, string> formatter)
@@ -134,19 +142,5 @@ public class EventHubLogger : ILogger
             }
             isFirst = false;
         }
-    }
-
-    internal EventHubLogger(
-        EventHubLoggerOptions options,
-        string name,
-        Func<string, LogLevel, bool>? filter,
-        EventHubLoggerExternalScopeProvider scopeProvider,
-        IMessagePump messagePump)
-    {
-        Name = name;
-        _options = options;
-        _filter = filter ?? ((category, logLevel) => logLevel >= options.MinLevel);
-        _scopeProvider = scopeProvider;
-        _messagePump = messagePump;
     }
 }

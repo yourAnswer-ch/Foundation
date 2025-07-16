@@ -1,9 +1,8 @@
 using Azure.Messaging.EventHubs.Producer;
 using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.Logging.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Foundation.Logging.EventHubLogger;
 
@@ -11,49 +10,34 @@ public static class EventHubLoggerExtensions
 {
     public static ILoggingBuilder AddEventHubLogger(this ILoggingBuilder builder)
     {
-        builder.AddConfiguration();
+        builder.Services.AddOptions<EventHubLoggerOptions>()
+            .BindConfiguration("Logging:EventHub")
+            .ValidateOnStart();
 
-        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, EventHubLoggerProvider>());
-        LoggerProviderOptions.RegisterProviderOptions<EventHubLoggerOptions, EventHubLoggerProvider>(builder.Services);
+        builder.Services.AddHostedService<MessagePublisher>();
+        builder.Services.AddSingleton<IMessageQueue, MessageQueue>();
+        builder.Services.AddAzureClients(b =>
+        {
+            b.AddClient<EventHubProducerClient, EventHubLoggerOptions>((options, credential, provider) =>
+            {
+                var o = provider.GetRequiredService<IOptions<EventHubLoggerOptions>>().Value;                
+                return new EventHubProducerClient(o.FullyQualifiedNamespace, o.EventHubName, credential);
+            }).WithName("EventHubLogger");
+        });
 
+        builder.Services.AddSingleton<ILoggerProvider, EventHubLoggerProvider>();
         return builder;
     }
 
-    public static ILoggingBuilder AddEventHubLogger(this ILoggingBuilder builder, Action<EventHubLoggerOptions> options)
+    public static ILoggingBuilder AddCustomLogger(this ILoggingBuilder builder, Action<EventHubLoggerOptions> configure)
     {
-        builder.AddConfiguration();
-
-        builder.Services.Configure(options);
-        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ILoggerProvider, EventHubLoggerProvider>());        
-
+        builder.Services.AddSingleton<ILoggerProvider, EventHubLoggerProvider>();
+        builder.Services.Configure(configure);
         return builder;
-    }
-
-    private static void WriteLoggerParameters(this ILoggerFactory factory, string message)
-    {
-        var log = factory.CreateLogger(nameof(EventHubLogger));
-        log.LogInformation(message);
     }
 
     public static IDisposable? AddCorrelationId(this ILogger logger, string correlationId)
     {
         return logger.BeginScope(new CorrelationContext(correlationId));
-    }
-    
-    public static IServiceCollection AddEventHubLogger(this IServiceCollection services)
-    {
-        services.AddOptions<EventHubLoggerOptions>()
-            .BindConfiguration("Logging::EventHub")
-            .ValidateOnStart();
-        
-        services.AddSingleton<IMessagePump, MessagePump>();
-        services.AddAzureClients(builder =>
-        {
-            builder.AddClient<EventHubProducerClient, EventHubLoggerOptions>((options, credential) => 
-                new EventHubProducerClient(
-                    options.FullyQualifiedNamespace, options.AppName, credential)).WithName("EventHubLogger");
-        });
-
-        return services;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Runtime.Versioning;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -9,32 +10,30 @@ namespace Foundation.Logging.EventHubLogger;
 [ProviderAlias("EventHub")]
 public class EventHubLoggerProvider : ILoggerProvider
 {
-    private readonly EventHubLoggerOptions _options;
-    private readonly IMessagePump _messagePump;
-    private readonly Func<string, LogLevel, bool>? _filter;
-    private readonly EventHubLoggerExternalScopeProvider _scopeProvider;
+    private readonly EventHubLoggerExternalScopeProvider _scopeProvider = new EventHubLoggerExternalScopeProvider();
     private readonly ConcurrentDictionary<string, EventHubLogger> _loggers = new();
+  
+    private readonly IMessageQueue _queue;
+    private readonly EventHubLoggerOptions _options;
 
-    public EventHubLoggerProvider(IOptions<EventHubLoggerOptions> options, IMessagePump messagePump)
+    public EventHubLoggerProvider(IServiceProvider provider, IOptions<EventHubLoggerOptions> options)
     {
-        _options = options.Value;       
-        _scopeProvider = new EventHubLoggerExternalScopeProvider();
-        _messagePump = messagePump;
-        _messagePump.Start();
+        if(options.Value == null)
+            throw new ArgumentNullException(nameof(options), "Event hub configuration is missing.");
+        _options = options.Value;
+        _queue = provider.GetRequiredService<IMessageQueue>();        
     }
-    
+
     public ILogger CreateLogger(string name)
     {
-        return _loggers.GetOrAdd(name, CreateLoggerImplementation);
+        return _loggers.GetOrAdd(name, (n) =>
+        {            
+            return new EventHubLogger(_options.AppName, n, _options.MinLogLevelToSend, _scopeProvider, _queue);
+        });
     }
 
-    private EventHubLogger CreateLoggerImplementation(string name)
+    public void Dispose()
     {
-        return new EventHubLogger(_options, name, _filter, _scopeProvider, _messagePump);
-    }
-    
-    void IDisposable.Dispose() {        
-        GC.SuppressFinalize(this);
-        _messagePump.Stop();
+        // Dispose of any resources if necessary
     }
 }

@@ -26,7 +26,6 @@ builder.Logging.AddEventHubLogger();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEventHubLogger();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

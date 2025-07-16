@@ -6,9 +6,13 @@ namespace Foundation.Logging.EventHubLogger;
 public class EventHubLoggerOptions
 {
     [Required]
-    public required string FullyQualifiedNamespace { get; init; } 
+    public required string FullyQualifiedNamespace { get; set; }
 
-    public string AppName { get; init; } = "Default";
+    [Required]
+    public required string EventHubName { get; set; }
 
-    public LogLevel MinLevel { get; init; } = LogLevel.Information;
+    [Required]
+    public required string AppName { get; set; }
+
+    public LogLevel MinLogLevelToSend { get; set; } = LogLevel.Information;
 }
