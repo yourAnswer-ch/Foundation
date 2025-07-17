@@ -18,7 +18,7 @@ public static class EventHubLoggerExtensions
         builder.Services.AddSingleton<IMessageQueue, MessageQueue>();
         builder.Services.AddAzureClients(b =>
         {
-            b.AddClient<EventHubProducerClient, EventHubLoggerOptions>((options, credential, provider) =>
+            b.AddClient<EventHubProducerClient, EventHubProducerClientOptions>((_, credential, provider) =>
             {
                 var o = provider.GetRequiredService<IOptions<EventHubLoggerOptions>>().Value;                
                 return new EventHubProducerClient(o.FullyQualifiedNamespace, o.EventHubName, credential);
