@@ -8,28 +8,19 @@ namespace Foundation.Logging.EventHubLogger;
 
 [UnsupportedOSPlatform("browser")]
 [ProviderAlias("EventHub")]
-public class EventHubLoggerProvider : ILoggerProvider
+public class EventHubLoggerProvider(IServiceProvider provider, IOptions<EventHubLoggerOptions> options)
+    : ILoggerProvider
 {
-    private readonly EventHubLoggerExternalScopeProvider _scopeProvider = new EventHubLoggerExternalScopeProvider();
+    private readonly EventHubLoggerExternalScopeProvider _scopeProvider = new();
     private readonly ConcurrentDictionary<string, EventHubLogger> _loggers = new();
   
-    private readonly IMessageQueue _queue;
-    private readonly EventHubLoggerOptions _options;
-
-    public EventHubLoggerProvider(IServiceProvider provider, IOptions<EventHubLoggerOptions> options)
-    {
-        if(options.Value == null)
-            throw new ArgumentNullException(nameof(options), "Event hub configuration is missing.");
-        _options = options.Value;
-        _queue = provider.GetRequiredService<IMessageQueue>();        
-    }
+    private readonly IMessageQueue _queue = provider.GetRequiredService<IMessageQueue>();
+    private readonly EventHubLoggerOptions _options = options.Value;
 
     public ILogger CreateLogger(string name)
     {
-        return _loggers.GetOrAdd(name, (n) =>
-        {            
-            return new EventHubLogger(_options.AppName, n, _options.MinLogLevelToSend, _scopeProvider, _queue);
-        });
+        return _loggers.GetOrAdd(name, 
+            n => new EventHubLogger(n, _options.AppName, _options.MinLogLevelToSend, _scopeProvider, _queue));
     }
 
     public void Dispose()

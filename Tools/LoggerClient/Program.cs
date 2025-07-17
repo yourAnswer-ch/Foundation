@@ -45,7 +45,7 @@ public class Program
             Thread.Sleep(200);
         }
 
-        Console.WriteLine("Shutdown lisener tasks...");
+        Console.WriteLine("Shutdown listener tasks...");
         host.Stop();
     }
  

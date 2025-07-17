@@ -1,3 +1,5 @@
+using Azure.Core;
+using Azure.Identity;
 using Azure.Messaging.EventHubs.Consumer;
 using CloudLogger.Filtering;
 using Microsoft.Azure.Amqp.Framing;
@@ -39,15 +41,13 @@ internal class LogReceiverHost(Columns columns, LogFilter filter, LogWriter writ
         }
     }
 
-    public async Task Connect(EventHubConnection connection, bool startWithEarliestEvent) //DateTime startDateTime)
+    public async Task Connect(string host, string queue, bool startWithEarliestEvent, TokenCredential token) //DateTime startDateTime)
     {
         await Mutex.WaitAsync();
         try
         {
-            Connection = connection;
-            var client = new EventHubConsumerClient(
-                EventHubConsumerClient.DefaultConsumerGroupName, 
-                connection.ConnectionString);
+            
+            var client = new EventHubConsumerClient(EventHubConsumerClient.DefaultConsumerGroupName, host, queue, token);
 
             var receiver = new LogReceiver(columns, filter, writer);
             //receiver.LaunchProcess(client, EventPosition.FromEnqueuedTime(startDateTime));
