@@ -20,4 +20,10 @@
     <ProjectReference Include="..\Foundation.Services.ImageProcessor.Core\Foundation.Services.ImageProcessor.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.Production.json">
+      <DependentUpon>appsettings.json</DependentUpon>
+    </Content>
+  </ItemGroup>
+
 </Project>

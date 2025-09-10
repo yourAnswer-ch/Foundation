@@ -9,14 +9,13 @@ namespace Foundation.Services.ImageProcessor.Core.Caching;
 public class CacheService(IAzureClientFactory<BlobServiceClient> factory, IConfiguration configuration)
 {
     private BlobContainerClient? _container;
-    private readonly FileHandlerConfiguration? config = configuration.GetFileHandlerConfig();
-
+    
     private async Task<BlobContainerClient> GetBlobContainerClient()
     {
         if (_container != null)
             return _container;
 
-        var client = factory.CreateClient(config!.ClientId);
+        var client = factory.CreateClient("ImageProcessor");
         _container = client.GetBlobContainerClient("cache");
         await _container.CreateIfNotExistsAsync();
         return _container;

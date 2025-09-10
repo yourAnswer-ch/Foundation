@@ -16,7 +16,7 @@ builder.Configuration.AddAzureKeyVault();
 
 builder.Services.AddCertService();
 
-builder.Services.AddImageProcessor(builder.Configuration);
+builder.Services.AddImageProcessor();
 
 
 //builder.Services.AddFirebaseAuthentication(builder.Configuration);
