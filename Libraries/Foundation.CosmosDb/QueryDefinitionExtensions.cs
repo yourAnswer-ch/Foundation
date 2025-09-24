@@ -9,8 +9,7 @@ internal static class QueryDefinitionExtensions
         var queryDefinition = new QueryDefinition(query);
         foreach (var parameter in parameters)
         {
-            var key = parameter.Key.StartsWith('@') ? parameter.Key : $"@{parameter.Key}";
-            queryDefinition.WithParameter(FormatName(key, useCamelCase), parameter.Value);
+            queryDefinition.WithParameter(FormatName(parameter.Key, useCamelCase), parameter.Value);
         }
 
         return queryDefinition;
@@ -40,6 +39,8 @@ internal static class QueryDefinitionExtensions
         if (string.IsNullOrEmpty(input))
             return input; // or throw an exception, depending on your needs
 
-        return !useCamelCase ? $"@{input.TrimStart('@')}" : $"@{char.ToLower(input[0])}{input.Substring(1)}";
+        var name = input.TrimStart('@');
+        
+        return !useCamelCase ? $"@{name}" : $"@{char.ToLower(name[0])}{name[1..]}";
     }
 }
