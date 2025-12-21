@@ -1,0 +1,12 @@
+trigger:
+  paths:
+    include:
+    - Libraries/Foundation.CosmosDb
+
+jobs:
+- template: /Shared assets/build_nuget_package_v1.yaml
+  parameters:  
+    versionMajor: 9
+    versionMinor: 0
+    dotnetVersion: '9.x'
+    projects: '**/Libraries/Foundation.CosmosDb/Foundation.CosmosDb.csproj'
