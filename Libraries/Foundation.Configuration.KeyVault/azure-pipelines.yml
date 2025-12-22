@@ -6,7 +6,7 @@ trigger:
 jobs:
 - template: /Build/nuget-package.yml
   parameters:  
-    versionMajor: 9
+    versionMajor: 10
     versionMinor: 0
-    dotnetVersion: '9.x'
+    dotnetVersion: '10.x'
     projects: '**/Libraries/Foundation.Configuration.KeyVault/Foundation.Configuration.KeyVault.csproj'

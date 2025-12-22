@@ -8,7 +8,7 @@ namespace CloudLogger.Commands;
 internal class EnvironmentVerb : IAction
 {
     [Value(0, Required = false)]
-    public string Environment { get; set; } = "hbdev";
+    public string Environment { get; set; } = "dev";
 
     public void Action()
     {

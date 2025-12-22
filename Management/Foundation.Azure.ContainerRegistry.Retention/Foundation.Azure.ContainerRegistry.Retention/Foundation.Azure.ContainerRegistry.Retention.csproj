@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>fd1496f9-d1f0-47f5-8c59-f34585ae0829</UserSecretsId>
@@ -29,15 +29,15 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.2.0" />
-    <PackageReference Include="Foundation.Configuration.KeyVault" Version="9.0.19507" />
-    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="9.0.19505" />
-    <PackageReference Include="Foundation.Notification.Slack" Version="9.0.19512" />
-    <PackageReference Include="Foundation.Processing.Pipeline" Version="9.0.19506" />
-    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="9.0.19516" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.12.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.7" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Foundation.Configuration.KeyVault" Version="9.0.19588" />
+    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="9.0.19601" />
+    <PackageReference Include="Foundation.Notification.Slack" Version="9.0.19593" />
+    <PackageReference Include="Foundation.Processing.Pipeline" Version="9.0.19587" />
+    <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="9.0.19590" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.13.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
   </ItemGroup>
 
   <ItemGroup>
