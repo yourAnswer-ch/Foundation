@@ -11,7 +11,6 @@ jobs:
   parameters:
     versionMajor: 10
     versionMinor: 0
-    dotnetVersion: '10.x'
     context: 'Management/Foundation.Azure.CertManager'
     dockerfilePath: '**/Foundation.Azure.CertManager/Dockerfile'    
     uploadToReleaseRegistry: $(uploadToReleaseRegistry)
