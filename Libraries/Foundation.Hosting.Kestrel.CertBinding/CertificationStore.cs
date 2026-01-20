@@ -13,9 +13,9 @@ public class CertificationStore(
     ILogger<CertificationStore> log)
 {
      
-    private List<CertificateEntry> _certificates = new();
+    private List<CertificateEntry> _certificates = [];
 
-    internal X509Certificate2 GetCertificat(string name)
+    internal X509Certificate2 GetCertificate(string name)
     {
         if (_certificates.Count == 0)
             throw new ArgumentException("No Certificates available");
@@ -74,7 +74,7 @@ public class CertificationStore(
         var dnsName = cert.GetNameInfo(X509NameType.DnsName, false);
         var alternativeNames = cert.GetSubjectAlternativeNames();
 
-        var hosts = alternativeNames.Concat(new[] { dnsName }).Distinct();
+        var hosts = alternativeNames.Concat([dnsName]).Distinct();
         var entry = new CertificateEntry(cert, hosts);
 
         log.Log(
