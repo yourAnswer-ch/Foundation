@@ -73,3 +73,6 @@ foreach (var domain in config.Certificates)
         Domain = domain 
     });       
 }
+
+log.LogInformation("Certificate manager finished");
+await Task.Delay(TimeSpan.FromSeconds(1));
