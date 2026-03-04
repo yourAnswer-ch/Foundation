@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="Foundation.Configuration.Defaults" Version="10.0.19658" />
+    <PackageReference Include="Foundation.Logging.EventHubLogger" Version="10.0.19643" />
     <PackageReference Include="Foundation.Notification.Slack" Version="10.0.19650" />
     <PackageReference Include="Foundation.ServiceBuilder.AzureDefault" Version="10.0.19656" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.13.1" />

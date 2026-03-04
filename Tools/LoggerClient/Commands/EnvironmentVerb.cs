@@ -19,7 +19,8 @@ internal class EnvironmentVerb : IAction
 
         try
         {
-            var credential = new InteractiveBrowserCredential();
+            //var credential = new InteractiveBrowserCredential();
+            var credential = new DefaultAzureCredential();
 
             //var connection = new EventHubConnection(secret.Value.Value);
 

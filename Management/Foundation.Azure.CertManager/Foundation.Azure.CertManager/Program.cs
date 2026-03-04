@@ -5,19 +5,26 @@ using Foundation.Azure.CertManager.Core.Configuration;
 using Foundation.Azure.CertManager.Core.Steps;
 using Foundation.Azure.CertManager.Core;
 using Foundation.ServiceBuilder;
+using Foundation.Logging.EventHubLogger;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Certes;
 using Azure.Identity;
+using Foundation.Azure.CertManager;
 
 var stack = Stack.Create
     .AddDefaultConfiguration()
-    .AddDefaultLoggingWithoutEventHubLogger()
+    .AddLogging(l =>
+    {
+        l.AddConsole();
+        l.AddEventHubLogger();
+    })
     .AddServices((s, c) =>
     {
         var config = c.GetCertManagerConfig();
+        s.AddLogging(l => l.AddConfiguration(c.GetSection("Logging")));
         s.AddAzureClients(e =>
         {       
             e.AddCertificateClient(new Uri(config.KeyVault.BaseUrl!));
@@ -48,8 +55,9 @@ var stack = Stack.Create
 
 var provider = stack.Build();
 
-var pipeline = provider.GetRequiredService<IPipeline>();
+var token = await provider.StartBackgroundServices();
 
+var pipeline = provider.GetRequiredService<IPipeline>();
 
 var log = provider.GetRequiredService<ILoggerFactory>().CreateLogger("CertManager");
 var config = provider.GetRequiredService<IConfiguration>().GetCertManagerConfig();
