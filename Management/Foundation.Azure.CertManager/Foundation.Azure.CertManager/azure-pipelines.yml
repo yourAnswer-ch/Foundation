@@ -15,8 +15,15 @@ jobs:
     dockerfilePath: '**/Foundation.Azure.CertManager/Dockerfile'    
     uploadToReleaseRegistry: $(uploadToReleaseRegistry)
     imageName: 'azure/cert-maintainer'
-    kubernetesEndpoint: 'Cluster01-PUB-Office'
-    kubernetesNamespace: 'pub-office'
-    kubernetesDeploymentName: 'cronjobs/cert-maintainer-dev'
-    kubernetesContainerName: 'cert-maintainer'
     containerRepository: 'azure/cert-maintainer'
+    # The registry the clusters pull from.
+    devContainerRegistryName: 'ya-containers'
+    prdContainerRegistryName: 'ya-containers'
+    devContainerRegistryUrl: 'containers.youranswer.ch'
+    prdContainerRegistryUrl: 'containers.youranswer.ch'
+    # One image for both: aks-vulcan-01 has Arm64 nodes, AKS-Kronos01 has x64 nodes. The
+    # Dockerfile cross-compiles for this.
+    platforms: 'linux/amd64,linux/arm64'
+    # The cluster takes the image from the infrastructure repository (Flux): the build
+    # number is set there, in clusters/aks-vulcan-01/platform/kustomization.yaml.
+    deploy: 'false'

@@ -53,6 +53,21 @@ parameters:
 - name: 'context'
   default: ''
   type: string
+# Empty: one image for the platform of the build machine, built and pushed by the Docker
+# task, as always. A list such as 'linux/amd64,linux/arm64': one image that holds every
+# platform of the list, under the same tags. See "Several platforms" below.
+- name: 'platforms'
+  default: ''
+  type: string
+# Only used with platforms: the address of the registry behind prdContainerRegistryName.
+- name: 'prdContainerRegistryUrl'
+  default: 'ffprd.azurecr.io'
+  type: string
+# 'false' leaves out the last step, which sets the image on a Kubernetes object. For
+# images that a cluster takes from its own repository (Flux).
+- name: 'deploy'
+  default: 'true'
+  type: string
 
 jobs:
 - job: Build_and_deploy
@@ -74,62 +89,175 @@ jobs:
       InformationalVersion: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
       PackageVersion: '${{ parameters.versionMajor }}.${{ parameters.versionMinor }}.$(Build.BuildId)'
 
-  - task: Docker@2
-    displayName: 'Build DEV image'
-    inputs:
-      containerRegistry: '${{ parameters.devContainerRegistryName }}'
-      repository: '${{ parameters.containerRepository }}'
-      command: 'build'
-      Dockerfile: '${{ parameters.dockerfilePath }}'      
-      buildContext: '${{ parameters.context }}'
-      tags: |
-        $(Build.BuildId)
-        latest
-      arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
+  # One platform, the default: the Docker task builds and pushes.
+  - ${{ if eq(parameters.platforms, '') }}:
+    - task: Docker@2
+      displayName: 'Build DEV image'
+      inputs:
+        containerRegistry: '${{ parameters.devContainerRegistryName }}'
+        repository: '${{ parameters.containerRepository }}'
+        command: 'build'
+        Dockerfile: '${{ parameters.dockerfilePath }}'      
+        buildContext: '${{ parameters.context }}'
+        tags: |
+          $(Build.BuildId)
+          latest
+        arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
 
-  - task: Docker@2
-    displayName: 'Push DEV image'
-    inputs:
-      containerRegistry: '${{ parameters.devContainerRegistryName }}'
-      repository: '${{ parameters.containerRepository }}'
-      command: 'push'
-      Dockerfile: '${{ parameters.dockerfilePath }}'
-      buildContext: '${{ parameters.context }}'
-      tags: |
-        $(Build.BuildId)
-        latest
+    - task: Docker@2
+      displayName: 'Push DEV image'
+      inputs:
+        containerRegistry: '${{ parameters.devContainerRegistryName }}'
+        repository: '${{ parameters.containerRepository }}'
+        command: 'push'
+        Dockerfile: '${{ parameters.dockerfilePath }}'
+        buildContext: '${{ parameters.context }}'
+        tags: |
+          $(Build.BuildId)
+          latest
       
-  - task: Docker@2
-    displayName: 'Build PRD image'
-    inputs:
-      containerRegistry: '${{ parameters.prdContainerRegistryName }}'
-      repository: '${{ parameters.containerRepository }}'
-      command: 'build'
-      Dockerfile: '${{ parameters.dockerfilePath }}'
-      buildContext: '${{ parameters.context }}'
-      tags: |
-        $(Build.BuildId)
-        latest
-      arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
-    condition: and(succeeded(), eq(variables['uploadToReleaseRegistry'], 'true'))
+    - task: Docker@2
+      displayName: 'Build PRD image'
+      inputs:
+        containerRegistry: '${{ parameters.prdContainerRegistryName }}'
+        repository: '${{ parameters.containerRepository }}'
+        command: 'build'
+        Dockerfile: '${{ parameters.dockerfilePath }}'
+        buildContext: '${{ parameters.context }}'
+        tags: |
+          $(Build.BuildId)
+          latest
+        arguments: '--build-arg NUGET_SOURCE="$(NuGet-Source)" --build-arg NUGET_KEY="$(NuGet-Key)"'
+      condition: and(succeeded(), eq(variables['uploadToReleaseRegistry'], 'true'))
 
-  - task: Docker@2
-    displayName: 'Push PRD image'
-    inputs:
-      containerRegistry: '${{ parameters.prdContainerRegistryName }}'
-      repository: '${{ parameters.containerRepository }}'
-      command: 'push'
-      Dockerfile: '${{ parameters.dockerfilePath }}'
-      buildContext: '${{ parameters.context }}'
-      tags: |
-        $(Build.BuildId)
-        latest
-    condition: and(succeeded(), eq(variables['uploadToReleaseRegistry'], 'true'))
+    - task: Docker@2
+      displayName: 'Push PRD image'
+      inputs:
+        containerRegistry: '${{ parameters.prdContainerRegistryName }}'
+        repository: '${{ parameters.containerRepository }}'
+        command: 'push'
+        Dockerfile: '${{ parameters.dockerfilePath }}'
+        buildContext: '${{ parameters.context }}'
+        tags: |
+          $(Build.BuildId)
+          latest
+      condition: and(succeeded(), eq(variables['uploadToReleaseRegistry'], 'true'))
 
-  - task: Kubernetes@1
-    displayName: 'Update DEV environment'
-    inputs:      
-      kubernetesServiceEndpoint: '${{ parameters.kubernetesEndpoint }}'
-      namespace: '${{ parameters.kubernetesNamespace }}'
-      command: 'set'
-      arguments: 'image ${{ parameters.kubernetesDeploymentName }} ${{ parameters.kubernetesContainerName }}=${{ parameters.devContainerRegistryUrl }}/${{ parameters.imageName }}:$(Build.BuildId)'
+  # Several platforms (parameter platforms). One build makes the image for every platform and
+  # pushes it under the build number and latest. A tag is only written when every platform
+  # was built, so no tag ever holds a part of the list.
+  #
+  # The Dockerfile has to cross-compile, so that nothing is emulated: the stage that compiles
+  # runs on the build machine (FROM --platform=$BUILDPLATFORM) and compiles for $TARGETARCH,
+  # and the final stage has no RUN instruction.
+  #
+  # NUGET_KEY reaches the build as before, as the build argument of that name. It is handed
+  # over in the environment of the step, not on its command line. No build cache and no
+  # provenance are pushed, so it is in no layer and no manifest in the registry.
+  - ${{ if ne(parameters.platforms, '') }}:
+    - task: Docker@2
+      displayName: 'Log in to the DEV registry'
+      inputs:
+        containerRegistry: '${{ parameters.devContainerRegistryName }}'
+        command: 'login'
+
+    - task: Docker@2
+      displayName: 'Log in to the PRD registry'
+      inputs:
+        containerRegistry: '${{ parameters.prdContainerRegistryName }}'
+        command: 'login'
+      condition: and(succeeded(), eq(variables['uploadToReleaseRegistry'], 'true'))
+
+    - bash: |
+        set -euo pipefail
+        shopt -s globstar nullglob
+
+        # The first file the pattern matches, as the Docker task picks it.
+        dockerfiles=( ${{ parameters.dockerfilePath }} )
+        if [ "${#dockerfiles[@]}" -eq 0 ]; then
+          echo "##vso[task.logissue type=error]No file matches '${{ parameters.dockerfilePath }}'"
+          exit 1
+        fi
+
+        # The build context: the parameter context, or the root of the repository.
+        context='${{ parameters.context }}'
+        context=${context:-.}
+
+        # The DEV registry, and the PRD registry when the pipeline asks for it.
+        images=( '${{ parameters.devContainerRegistryUrl }}/${{ parameters.containerRepository }}' )
+        prd='${{ parameters.prdContainerRegistryUrl }}/${{ parameters.containerRepository }}'
+        if [ "$UPLOAD_TO_RELEASE_REGISTRY" = "true" ] && [ "$prd" != "${images[0]}" ]; then
+          images+=( "$prd" )
+        fi
+        tags=() pushed=()
+        for image in "${images[@]}"; do
+          for tag in "$BUILD_BUILDID" latest; do
+            tags+=( --tag "$image:$tag" )
+            pushed+=( "$image:$tag" )
+          done
+        done
+
+        # The labels the Docker task writes about the build.
+        host=$(printf '%s' "$SYSTEM_TEAMFOUNDATIONCOLLECTIONURI" | cut -d/ -f3)
+        prefix=$(printf '%s\n' "$host" | tr . '\n' | tac | paste -sd. -).image
+        labels=(
+          --label "$prefix.system.teamfoundationcollectionuri=$SYSTEM_TEAMFOUNDATIONCOLLECTIONURI"
+          --label "$prefix.system.teamproject=$SYSTEM_TEAMPROJECT"
+          --label "$prefix.build.repository.name=$BUILD_REPOSITORY_NAME"
+          --label "$prefix.build.sourceversion=$BUILD_SOURCEVERSION"
+          --label "$prefix.build.repository.uri=$BUILD_REPOSITORY_URI"
+          --label "$prefix.build.sourcebranchname=$BUILD_SOURCEBRANCHNAME"
+          --label "$prefix.build.definitionname=$BUILD_DEFINITIONNAME"
+          --label "$prefix.build.buildnumber=$BUILD_BUILDNUMBER"
+          --label "$prefix.build.builduri=$BUILD_BUILDURI"
+        )
+
+        # A builder that can build for several platforms. The Docker task cannot.
+        docker buildx inspect multi-platform > /dev/null 2>&1 ||
+          docker buildx create --name multi-platform --driver docker-container > /dev/null
+
+        docker buildx build \
+          --builder multi-platform \
+          --platform '${{ parameters.platforms }}' \
+          --file "${dockerfiles[0]}" \
+          --build-arg NUGET_SOURCE --build-arg NUGET_KEY \
+          "${labels[@]}" "${tags[@]}" \
+          --provenance=false \
+          --push \
+          "$context"
+
+        echo "##vso[task.setvariable variable=pushedImages]${pushed[*]}"
+      displayName: 'Build and push the image for ${{ parameters.platforms }}'
+      workingDirectory: '$(Build.SourcesDirectory)'
+      env:
+        NUGET_SOURCE: $(NuGet-Source)
+        NUGET_KEY: $(NuGet-Key)
+        UPLOAD_TO_RELEASE_REGISTRY: $(uploadToReleaseRegistry)
+
+    # Fails the run when a tag does not list every platform that was asked for.
+    - bash: |
+        set -euo pipefail
+        failed=0
+        for image in $(pushedImages); do
+          echo "== $image"
+          docker buildx imagetools inspect "$image"
+          found=$(docker buildx imagetools inspect "$image" \
+            --format '{{range .Manifest.Manifests}}{{.Platform.OS}}/{{.Platform.Architecture}}{{"\n"}}{{end}}')
+          for platform in $(printf '%s' '${{ parameters.platforms }}' | tr ',' ' '); do
+            if ! printf '%s\n' "$found" | grep -qx "$(printf '%s' "$platform" | cut -d/ -f1,2)"; then
+              echo "##vso[task.logissue type=error]$image has no image for $platform"
+              failed=1
+            fi
+          done
+        done
+        exit "$failed"
+      displayName: 'Check that every tag holds ${{ parameters.platforms }}'
+
+  - ${{ if eq(parameters.deploy, 'true') }}:
+    - task: Kubernetes@1
+      displayName: 'Update DEV environment'
+      inputs:      
+        kubernetesServiceEndpoint: '${{ parameters.kubernetesEndpoint }}'
+        namespace: '${{ parameters.kubernetesNamespace }}'
+        command: 'set'
+        arguments: 'image ${{ parameters.kubernetesDeploymentName }} ${{ parameters.kubernetesContainerName }}=${{ parameters.devContainerRegistryUrl }}/${{ parameters.imageName }}:$(Build.BuildId)'
